@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Pencil, Trash2, RefreshCcw, ArrowLeft } from "lucide-react";
+import { Pencil, Trash2, ArrowLeft, Link, Paperclip } from "lucide-react";
 
 const AnnouncementDetail = () => {
   // const AnnouncementDetail = ({ announcement }) => {
@@ -36,7 +36,7 @@ const AnnouncementDetail = () => {
         </h1>
 
         <p className="text-sm text-gray-500">
-          Published on {announcement.date}
+          Published on {announcement.date} by <b>{"Admin Name"}</b>
         </p>
 
         {/* Message */}
@@ -44,31 +44,23 @@ const AnnouncementDetail = () => {
           {announcement.message}
         </p>
 
-        {/* Links */}
-        {announcement.notice_url && (
-          <a
-            href={announcement.notice_url}
-            target="_blank"
-            className="text-indigo-600 text-sm underline"
-          >
-            View Notice
-          </a>
-        )}
+        
+        
 
         {announcement.attachment && (
           <p className="text-sm text-gray-600">
-            📎🧷 {announcement.attachment}
+            <Paperclip size={18} className="inline m-1 opacity-50"/> {announcement.attachment}
           </p>
         )}
 
         {/* Actions */}
         <div className="flex gap-3 pt-4 border-t">
-          <button 
-          onClick={()=>
-          navigate(`/admin/ann/${id}/edit`,{
-            state :announcement
-          })}
-          className="flex items-center gap-2 px-4 py-2 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700">
+          <button
+            onClick={() =>
+              navigate(`/admin/ann/${id}/edit`, {
+                state: announcement
+              })}
+            className="flex items-center gap-2 px-4 py-2 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700">
             <Pencil size={16} />
             Edit
           </button>
@@ -78,10 +70,7 @@ const AnnouncementDetail = () => {
             Delete
           </button>
 
-          <button className="flex items-center gap-2 px-4 py-2 text-sm rounded bg-gray-100 text-gray-700 hover:bg-gray-200">
-            <RefreshCcw size={16} />
-            Repost
-          </button>
+
         </div>
       </div>
     </div>

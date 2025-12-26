@@ -5,6 +5,7 @@ import { selectStudentsTotalCount } from "../../../utils/store/studentSlice";
 import { selectRoomsTotalCount, selectRoomsActiveCount } from "../../../utils/store/roomsSlice";
 import { selectIssuesPendingCount } from "../../../utils/store/issuesSlice";
 const QuickInfo = ({admin}) => {
+    console.log("quickInfoAdmin",admin)
     const totalStudents = useSelector(selectStudentsTotalCount);
     const totalRooms = useSelector(selectRoomsTotalCount);
     const activeRooms = useSelector(selectRoomsActiveCount);

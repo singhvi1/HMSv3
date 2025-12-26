@@ -22,7 +22,8 @@ import CreateStudent from './Components/forms/CreateStudent'
 import StudentList from './Components/pages/admins/studentlist/StudentList'
 import AdminIssueList from './Components/pages/admins/issues/AdminIssueList'
 import RoomsList from './Components/pages/admins/rooms/RoomsList'
-import AdminStudentActions from './Components/pages/admins/studentlist/AdminStudentProfile'
+import AdminStudentProfile from './Components/pages/admins/studentlist/AdminStudentProfile'
+import AdminRoomProfile from './Components/pages/admins/rooms/AdminRoomProfile'
 function App() {
   return (
     <>
@@ -52,8 +53,9 @@ function App() {
                 <Route path='ann/:id/edit' element={<EditAnnouncement />} />
                 <Route path='students/new' element={<CreateStudent />} />
                 <Route path='students' element={<StudentList />} />
-                <Route path='students/:id' element={<AdminStudentActions student={student} />} />
+                <Route path='students/:id' element={<AdminStudentProfile student={student} />} />
                 <Route path='rooms' element={<RoomsList />} />
+                <Route path='rooms/:id' element={<AdminRoomProfile />} />
                 <Route path='issues' element={<AdminIssueList />} />
 
               </Route>

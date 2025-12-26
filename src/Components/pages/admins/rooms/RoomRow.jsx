@@ -8,7 +8,7 @@ const activeClasses = {
 
 const RoomRow = ({ room, index }) => {
   const navigate = useNavigate();
-  console.log(room);
+  console.log("RoomRow each",room);
   const isActiveKey = String(!!room.is_active);
 
   return (
@@ -25,7 +25,7 @@ const RoomRow = ({ room, index }) => {
       </td>
       <td className="p-2 flex gap-2">
         <Eye size={16} className="cursor-pointer text-gray-600"
-          onClick={() => { navigate(`/admin/rooms/${room._id}`) }}
+          onClick={() => { navigate(`/admin/rooms/${room._id}`, { state: { room } }) }}
         />
       </td>
     </tr>

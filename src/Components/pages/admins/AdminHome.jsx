@@ -3,7 +3,7 @@ import AdminActions from "./adminActions"
 import AdminHero from "./AdminHero"
 
 const AdminHome = () => {
-    console.log(admin)
+    console.log("admin",admin)
     return (
         <section className="space-y-6">
             

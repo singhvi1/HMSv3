@@ -28,7 +28,7 @@ const AdminIssueList = () => {
     <div className="p-6 bg-gray-50 min-h-screen">
       <h1 className="text-2xl font-bold mb-6">Maintenance Issues</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-4">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-4">
         <input
           className="input"
           value={filters.search}
@@ -36,24 +36,23 @@ const AdminIssueList = () => {
           placeholder="Search issue / student"
         />
 
-        <div className="md:col-span-2 flex gap-3">
-          <select
-            className="input"
-            value={pageData.pageSize}
-            onChange={(e) => dispatch(setIssuesPageSize(Number(e.target.value)))}
-          >
-            <option value={10}>10</option>
-            <option value={20}>20</option>
-            <option value={50}>50</option>
-          </select>
-        </div>
+        <select
+          className="input"
+          value={pageData.pageSize}
+          onChange={(e) => dispatch(setIssuesPageSize(Number(e.target.value)))}
+        >
+          <option value={10}>10</option>
+          <option value={20}>20</option>
+          <option value={50}>50</option>
+        </select>
+
+        <IssueFilters
+          status={filters.status}
+          priority={filters.priority}
+          onChange={handleFilterChange}
+        />
       </div>
 
-      <IssueFilters
-        status={filters.status}
-        priority={filters.priority}
-        onChange={handleFilterChange}
-      />
 
       <IssueTable
         issues={pageData.items}

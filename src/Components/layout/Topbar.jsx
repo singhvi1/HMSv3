@@ -1,10 +1,15 @@
 import { LogOut, Home } from "lucide-react";
 import { Link } from "react-router-dom"
 import ProfileAvatar from "../profile/ProfileAvatar";
+import { useDispatch } from "react-redux";
+import { student } from "../../../data";
+import { setLoggedinUser } from "../../utils/store/logedinUser";
 
 //this is for laptop hidden for mobile
 const Topbar = ({ user }) => {
   // console.log(user)
+  const dispactch=useDispatch();
+  dispactch(setLoggedinUser(student))
   return (
     <div className="hidden md:flex  bg-linear-to-r from-indigo-600 to-blue-500 text-white shadow px-6 py-4 items-center justify-between ">
       {/* left loggo home wala */}

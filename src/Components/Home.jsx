@@ -5,7 +5,7 @@ import { announcements, student } from '../../data';
 import AnnounceMents from './dashboard/AnnounceMents';
 
 const Home = () => {
-  console.log(student)
+  console.log("student",student)
   return (
     <>
       <Topbar user={student} />

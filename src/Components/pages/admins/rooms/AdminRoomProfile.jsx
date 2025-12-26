@@ -1,17 +1,19 @@
 import { useLocation, useParams } from "react-router-dom";
+import { rooms } from "../../../../../data";
 import ProfileHero from "../../../profile/ProfileHero";
-import AdminStudentActions from "./AdminStudentActions";
+import { useSelector } from "react-redux";
+import AdminStudentActions from "../studentlist/AdminStudentActions";
 
-import { students } from "../../../../../data";
 
-const AdminStudentProfile = () => {
+const AdminRoomProfile = () => {
     const { roomId } = useParams();
     const location = useLocation();
-    const studentFromState = location.state?.student;
-
+    const loggedinUser=useSelector(state=>state.loggedinUser);
+    const roomFromState = location.state?.room;
+    console.log("AdminroomData",roomFromState);
     // Use student from state if available, otherwise fallback to finding by ID
-    const student = studentFromState ||
-        students.find(s => s._id === roomId); //or later from API/redux
+    const student = roomFromState ||
+        rooms.find(s => s._id === roomId); //or later from API/redux
 
     if (!student) {
         return <p className="p-6 text-red-500">Student not found</p>;
@@ -20,7 +22,7 @@ const AdminStudentProfile = () => {
     return (
         <div className="p-6 space-y-6">
             {/* Student basic info */}
-            <ProfileHero student={student} />
+            <ProfileHero student={loggedinUser} />
 
             {/* Admin actions */}
             <AdminStudentActions student={student} />
@@ -28,4 +30,4 @@ const AdminStudentProfile = () => {
     );
 };
 
-export default AdminStudentProfile;
+export default AdminRoomProfile;

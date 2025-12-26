@@ -3,11 +3,17 @@ import { useState } from "react";
 import axios from "axios";
 import { BASE_URL } from "../utils/constant";
 import Navbar from "../Components/layout/NavBar"; // adjust path if needed
+import { useDispatch } from "react-redux";
+import { setLoggedinUser } from "../utils/store/logedinUser";
+import { student } from "../../data";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const dispactch = useDispatch();
+
+
 
   const handleSubmit = async (e) => {
     try {
@@ -21,6 +27,8 @@ const Login = () => {
       if (res.data.success) {
         const role = res.data.user.role;
         window.location.href = `/${role}`;
+        dispactch(setLoggedinUser(student));
+        // dispactch(setLoggedinUser(res.data.user));
       }
     } catch (err) {
       setError(

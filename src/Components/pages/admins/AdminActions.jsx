@@ -16,13 +16,13 @@ const AdminActions = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
-{/* announcement */}
+        {/* announcement */}
         <Link to="/admin/ann/new">
           <ActionCard icon={<Wrench size={18} />} title="Announcements" color="bg-yellow-50" children="Create New Announcement">
 
           </ActionCard>
         </Link>
-{/* adding a student */}
+        {/* adding a student */}
         <Link to="/admin/students/new">
           <ActionCard icon={<CalendarDays size={18} />} title="New Student" color="bg-purple-50">
             Add a Student
