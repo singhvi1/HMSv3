@@ -1,3 +1,5 @@
+import dayjs from "dayjs";
+
 export const student = {
   full_name: "Vikash Kumar",
   email: "vikash@example.com",
@@ -14,8 +16,8 @@ export const student = {
   hostel: "Boys Hostel A",
   payment: {
     hostel_fee: "Pending",
-    mess_fee: "Paid"
-  }
+    mess_fee: "Paid",
+  },
 };
 
 export const students = Array.from({ length: 47 }, (_, i) => ({
@@ -30,7 +32,7 @@ export const students = Array.from({ length: 47 }, (_, i) => ({
   guardian_contact: `90000000${i + 10}`,
   block: ["A", "B", "C"][i % 3],
   room_number: `${["A", "B", "C"][i % 3]}-${101 + i}`,
-  status: i % 6 === 0 ? "inactive" : "active"
+  status: i % 6 === 0 ? "inactive" : "active",
 }));
 
 export const rooms = Array.from({ length: 60 }, (_, i) => {
@@ -44,7 +46,7 @@ export const rooms = Array.from({ length: 60 }, (_, i) => {
     floor,
     capacity: [1, 2, 3][i % 3],
     is_active: i % 12 !== 0,
-    yearly_rent: 85000
+    yearly_rent: 85000,
   };
 });
 
@@ -60,11 +62,12 @@ export const issueList = Array.from({ length: 38 }, (_, i) => ({
     "Fan not working",
     "Water leakage",
     "Broken chair",
-    "WiFi not connecting"
+    "WiFi not connecting",
   ][i % 4],
 
-  description: `Reported issue related to ${["fan", "pipe", "chair", "internet"][i % 4]
-    } in the room.`,
+  description: `Reported issue related to ${
+    ["fan", "pipe", "chair", "internet"][i % 4]
+  } in the room.`,
 
   block: ["A", "B", "C"][i % 3],
   room: `${["A", "B", "C"][i % 3]}-${101 + i}`,
@@ -73,16 +76,12 @@ export const issueList = Array.from({ length: 38 }, (_, i) => ({
 
   status: ["pending", "in_progress", "resolved"][i % 3],
 
-  created_at: new Date(
-    Date.now() - i * 24 * 60 * 60 * 1000
-  ).toISOString(),
+  created_at: new Date(Date.now() - i * 24 * 60 * 60 * 1000).toISOString(),
 
   updated_at:
     i % 3 === 2
-      ? new Date(
-        Date.now() - (i - 1) * 24 * 60 * 60 * 1000
-      ).toISOString()
-      : null
+      ? new Date(Date.now() - (i - 1) * 24 * 60 * 60 * 1000).toISOString()
+      : null,
 }));
 
 export const admin = {
@@ -95,8 +94,7 @@ export const admin = {
   total_student: "600",
   occupied_rooms: "72%",
   pending_issues: "77%",
-  hostel_name: "Himalya Hostel"
-
+  hostel_name: "Himalya Hostel",
 };
 
 export const maintenanceMockData = [
@@ -109,7 +107,7 @@ export const maintenanceMockData = [
     block: "B",
     status: "pending",
     createdAt: "2025-12-21T10:30:00Z",
-    staff_remark: ""
+    staff_remark: "",
   },
   {
     _id: "2",
@@ -120,7 +118,7 @@ export const maintenanceMockData = [
     block: "B",
     status: "in_progress",
     createdAt: "2025-12-20T08:00:00Z",
-    staff_remark: "Plumber assigned"
+    staff_remark: "Plumber assigned",
   },
   {
     _id: "3",
@@ -131,67 +129,110 @@ export const maintenanceMockData = [
     block: "B",
     status: "resolved",
     createdAt: "2025-12-18T14:20:00Z",
-    staff_remark: "Chair replaced"
-  }
+    staff_remark: "Chair replaced",
+  },
 ];
 
-import { Trophy, Wrench, Users, BookOpen } from "lucide-react"
+import { Trophy, Wrench, Users, BookOpen } from "lucide-react";
 export const announcements = [
   {
     id: 1,
     title: "Annual Sports Meet 2024",
     date: "2024-03-25",
     category: "sports",
-    description: "Join us for the annual inter-hostel sports competition featuring cricket, football, and basketball tournaments.",
+    description:
+      "Join us for the annual inter-hostel sports competition featuring cricket, football, and basketball tournaments.",
     icon: Trophy,
-    color: "bg-blue-100 text-blue-600"
+    color: "bg-blue-100 text-blue-600",
   },
   {
     id: 2,
     title: "Hostel Maintenance Schedule",
     date: "2024-03-20",
     category: "maintenance",
-    description: "Block A water tank cleaning will be conducted. Water supply will be interrupted from 10 AM to 2 PM.",
+    description:
+      "Block A water tank cleaning will be conducted. Water supply will be interrupted from 10 AM to 2 PM.",
     icon: Wrench,
-    color: "bg-yellow-100 text-yellow-600"
+    color: "bg-yellow-100 text-yellow-600",
   },
   {
     id: 3,
     title: "Cultural Night",
     date: "2024-03-30",
     category: "event",
-    description: "Annual cultural night celebration in the hostel auditorium. All students are invited to participate.",
+    description:
+      "Annual cultural night celebration in the hostel auditorium. All students are invited to participate.",
     icon: Users,
-    color: "bg-purple-100 text-purple-600"
+    color: "bg-purple-100 text-purple-600",
   },
   {
     id: 4,
     title: "Library Extended Hours",
     date: "2024-03-22",
     category: "academic",
-    description: "The hostel library will remain open until midnight during the exam period.",
+    description:
+      "The hostel library will remain open until midnight during the exam period.",
     icon: BookOpen,
-    color: "bg-green-100 text-green-600"
-  }];
+    color: "bg-green-100 text-green-600",
+  },
+];
 
 export const galleryImages = [
   {
-    url_1: "https://www.shutterstock.com/shutterstock/photos/2016000839/display_1500/stock-photo-new-delhi-india-july-group-of-students-eating-together-in-hostel-dining-room-of-hindu-2016000839.jpg"
+    url_1:
+      "https://www.shutterstock.com/shutterstock/photos/2016000839/display_1500/stock-photo-new-delhi-india-july-group-of-students-eating-together-in-hostel-dining-room-of-hindu-2016000839.jpg",
   },
   {
-    url_2: "https://t4.ftcdn.net/jpg/06/14/15/13/360_F_614151302_RPKa47w8G2nHrHy3DPpU4qKn0bnwRiVI.jpg"
-  }
-
-]
-
-
+    url_2:
+      "https://t4.ftcdn.net/jpg/06/14/15/13/360_F_614151302_RPKa47w8G2nHrHy3DPpU4qKn0bnwRiVI.jpg",
+  },
+];
 
 export const STATUS_COLOR = {
   pending: "bg-yellow-100 text-yellow-700",
   in_progress: "bg-blue-100 text-blue-700",
-  resolved: "bg-green-100 text-green-700"
+  resolved: "bg-green-100 text-green-700",
 };
 
+// -----------------------
+const reasons = [
+  "Family function at hometown",
+  "Medical checkup scheduled",
+  "Attending cousin's wedding",
+  "Personal emergency at home",
+  "Festival celebration with parents",
+  "Property documentation work",
+  "Brother's school admission process",
+  "Grandparent health concern",
+];
 
+const destinations = [
+  "Hyderabad",
+  "Bangalore",
+  "Chennai",
+  "Mumbai",
+  "Vijayawada",
+  "Warangal",
+  "Vizag",
+];
 
+export const leaves = Array.from({ length: 85 }, (_, i) => {
+  const s = students[i % students.length];
+  const from = dayjs().add(i % 5, "day");
+  const to = from.add((i % 3) + 1, "day");
 
+  return {
+    _id: `lv_${i + 1}`,
+    student_id: s._id,
+    full_name: s.full_name,
+    sid: s.sid,
+    branch: s.branch,
+    block: s.block,
+    room_number: s.room_number,
+    from_date: from.format("YYYY-MM-DD"),
+    to_date: to.format("YYYY-MM-DD"),
+    destination: destinations[i % destinations.length],
+    reason: reasons[i % reasons.length],
+    status: i % 6 === 0 ? "approved" : i % 9 === 0 ? "rejected" : "pending",
+  };
+});

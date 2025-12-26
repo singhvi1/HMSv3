@@ -1,9 +1,17 @@
-import { User, CreditCard, Wrench, CalendarDays, X, Megaphone, BedDouble } from "lucide-react";
+import {
+  User,
+  CreditCard,
+  Wrench,
+  CalendarDays,
+  X,
+  Megaphone,
+  BedDouble,
+} from "lucide-react";
 import SideBarItem from "../../../layout/SidebarItem";
 import { useNavigate } from "react-router-dom";
 
 const SideBar = ({ isOpen, onClose }) => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <>
@@ -29,8 +37,6 @@ const SideBar = ({ isOpen, onClose }) => {
           <X onClick={onClose} className="cursor-pointer" />
         </div>
 
-
-
         <nav className="space-y-4 text-gray-700">
           <SideBarItem
             icon={<User size={18} />}
@@ -48,39 +54,46 @@ const SideBar = ({ isOpen, onClose }) => {
               onClose();
             }}
           />
-          <SideBarItem icon={<BedDouble size={18} />} label="StudentList"
+          <SideBarItem
+            icon={<BedDouble size={18} />}
+            label="StudentList"
             onClick={() => {
               navigate("/admin/students");
               onClose();
             }}
           />
-          <SideBarItem icon={<BedDouble size={18} />} label="Rooms"
+          <SideBarItem
+            icon={<BedDouble size={18} />}
+            label="Rooms"
             onClick={() => {
               navigate("/admin/rooms");
               onClose();
             }}
           />
-          <SideBarItem icon={<Wrench size={18} />}
+          <SideBarItem
+            icon={<Wrench size={18} />}
             onClick={() => {
               navigate("/admin/issues");
               onClose();
             }}
             label="Issues"
           />
-          <SideBarItem icon={<CalendarDays size={18} />}
-
+          <SideBarItem
+            icon={<CalendarDays size={18} />}
             label="Leave"
             onClick={() => {
-              // navigate("/student/leave/new");
+              navigate("/admin/leaves");
               onClose();
             }}
           />
-          <SideBarItem icon={<CreditCard size={18} />} label="Payments"
+          <SideBarItem
+            icon={<CreditCard size={18} />}
+            label="Payments"
             onClick={() => {
               // navigate("/student/notfound");
               onClose();
-            }} />
-
+            }}
+          />
         </nav>
       </aside>
     </>

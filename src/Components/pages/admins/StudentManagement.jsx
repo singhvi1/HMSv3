@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 import {
   Table,
   Button,
@@ -15,8 +15,8 @@ import {
   Typography,
   Row,
   Col,
-  Tag
-} from 'antd';
+  Tag,
+} from "antd";
 import {
   PlusOutlined,
   EditOutlined,
@@ -25,9 +25,9 @@ import {
   UserOutlined,
   MailOutlined,
   PhoneOutlined,
-  HomeOutlined
-} from '@ant-design/icons';
-import { studentService } from '../../../services/apiService';
+  HomeOutlined,
+} from "@ant-design/icons";
+import { studentService } from "../../../services/apiService";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -46,11 +46,11 @@ const StudentManagement = () => {
   const [filters, setFilters] = useState({
     branch: null,
     block: null,
-    search: '',
+    search: "",
   });
 
-  const branches = ['CSE', 'ECE', 'EEE', 'MECH', 'CIVIL', 'IT'];
-  const blocks = ['A', 'B', 'C', 'D'];
+  const branches = ["CSE", "ECE", "EEE", "MECH", "CIVIL", "IT"];
+  const blocks = ["A", "B", "C", "D"];
 
   const fetchStudents = async (params = {}) => {
     setLoading(true);
@@ -74,8 +74,8 @@ const StudentManagement = () => {
         current: response.data.page,
       });
     } catch (error) {
-      message.error('Failed to fetch students');
-      console.error('Error fetching students:', error);
+      message.error("Failed to fetch students");
+      console.error("Error fetching students:", error);
     } finally {
       setLoading(false);
     }
@@ -111,11 +111,11 @@ const StudentManagement = () => {
   const handleDeleteStudent = async (userId) => {
     try {
       await studentService.deleteStudent(userId);
-      message.success('Student deleted successfully');
+      message.success("Student deleted successfully");
       fetchStudents();
     } catch (error) {
-      message.error('Failed to delete student');
-      console.error('Error deleting student:', error);
+      message.error("Failed to delete student");
+      console.error("Error deleting student:", error);
     }
   };
 
@@ -123,54 +123,59 @@ const StudentManagement = () => {
     try {
       if (editingStudent) {
         await studentService.updateStudent(editingStudent._id, values);
-        message.success('Student updated successfully');
+        message.success("Student updated successfully");
       } else {
         // Handle create student (would need to call appropriate API)
         // For now, we'll just show a message
-        message.success('Student created successfully');
+        message.success("Student created successfully");
       }
       setIsModalVisible(false);
       fetchStudents();
     } catch (error) {
-      message.error(`Failed to ${editingStudent ? 'update' : 'create'} student`);
-      console.error(`Error ${editingStudent ? 'updating' : 'creating'} student:`, error);
+      message.error(
+        `Failed to ${editingStudent ? "update" : "create"} student`
+      );
+      console.error(
+        `Error ${editingStudent ? "updating" : "creating"} student:`,
+        error
+      );
     }
   };
 
   const columns = [
     {
-      title: 'Student ID',
-      dataIndex: 'sid',
-      key: 'sid',
+      title: "Student ID",
+      dataIndex: "sid",
+      key: "sid",
       sorter: (a, b) => a.sid.localeCompare(b.sid),
     },
     {
-      title: 'Name',
-      dataIndex: 'full_name',
-      key: 'full_name',
+      title: "Name",
+      dataIndex: "full_name",
+      key: "full_name",
       render: (_, record) => (
         <div>
           <div>{record.full_name}</div>
-          <div style={{ fontSize: '12px', color: '#666' }}>{record.email}</div>
+          <div style={{ fontSize: "12px", color: "#666" }}>{record.email}</div>
         </div>
       ),
     },
     {
-      title: 'Contact',
-      dataIndex: 'phone',
-      key: 'phone',
+      title: "Contact",
+      dataIndex: "phone",
+      key: "phone",
     },
     {
-      title: 'Branch',
-      dataIndex: 'branch',
-      key: 'branch',
-      filters: branches.map(branch => ({ text: branch, value: branch })),
+      title: "Branch",
+      dataIndex: "branch",
+      key: "branch",
+      filters: branches.map((branch) => ({ text: branch, value: branch })),
       onFilter: (value, record) => record.branch === value,
     },
     {
-      title: 'Room',
-      dataIndex: 'room_number',
-      key: 'room_number',
+      title: "Room",
+      dataIndex: "room_number",
+      key: "room_number",
       render: (_, record) => (
         <Tag color="blue">
           {record.block}-{record.room_number}
@@ -178,18 +183,18 @@ const StudentManagement = () => {
       ),
     },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
       render: (status) => (
-        <Tag color={status === 'active' ? 'green' : 'red'}>
+        <Tag color={status === "active" ? "green" : "red"}>
           {status.toUpperCase()}
         </Tag>
       ),
     },
     {
-      title: 'Actions',
-      key: 'actions',
+      title: "Actions",
+      key: "actions",
       render: (_, record) => (
         <Space size="middle">
           <Button
@@ -211,10 +216,18 @@ const StudentManagement = () => {
   ];
 
   return (
-    <div style={{ padding: '24px' }}>
+    <div style={{ padding: "24px" }}>
       <Card>
-        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-          <Title level={4} style={{ margin: 0 }}>Student Management</Title>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "20px",
+          }}
+        >
+          <Title level={4} style={{ margin: 0 }}>
+            Student Management
+          </Title>
           <Button
             type="primary"
             icon={<PlusOutlined />}
@@ -225,37 +238,43 @@ const StudentManagement = () => {
         </div>
 
         {/* Filters */}
-        <div style={{ marginBottom: '20px' }}>
+        <div style={{ marginBottom: "20px" }}>
           <Row gutter={[16, 16]}>
             <Col xs={24} sm={12} md={6}>
               <Input
                 placeholder="Search by name or ID"
                 prefix={<SearchOutlined />}
-                onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                onChange={(e) =>
+                  setFilters({ ...filters, search: e.target.value })
+                }
                 allowClear
               />
             </Col>
             <Col xs={12} sm={6} md={3}>
               <Select
-                style={{ width: '100%' }}
+                style={{ width: "100%" }}
                 placeholder="Select Branch"
                 allowClear
                 onChange={(value) => setFilters({ ...filters, branch: value })}
               >
-                {branches.map(branch => (
-                  <Option key={branch} value={branch}>{branch}</Option>
+                {branches.map((branch) => (
+                  <Option key={branch} value={branch}>
+                    {branch}
+                  </Option>
                 ))}
               </Select>
             </Col>
             <Col xs={12} sm={6} md={3}>
               <Select
-                style={{ width: '100%' }}
+                style={{ width: "100%" }}
                 placeholder="Select Block"
                 allowClear
                 onChange={(value) => setFilters({ ...filters, block: value })}
               >
-                {blocks.map(block => (
-                  <Option key={block} value={block}>{block}</Option>
+                {blocks.map((block) => (
+                  <Option key={block} value={block}>
+                    {block}
+                  </Option>
                 ))}
               </Select>
             </Col>
@@ -276,7 +295,7 @@ const StudentManagement = () => {
 
       {/* Add/Edit Student Modal */}
       <Modal
-        title={editingStudent ? 'Edit Student' : 'Add New Student'}
+        title={editingStudent ? "Edit Student" : "Add New Student"}
         open={isModalVisible}
         onCancel={() => setIsModalVisible(false)}
         onOk={() => form.submit()}
@@ -287,7 +306,7 @@ const StudentManagement = () => {
           layout="vertical"
           onFinish={handleSubmit}
           initialValues={{
-            status: 'active'
+            status: "active",
           }}
         >
           <Row gutter={16}>
@@ -295,7 +314,7 @@ const StudentManagement = () => {
               <Form.Item
                 name="full_name"
                 label="Full Name"
-                rules={[{ required: true, message: 'Please enter full name' }]}
+                rules={[{ required: true, message: "Please enter full name" }]}
               >
                 <Input prefix={<UserOutlined />} placeholder="Full Name" />
               </Form.Item>
@@ -305,8 +324,8 @@ const StudentManagement = () => {
                 name="email"
                 label="Email"
                 rules={[
-                  { required: true, message: 'Please enter email' },
-                  { type: 'email', message: 'Please enter a valid email' },
+                  { required: true, message: "Please enter email" },
+                  { type: "email", message: "Please enter a valid email" },
                 ]}
               >
                 <Input prefix={<MailOutlined />} placeholder="Email" />
@@ -320,8 +339,11 @@ const StudentManagement = () => {
                 name="phone"
                 label="Phone Number"
                 rules={[
-                  { required: true, message: 'Please enter phone number' },
-                  { pattern: /^[0-9]{10}$/, message: 'Please enter a valid 10-digit phone number' },
+                  { required: true, message: "Please enter phone number" },
+                  {
+                    pattern: /^[0-9]{10}$/,
+                    message: "Please enter a valid 10-digit phone number",
+                  },
                 ]}
               >
                 <Input
@@ -336,8 +358,11 @@ const StudentManagement = () => {
                 name="sid"
                 label="Student ID"
                 rules={[
-                  { required: true, message: 'Please enter student ID' },
-                  { pattern: /^[0-9]{8}$/, message: 'Student ID must be 8 digits' },
+                  { required: true, message: "Please enter student ID" },
+                  {
+                    pattern: /^[0-9]{8}$/,
+                    message: "Student ID must be 8 digits",
+                  },
                 ]}
               >
                 <Input placeholder="Student ID" maxLength={8} />
@@ -350,20 +375,19 @@ const StudentManagement = () => {
               <Form.Item
                 name="branch"
                 label="Branch"
-                rules={[{ required: true, message: 'Please select branch' }]}
+                rules={[{ required: true, message: "Please select branch" }]}
               >
                 <Select placeholder="Select Branch">
-                  {branches.map(branch => (
-                    <Option key={branch} value={branch}>{branch}</Option>
+                  {branches.map((branch) => (
+                    <Option key={branch} value={branch}>
+                      {branch}
+                    </Option>
                   ))}
                 </Select>
               </Form.Item>
             </Col>
             <Col span={12}>
-              <Form.Item
-                name="status"
-                label="Status"
-              >
+              <Form.Item name="status" label="Status">
                 <Select>
                   <Option value="active">Active</Option>
                   <Option value="inactive">Inactive</Option>
@@ -377,11 +401,13 @@ const StudentManagement = () => {
               <Form.Item
                 name="block"
                 label="Block"
-                rules={[{ required: true, message: 'Please select block' }]}
+                rules={[{ required: true, message: "Please select block" }]}
               >
                 <Select placeholder="Select Block">
-                  {blocks.map(block => (
-                    <Option key={block} value={block}>Block {block}</Option>
+                  {blocks.map((block) => (
+                    <Option key={block} value={block}>
+                      Block {block}
+                    </Option>
                   ))}
                 </Select>
               </Form.Item>
@@ -390,10 +416,12 @@ const StudentManagement = () => {
               <Form.Item
                 name="room_number"
                 label="Room Number"
-                rules={[{ required: true, message: 'Please enter room number' }]}
+                rules={[
+                  { required: true, message: "Please enter room number" },
+                ]}
               >
                 <InputNumber
-                  style={{ width: '100%' }}
+                  style={{ width: "100%" }}
                   min={100}
                   max={999}
                   placeholder="Room Number"
@@ -405,8 +433,11 @@ const StudentManagement = () => {
                 name="guardian_contact"
                 label="Guardian Contact"
                 rules={[
-                  { required: true, message: 'Please enter guardian contact' },
-                  { pattern: /^[0-9]{10}$/, message: 'Please enter a valid 10-digit number' },
+                  { required: true, message: "Please enter guardian contact" },
+                  {
+                    pattern: /^[0-9]{10}$/,
+                    message: "Please enter a valid 10-digit number",
+                  },
                 ]}
               >
                 <Input placeholder="Guardian Contact" maxLength={10} />
@@ -417,7 +448,9 @@ const StudentManagement = () => {
           <Form.Item
             name="permanent_address"
             label="Permanent Address"
-            rules={[{ required: true, message: 'Please enter permanent address' }]}
+            rules={[
+              { required: true, message: "Please enter permanent address" },
+            ]}
           >
             <Input.TextArea
               rows={3}
@@ -431,8 +464,8 @@ const StudentManagement = () => {
               name="password"
               label="Password"
               rules={[
-                { required: true, message: 'Please enter password' },
-                { min: 6, message: 'Password must be at least 6 characters' },
+                { required: true, message: "Please enter password" },
+                { min: 6, message: "Password must be at least 6 characters" },
               ]}
             >
               <Input.Password placeholder="Password" />

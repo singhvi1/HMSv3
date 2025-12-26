@@ -3,12 +3,11 @@ import { useNavigate } from "react-router-dom";
 
 const activeClasses = {
   true: "bg-green-100 text-green-700",
-  false: "bg-gray-100 text-gray-600"
+  false: "bg-gray-100 text-gray-600",
 };
 
 const RoomRow = ({ room, index }) => {
   const navigate = useNavigate();
-  console.log(room);
   const isActiveKey = String(!!room.is_active);
 
   return (
@@ -19,13 +18,19 @@ const RoomRow = ({ room, index }) => {
       <td className="p-2">{room.floor ?? "-"}</td>
       <td className="p-2">{room.capacity}</td>
       <td className="p-2">
-        <span className={`px-2 py-1 rounded text-xs ${activeClasses[isActiveKey]}`}>
+        <span
+          className={`px-2 py-1 rounded text-xs ${activeClasses[isActiveKey]}`}
+        >
           {room.is_active ? "active" : "inactive"}
         </span>
       </td>
       <td className="p-2 flex gap-2">
-        <Eye size={16} className="cursor-pointer text-gray-600"
-          onClick={() => { navigate(`/admin/rooms/${room._id}`) }}
+        <Eye
+          size={16}
+          className="cursor-pointer text-gray-600"
+          onClick={() => {
+            navigate(`/admin/rooms/${room._id}`, { state: { room } });
+          }}
         />
       </td>
     </tr>

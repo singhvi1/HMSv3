@@ -2,30 +2,29 @@ import { useLocation, useParams } from "react-router-dom";
 import ProfileHero from "../../../profile/ProfileHero";
 import AdminStudentActions from "./AdminStudentActions";
 
-import { students } from "../../../../../data";
+import { rooms, students } from "../../../../../data";
 
 const AdminStudentProfile = () => {
-    const { roomId } = useParams();
-    const location = useLocation();
-    const studentFromState = location.state?.student;
+  const { roomId } = useParams();
+  const location = useLocation();
+  const studentFromState = location.state?.room;
+  console.log(studentFromState);
+  // Use student from state if available, otherwise fallback to finding by ID
+  const student = studentFromState || rooms.find((s) => s._id === roomId); //or later from API/redux
 
-    // Use student from state if available, otherwise fallback to finding by ID
-    const student = studentFromState ||
-        students.find(s => s._id === roomId); //or later from API/redux
+  if (!student) {
+    return <p className="p-6 text-red-500">Student not found</p>;
+  }
 
-    if (!student) {
-        return <p className="p-6 text-red-500">Student not found</p>;
-    }
+  return (
+    <div className="p-6 space-y-6">
+      {/* Student basic info */}
+      <ProfileHero student={student} />
 
-    return (
-        <div className="p-6 space-y-6">
-            {/* Student basic info */}
-            <ProfileHero student={student} />
-
-            {/* Admin actions */}
-            <AdminStudentActions student={student} />
-        </div>
-    );
+      {/* Admin actions */}
+      <AdminStudentActions student={student} />
+    </div>
+  );
 };
 
 export default AdminStudentProfile;

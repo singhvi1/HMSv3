@@ -5,27 +5,26 @@ import AdminStudentActions from "./AdminStudentActions";
 import { students } from "../../../../../data";
 
 const AdminStudentProfile = () => {
-    const { studentId } = useParams();
-    const location = useLocation();
-    const studentFromState = location.state?.student;
+  const { studentId } = useParams();
+  const location = useLocation();
+  const studentFromState = location.state?.student;
+  console.log(studentFromState);
+  // Use student from state if available, otherwise fallback to finding by ID
+  const student = studentFromState || students.find((s) => s._id === studentId); //or later from API/redux
 
-    // Use student from state if available, otherwise fallback to finding by ID
-    const student = studentFromState ||
-        students.find(s => s._id === studentId); //or later from API/redux
+  if (!student) {
+    return <p className="p-6 text-red-500">Student not found</p>;
+  }
 
-    if (!student) {
-        return <p className="p-6 text-red-500">Student not found</p>;
-    }
+  return (
+    <div className="p-6 space-y-6">
+      {/* Student basic info */}
+      <ProfileHero student={student} />
 
-    return (
-        <div className="p-6 space-y-6">
-            {/* Student basic info */}
-            <ProfileHero student={student} />
-
-            {/* Admin actions */}
-            <AdminStudentActions student={student} />
-        </div>
-    );
+      {/* Admin actions */}
+      <AdminStudentActions student={student} />
+    </div>
+  );
 };
 
 export default AdminStudentProfile;
