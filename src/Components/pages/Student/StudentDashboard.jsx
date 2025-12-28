@@ -7,7 +7,7 @@ import { Outlet } from "react-router-dom";
 
 const StudentDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  console.log("studentDashBoard rendring")
+  // console.log("studentDashBoard rendring")
   return (
     <div className="min-h-screen bg-gray-100">
       {/*ye mobie ke liye  */}

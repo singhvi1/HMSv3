@@ -140,40 +140,76 @@ export const maintenanceMockData = [
 import { Trophy, Wrench, Users, BookOpen } from "lucide-react"
 export const announcements = [
   {
-    id: 1,
+    _id: 1,
     title: "Annual Sports Meet 2024",
     date: "2024-03-25",
     category: "sports",
-    description: "Join us for the annual inter-hostel sports competition featuring cricket, football, and basketball tournaments.",
+    message: "Join us for the annual inter-hostel sports competition featuring cricket, football, and basketball tournaments.",
+    created_by: {
+      "_id": "694b554584ae4de87575e0a1",
+      "full_name": "Ajay Kumar",
+      "email": "admin@hms.com",
+      "role": "admin",
+      "id": "694b554584ae4de87575e0a1",
+    },
     icon: Trophy,
-    color: "bg-blue-100 text-blue-600"
+    color: "bg-blue-100 text-blue-600",
+    createdAt: "2025-12-28T00:53:08.844Z",
+    updatedAt: "2025-12-28T00:53:08.844Z",
   },
   {
-    id: 2,
+    _id: 2,
     title: "Hostel Maintenance Schedule",
     date: "2024-03-20",
     category: "maintenance",
-    description: "Block A water tank cleaning will be conducted. Water supply will be interrupted from 10 AM to 2 PM.",
+    message: "Block A water tank cleaning will be conducted. Water supply will be interrupted from 10 AM to 2 PM.",
     icon: Wrench,
-    color: "bg-yellow-100 text-yellow-600"
+    created_by: {
+      "_id": "694b554584ae4de87575e0a1",
+      "full_name": "Ajay Kumar",
+      "email": "admin@hms.com",
+      "role": "admin",
+      "id": "694b554584ae4de87575e0a1",
+    },
+    color: "bg-yellow-100 text-yellow-600",
+    createdAt: "2025-12-28T00:53:08.844Z",
+    updatedAt: "2025-12-28T00:53:08.844Z",
   },
   {
-    id: 3,
+    _id: 3,
     title: "Cultural Night",
     date: "2024-03-30",
     category: "event",
-    description: "Annual cultural night celebration in the hostel auditorium. All students are invited to participate.",
+    message: "Annual cultural night celebration in the hostel auditorium. All students are invited to participate.",
     icon: Users,
-    color: "bg-purple-100 text-purple-600"
+    created_by: {
+      "_id": "694b554584ae4de87575e0a1",
+      "full_name": "Ajay Kumar",
+      "email": "admin@hms.com",
+      "role": "admin",
+      "id": "694b554584ae4de87575e0a1",
+    },
+    color: "bg-purple-100 text-purple-600",
+    createdAt: "2025-12-28T00:53:08.844Z",
+    updatedAt: "2025-12-28T00:53:08.844Z",
   },
   {
-    id: 4,
+    _id: 4,
     title: "Library Extended Hours",
     date: "2024-03-22",
     category: "academic",
-    description: "The hostel library will remain open until midnight during the exam period.",
+    message: "The hostel library will remain open until midnight during the exam period.",
     icon: BookOpen,
-    color: "bg-green-100 text-green-600"
+    created_by: {
+      "_id": "694b554584ae4de87575e0a1",
+      "full_name": "Ajay Kumar",
+      "email": "admin@hms.com",
+      "role": "admin",
+      "id": "694b554584ae4de87575e0a1",
+    },
+    color: "bg-green-100 text-green-600",
+    createdAt: "2025-12-28T00:53:08.844Z",
+    updatedAt: "2025-12-28T00:53:08.844Z",
   }];
 
 export const galleryImages = [

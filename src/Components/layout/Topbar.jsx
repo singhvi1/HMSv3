@@ -1,18 +1,16 @@
 import { LogOut, Home } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ProfileAvatar from "../profile/ProfileAvatar";
-import { useDispatch } from "react-redux";
-import { setLoggedinUser } from "../../utils/store/logedinUser";
+import { useDispatch, useSelector } from "react-redux";
+import { removeLoggedinUser } from "../../utils/store/logedinUser";
 import { authService } from "../../services/apiService";
 
 const Topbar = ({ user }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const handleLogout =async  () => {
-    const res=await authService.logoutUser();
-    dispatch(setLoggedinUser(null));   // clear redux state
-    navigate("/login");
-    console.log(res)                // SPA navigation
+  const handleLogout = async () => {
+    const res = await authService.logoutUser();
+    dispatch(removeLoggedinUser(null));   // clear redux state
+    // console.log(res)                // SPA navigation
   };
 
   return (
@@ -27,6 +25,7 @@ const Topbar = ({ user }) => {
       {/* Right */}
       <div className="flex items-center gap-5">
         {/* Avatar */}
+        {user && <Link to={`/${user.role}`}>Profile</Link>}
         <ProfileAvatar
           image_url={user?.image_url}
           name={user?.full_name}

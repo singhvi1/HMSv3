@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setHostel } from "../../../../utils/store/hostelSlice";
 import { BackButton } from "../../../index"
+
 const HostelForm = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -32,7 +33,7 @@ const HostelForm = () => {
     const res = await hostelService.create(payload);
     if (res.data.success) {
       dispatch(setHostel(res.data.data))
-      console.log("save the daata please ", res)
+      // console.log("save the daata please ", res)
       navigate("/admin/hostel");
     }
   };

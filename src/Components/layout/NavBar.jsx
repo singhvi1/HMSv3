@@ -12,8 +12,7 @@ const Navbar = ({ onMenuClick }) => {
   const handleLogout = async () => {
     const res = await authService.logoutUser();
     dispatch(setLoggedinUser(null));   // clear redux state
-    navigate("/login");  
-    console.log(res)              // SPA navigation
+    // console.log(res)              // SPA navigation
   };
 
   return (

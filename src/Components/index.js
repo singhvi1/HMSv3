@@ -5,6 +5,11 @@ import HostelForm from "./pages/admins/hostel/HostelForm"
 import EditHostel from "./pages/admins/hostel/EditHostel"
 import BackButton from "./common/ui/Backbutton";
 import Button from "./common/ui/button";
+import PageLoader from "./common/PageLoader"
+import AnnouncementForm from "./forms/AnnouncementForm"
+import CreateAnnouncement from "./pages/admins/announcements/CreateAnnouncement"
+import EditAnnouncement from "./pages/admins/announcements/EditAnnouncement"
 
-export { QuickActionsGrid, AdminHero, HostelOverview, HostelForm, EditHostel, BackButton ,Button}
+
+export { QuickActionsGrid, AdminHero, HostelOverview, HostelForm, EditHostel, BackButton, Button, PageLoader, AnnouncementForm, CreateAnnouncement ,EditAnnouncement}
 

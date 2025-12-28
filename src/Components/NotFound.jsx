@@ -1,31 +1,45 @@
 import { Link } from "react-router-dom";
+import { BackButton } from "./index";
 
 const NotFound = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-linear-to-b from-gray-50 to-gray-100 px-4">
-      
-      {/* Illustration */}
-      {/* <img
-        src="https://edteam-media.s3.amazonaws.com/blogs/big/2ab53939-9b50-47dd-b56e-38d4ba3cc0f0.png"
-        alt="404 Not Found"
-        className="w-72 md:w-96 mb-8"
-      /> */}
+    // 1. Added 'relative' here so the absolute child positions itself inside this box
+    <div className="min-h-screen relative flex flex-col items-center justify-center bg-gradient-to-b from-gray-50 to-gray-200 px-4 text-center">
 
-      {/* Text */}
-      <h1 className="text-5xl font-extrabold text-gray-800 mb-3">
+      {/* 2. Positioned the BackButton at the top-left */}
+      <div className="absolute top-5 left-5">
+        <BackButton />
+      </div>
+
+      {/* Illustration */}
+      <img
+        src="https://cdn.vectorstock.com/i/1000v/20/99/cloud-server-error-404-technology-system-vector-51242099.jpg"
+        alt="404 Not Found"
+        className="w-72 md:w-96 mb-6 mix-blend-multiply object-contain"
+      />
+
+      {/* Text Content */}
+      <h1 className="text-6xl md:text-8xl font-extrabold text-indigo-600 mb-2">
         404
       </h1>
-      <p className="text-lg text-gray-600 text-center max-w-md mb-6">
-        Oops! The page you are looking for doesn’t exist or has been moved.
+
+      <h2 className="text-2xl font-bold text-gray-800 mb-3">
+        Page Not Found
+      </h2>
+
+      <p className="text-gray-600 max-w-md mb-8 mx-auto">
+        Oops! The page you are looking for doesn’t exist, has been removed, or is temporarily unavailable.
       </p>
 
-      {/* Action */}
-      <Link
-        to="/"
-        className="px-6 py-3 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition"
-      >
-        Go Back Home
-      </Link>
+      {/* Actions */}
+      <div className="flex flex-col sm:flex-row items-center gap-4">
+        <Link
+          to="/"
+          className="px-6 py-3 rounded-lg bg-indigo-600 text-white font-medium hover:bg-indigo-700 transition shadow-lg shadow-indigo-200"
+        >
+          Go Back Home
+        </Link>
+      </div>
     </div>
   );
 };

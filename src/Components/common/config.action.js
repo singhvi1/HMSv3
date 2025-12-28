@@ -52,7 +52,7 @@ export const adminActions = [
     description: "Create New Announcement",
     icon: Wrench,
     color: "bg-yellow-50",
-    to: "/admin/ann/new"
+    to: "/admin/anns/new"
   },
   {
     title: "New Student",

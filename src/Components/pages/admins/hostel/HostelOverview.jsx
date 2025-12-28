@@ -22,6 +22,11 @@ const HostelOverview = () => {
     }
   };
 
+  const handleDelete=async ()=>{
+    const res=await hostelService.delete(hostel._id)
+    dispatch(clearHostel());
+  }
+
   useEffect(() => {
     if (loading) {
       fetchHostel();
@@ -118,11 +123,13 @@ const HostelOverview = () => {
 
         <div className="flex gap-3 mt-8">
 
-          <Button children={"Edit Hostel"} onClick={() => navigate(`/admin/hostel/${hostel._id}/edit`)} className="px-5 py-2 bg-blue-600 text-white rounded" />
+          <Button
+            children={"Edit Hostel"}
+            onClick={() => navigate(`/admin/hostel/${hostel._id}/edit`, { state: hostel })} className="px-5 py-2 bg-blue-600 text-white rounded" />
           <Button
             children={"Delete Hostel"}
             variant="danger"
-            onClick={() => navigate(`/admin/hostel/${hostel._id}`)} className="px-5 py-2  text-white rounded" />
+            onClick={handleDelete} className="px-5 py-2  text-white rounded" />
         </div>
 
       </div>

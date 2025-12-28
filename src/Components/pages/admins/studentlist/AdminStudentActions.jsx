@@ -1,5 +1,5 @@
 const AdminStudentActions = ({ student }) => {
-  console.log(student); //we will use this sudent data to perform admin actions
+  // console.log(student); //we will use this sudent data to perform admin actions
   return (
     <div className="bg-white rounded-xl shadow p-4 space-y-4">
       <h3 className="font-semibold text-lg">Admin Actions</h3>

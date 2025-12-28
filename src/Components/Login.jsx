@@ -4,27 +4,27 @@ import Navbar from "../Components/layout/NavBar"; // adjust path if needed
 import { useDispatch } from "react-redux";
 import { setLoggedinUser } from "../utils/store/logedinUser";
 import { authService } from "../services/apiService";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const dispactch = useDispatch();
-
-
+  // console.log("login called")
 
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
       const res = await authService.loginUser(email, password);
-      console.log("login successfully")
-      console.log(res);
+      // console.log("login successfully")
+      // console.log(res);
       // const role = res.data.user.role;
 
       if (res.data.success) {
-        console.log(res.data)
-        // window.location.href = `/${role}`;
-        console.log("login page loaaded")
+        // console.log(res?.data.user.role)
+        // navigate(`/${res?.data.user.role}`);
+        // console.log("login page loaaded")
         dispactch(setLoggedinUser(res.data.user));
       }
     } catch (err) {

@@ -1,76 +1,125 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Pencil, Trash2, ArrowLeft, Link, Paperclip } from "lucide-react";
+import { Pencil, Trash2, Paperclip } from "lucide-react";
+import BackButton from "../common/ui/Backbutton";
+import { formatDateTime } from "../../utils/constant";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useState } from "react";
+import { announcementService } from "../../services/apiService";
+import { removeAnnouncement, setSelectedAnnouncement } from "../../utils/store/announcementsSlice";
+
 
 const AnnouncementDetail = () => {
-  // const AnnouncementDetail = ({ announcement }) => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { selected } = useSelector((state) => state.anns);
+  const dispatch = useDispatch();
+  const [announcement, setAnnouncement] = useState(null)
+  const [loading, setLoading] = useState(true);
 
-  // temporary dummy data (later API)
-  const announcement = {
-    id,
-    title: "Testing Single Announcement title ",
-    message:
-      "Water supply will be interrupted tomorrow from 10 AM to 2 PM due to maintenance work.",
-    date: "24 Dec 2025",
-    notice_url: "https://example.com/notice.pdf",
-    attachment: "maintenance.pdf"
-  };
+  useEffect(() => {
+    const loadAnn = async () => {
+      try {
+        if (selected && selected._id === id) {
+          setAnnouncement(selected);
+        } else {
+          const res = await announcementService.getAnnouncementById(id);
+          // console.log(res);
+          setAnnouncement(res.data.announcement);
+          dispatch(setSelectedAnnouncement(res.data))
+        }
+      } catch (err) {
+        console.error("Failed to load announcement", err);
+      } finally {
+        setLoading(false);
+      }
 
+    }
+
+    loadAnn()
+  }, [id])
+
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-500">
+        Loading announcement...
+      </div>
+    );
+  }
+  if (!announcement) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-500">
+        Announcement not found.
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen bg-gray-50 p-6">
+      <BackButton />
+
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow p-6 space-y-5">
-
-        {/* Back */}
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center text-sm text-gray-500 hover:text-black"
-        >
-          <ArrowLeft className="w-4 h-4 mr-1" />
-          Back
-        </button>
-
         {/* Title */}
         <h1 className="text-2xl font-bold text-gray-800">
-          {announcement.title}
+          {announcement?.title || ""}
         </h1>
 
+        {/* Meta */}
         <p className="text-sm text-gray-500">
-          Published on {announcement.date} by <b>{"Admin Name"}</b>
+          published On : <span>
+            {formatDateTime(
+              announcement?.updatedAt &&
+                announcement?.updatedAt !== announcement?.createdAt
+                ? announcement?.updatedAt
+                : announcement?.createdAt
+            )}
+          </span> by{" "}
+          <b>{announcement?.created_by?.full_name} </b>as Warden
         </p>
 
         {/* Message */}
         <p className="text-gray-700 leading-relaxed">
-          {announcement.message}
+          {announcement?.message}
         </p>
 
-        
-        
-
-        {announcement.attachment && (
-          <p className="text-sm text-gray-600">
-            <Paperclip size={18} className="inline m-1 opacity-50"/> {announcement.attachment}
-          </p>
+        {/* Attachment */}
+        {announcement?.notice_url && (
+          <a
+            href={announcement?.notice_url}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center text-sm text-indigo-600 hover:underline"
+          >
+            <Paperclip size={16} className="mr-1 opacity-70" />
+            View attachment
+          </a>
         )}
 
         {/* Actions */}
         <div className="flex gap-3 pt-4 border-t">
+
           <button
             onClick={() =>
-              navigate(`/admin/ann/${id}/edit`, {
+              navigate(`/admin/anns/${id}/edit`, {
                 state: announcement
-              })}
-            className="flex items-center gap-2 px-4 py-2 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700">
+              })
+            }
+            className="flex items-center gap-2 px-4 py-2 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700"
+          >
             <Pencil size={16} />
             Edit
           </button>
 
-          <button className="flex items-center gap-2 px-4 py-2 text-sm rounded bg-red-600 text-white hover:bg-red-700">
+          <button
+            className="flex items-center gap-2 px-4 py-2 text-sm rounded bg-red-600 text-white hover:bg-red-700"
+            onClick={() => {
+              announcementService.deleteAnnouncement(id)
+              dispatch(removeAnnouncement(id))
+              navigate(`/admin/ann`)
+            }}
+          >
             <Trash2 size={16} />
             Delete
           </button>
-
-
         </div>
       </div>
     </div>
@@ -78,4 +127,5 @@ const AnnouncementDetail = () => {
 };
 
 export default AnnouncementDetail;
+
 

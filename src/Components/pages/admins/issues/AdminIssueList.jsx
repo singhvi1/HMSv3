@@ -20,7 +20,7 @@ const AdminIssueList = () => {
   };
 
   const handleView = (issue) => {
-    console.log("Selected Issue:", issue);
+    // console.log("Selected Issue:", issue);
     // later → open modal
   };
 

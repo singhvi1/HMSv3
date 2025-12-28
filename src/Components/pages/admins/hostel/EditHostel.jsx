@@ -1,11 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { hostelService } from "../../../../services/apiService";
 import { BackButton, Button } from "../../../index"
+
+
 const EditHostel = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { state } = location;
 
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -16,19 +20,27 @@ const EditHostel = () => {
     floors_per_block: "",
     rooms_per_floor: ""
   });
+  // 🔹 Normalize hostel state → form
+  const mapHostelToForm = (hostel) => {
+    setForm({
+      name: hostel?.name || "",
+      blocks: hostel?.blocks?.join(", ") || "",
+      floors_per_block: hostel?.floors_per_block || "",
+      rooms_per_floor: hostel?.rooms_per_floor || ""
+    });
+  };
 
   // 🔹 Fetch hostel by ID
   const fetchHostel = async () => {
     try {
-      const res = await hostelService.getById(id);
-      const hostel = res.data.data;
+      if (state) {
+        mapHostelToForm(state);
+        return;
+      };
 
-      setForm({
-        name: hostel.name || "",
-        blocks: hostel.blocks?.join(", ") || "",
-        floors_per_block: hostel.floors_per_block || "",
-        rooms_per_floor: hostel.rooms_per_floor || ""
-      });
+      const res = await hostelService.getById(id);
+      mapHostelToForm(res.data.data)
+
     } catch (err) {
       console.error("Failed to fetch hostel", err);
       alert("Unable to load hostel details");
@@ -65,7 +77,7 @@ const EditHostel = () => {
 
     try {
       await hostelService.update(id, payload);
-      navigate("/admin/hostels");
+      navigate("/admin/hostel");
     } catch (err) {
       console.error("Failed to update hostel", err);
       alert("Failed to update hostel");

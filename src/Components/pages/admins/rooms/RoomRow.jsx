@@ -8,7 +8,7 @@ const activeClasses = {
 
 const RoomRow = ({ room, index }) => {
   const navigate = useNavigate();
-  console.log("RoomRow each",room);
+  // console.log("RoomRow each",room);
   const isActiveKey = String(!!room.is_active);
 
   return (

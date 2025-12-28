@@ -6,7 +6,7 @@ const EditAnnouncement = () => {
   const { state } = useLocation(); // announcement data
 
   const handleUpdate = (data) => {
-    console.log("Updating announcement:", id, data);
+    // console.log("Updating announcement:", id, data);
   };
 
   return (

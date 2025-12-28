@@ -5,10 +5,13 @@ import issuesReducer from "./issuesSlice"
 import leaveReducer from "./leaveSlice"
 import loggedinUserReducer from "./logedinUser"
 import hostelReducer from "./hostelSlice"
+import announcementsSlice from "./announcementsSlice"
+
 const store=configureStore({
     reducer:{
         hostel:hostelReducer,
         loggedinUser:loggedinUserReducer,
+        anns:announcementsSlice,
         students:studentReducer,
         rooms: roomsReducer,
         issues: issuesReducer,

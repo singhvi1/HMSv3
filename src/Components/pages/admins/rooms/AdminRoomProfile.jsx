@@ -10,7 +10,7 @@ const AdminRoomProfile = () => {
     const location = useLocation();
     const loggedinUser=useSelector(state=>state.loggedinUser);
     const roomFromState = location.state?.room;
-    console.log("AdminroomData",roomFromState);
+    // console.log("AdminroomData",roomFromState);
     // Use student from state if available, otherwise fallback to finding by ID
     const student = roomFromState ||
         rooms.find(s => s._id === roomId); //or later from API/redux

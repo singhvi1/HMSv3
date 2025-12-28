@@ -44,7 +44,7 @@ const SideBar = ({ isOpen, onClose }) => {
             icon={<Megaphone size={18} />}
             label="Announcements"
             onClick={() => {
-              navigate("/admin/ann");
+              navigate("/admin/anns");
               onClose();
             }}
           />

@@ -2,7 +2,7 @@ import ProfileAvatar from "./ProfileAvatar";
 import ProfileInfoGrid from "./ProfileInfoGrid";
 
 const ProfileHero = ({ student }) => {
-  console.log("profileHero student",student)
+  // console.log("profileHero student",student)
   return (
     <div className="bg-white rounded-xl shadow p-6 flex flex-col md:flex-row gap-8">
       <ProfileAvatar

@@ -31,9 +31,15 @@ export const leaveService = {
 
 // Announcement related APIs
 export const announcementService = {
-  createAnnouncement: (data) => api.post('/announcements/create', data),
-  getAllAnnouncements: () => api.get('/announcements'),
-  deleteAnnouncement: (id) => api.delete(`/announcements/${id}`),
+  createAnnouncement: (data) => api.post('/home/announcements', data),
+
+  getAllAnnouncements: () => api.get('/home/announcements'),
+
+  getAnnouncementById: (id) => api.get(`/home/announcements/${id}`),
+
+  updateAnnouncement: (data, id) => api.patch(`/home/announcements/${id}`, data),
+  
+  deleteAnnouncement: (id) => api.delete(`/home/announcements/${id}`),
 };
 
 // Payment related APIs
