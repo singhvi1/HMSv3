@@ -1,17 +1,16 @@
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ProfileHero from "../../../profile/ProfileHero";
 import AdminStudentActions from "./AdminStudentActions";
 
 import { students } from "../../../../../data";
 
 const AdminStudentProfile = () => {
-    const { studentId } = useParams();
-    const location = useLocation();
-    const studentFromState = location.state?.student;
+    const { id } = useParams();
 
+
+    console.log(id)
     // Use student from state if available, otherwise fallback to finding by ID
-    const student = studentFromState ||
-        students.find(s => s._id === studentId); //or later from API/redux
+    const student = students.find(s => s._id === id); //or later from API/redux
 
     if (!student) {
         return <p className="p-6 text-red-500">Student not found</p>;

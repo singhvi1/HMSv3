@@ -8,7 +8,8 @@ const initialState = {
     search: "",
     branch: "",
     block: "",
-    status: ""
+    status: "",
+
   },
   pagination: {
     page: 1,
@@ -34,10 +35,10 @@ const studentsSlice = createSlice({
       state.pagination.pageSize = action.payload;
       state.pagination.page = 1;
     },
-    // resetStudentsFilters: (state) => {
-    //   state.filters = initialState.filters;
-    //   state.pagination = initialState.pagination;
-    // }
+    resetStudentsFilters: (state) => {
+      state.filters = initialState.filters;
+      state.pagination = initialState.pagination;
+    }
   }
 });
 
@@ -46,10 +47,15 @@ export const {
   setStudentsFilters,
   setStudentsPage,
   setStudentsPageSize,
-  // resetStudentsFilters
+  resetStudentsFilters
 } = studentsSlice.actions;
 
+
+
+
+
 const selectStudentsState = (state) => state.students;
+export const selectStudentById = (id) => (state) => state.students.items.find((s) => s._id === id);
 
 export const selectStudentsItems = (state) => selectStudentsState(state).items
 export const selectStudentsFilters = (state) => selectStudentsState(state).filters
@@ -58,10 +64,12 @@ export const selectStudentsPagination = (state) => selectStudentsState(state).pa
 //filter :createSelector([reset element],(fxn to cal))
 export const selectStudentsFiltered = createSelector([selectStudentsItems, selectStudentsFilters],
   (items, filters) => {
-    const q = filters.search.toLowerCase();
+    const q = (filters?.search || "").toLowerCase();
+    
     return items.filter((s) => {
       if (q && !(s.full_name.toLowerCase().includes(q) ||
         s.email.toLowerCase().includes(q) ||
+        s.room_number.toLowerCase().includes(q) ||
         s.sid.toLowerCase().includes(q))) return false;
 
       if (filters.block && s.block !== filters.block) return false;

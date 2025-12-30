@@ -35,6 +35,7 @@ export const students = Array.from({ length: 47 }, (_, i) => ({
   _id: `st_${i + 1}`,
   sid: `HMS2024${100 + i}`,
   email: `student${i + 1}@example.com`,
+  phone: `90000000${i + 10}`,
   full_name: `Student ${i + 1}`,
   branch: ["CSE", "ECE", "ME", "CE"][i % 4],
   year: (i % 4) + 1,
@@ -42,7 +43,7 @@ export const students = Array.from({ length: 47 }, (_, i) => ({
   guardian_name: `Guardian ${i + 1}`,
   guardian_contact: `90000000${i + 10}`,
   block: ["A", "B", "C"][i % 3],
-  room_number: `${["A", "B", "C"][i % 3]}-${101 + i}`,
+  room_number: `${101 + i}`,
   status: i % 6 === 0 ? "inactive" : "active"
 }));
 

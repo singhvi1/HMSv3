@@ -6,7 +6,6 @@ const initialState = {
   filters: {
     search: "",
     block: "",
-    floor: "",
     is_active: ""
   },
   pagination: {
@@ -48,66 +47,53 @@ export const {
   resetRoomsFilters
 } = roomsSlice.actions;
 
-const selectRoomsState = (state) => state.rooms;
-export const selectRoomsItems = (state) => selectRoomsState(state).items;
-export const selectRoomsFilters = (state) => selectRoomsState(state).filters;
-export const selectRoomsPagination = (state) => selectRoomsState(state).pagination;
+const selectRoomState = (state) => state.rooms;
+
+export const selectRoomsItems = (state) => selectRoomState(state).items
+export const selectRoomsFilters = (state) => selectRoomState(state).filters
+export const selectRoomsPagination = (state) => selectRoomState(state).pagination
 
 export const selectRoomsFiltered = createSelector(
   [selectRoomsItems, selectRoomsFilters],
-  (items, filters) => {
-    const search = filters.search.trim().toLowerCase();
-    return items.filter((r) => {
-      const block = (r.block || "").toString().toLowerCase();
-      const roomNumber = (r.room_number || "").toString().toLowerCase();
-      const floor = r.floor === undefined || r.floor === null ? "" : String(r.floor);
-      const isActive = r.is_active ? "active" : "inactive";
-
-      const matchesSearch =
-        !search ||
-        roomNumber.includes(search) ||
-        block.includes(search) ||
-        `${block}-${roomNumber}`.includes(search);
-
-      const matchesBlock = !filters.block || block === filters.block.toLowerCase();
-      const matchesFloor = !filters.floor || floor === String(filters.floor);
-      const matchesActive =
-        !filters.is_active ||
-        (filters.is_active === "true" ? r.is_active === true : r.is_active === false);
-
-      return matchesSearch && matchesBlock && matchesFloor && matchesActive;
-    });
-  }
-);
-
+  (items = [], filters) => {
+    if (!filters) return items;
+    const q = (filters?.search || "").trim().toLowerCase()
+    return (
+      items.filter((item) => {
+        const roomNumber = String(item.room_number || "").toLowerCase();
+        const block = String(item.block || "").toLowerCase();
+        const matchSearch = !q || roomNumber.includes(q) ||
+          block.includes(q) || `${block}-${roomNumber}`.includes(q);
+        const matchBlock = !filters.block || block == filters.block.toLowerCase();
+        const matchActive = filters.is_active === "" ||
+          item.is_active === (filters.is_active === "true");
+        return matchActive && matchSearch && matchBlock;
+      })
+    )
+  })
 export const selectRoomsPageData = createSelector(
   [selectRoomsFiltered, selectRoomsPagination],
-  (filtered, pagination) => {
-    const total = filtered.length;
-    const pageSize = pagination.pageSize;
-    const totalPages = Math.max(1, Math.ceil(total / pageSize));
-    const page = Math.min(Math.max(1, pagination.page), totalPages);
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
-
+  (filtered = [], { page, pageSize }) => {
+    const startIndx = (page - 1) * pageSize;
+    const endIndx = (startIndx + pageSize)
     return {
+      items: filtered?.slice(startIndx, endIndx),
       page,
       pageSize,
-      total,
-      totalPages,
-      items: filtered.slice(start, end)
-    };
+      totalPages: Math.max(1, Math.ceil(filtered?.length / pageSize))
+    }
   }
-);
-
+)
 export const selectRoomsTotalCount = createSelector(
   [selectRoomsItems],
   (items) => items.length
-);
+)
 
 export const selectRoomsActiveCount = createSelector(
   [selectRoomsItems],
-  (items) => items.filter((r) => r.is_active).length
-);
+  (items) => items.filter((room) => room.is_active).length
+)
+
+
 
 export default roomsSlice.reducer;

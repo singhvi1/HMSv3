@@ -2,7 +2,7 @@ import { useLocation, useParams } from "react-router-dom";
 import { rooms } from "../../../../../data";
 import ProfileHero from "../../../profile/ProfileHero";
 import { useSelector } from "react-redux";
-import AdminStudentActions from "../studentlist/AdminStudentActions";
+import AdminStudentActions from "../list/student/AdminStudentActions";
 
 
 const AdminRoomProfile = () => {

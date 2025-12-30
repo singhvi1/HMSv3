@@ -1,8 +1,8 @@
-const Table = ({ columns = [], students = [] }) => {
+const Table = ({ columns = [], data = [] }) => {
     return (
         <div className='p-6 bg-gray-50 '>
             <h2 className="text-2xl font-semibold mb-4 text-gray-800 ">
-                 List
+                List
             </h2>
             <div className="overflow-x-auto bg-white rounded-lg shadow">
                 <table className='min-w-full border border-gray-200 text-sm'>
@@ -15,10 +15,10 @@ const Table = ({ columns = [], students = [] }) => {
 
                     </thead>
                     <tbody>
-                        {students.map((student, indx) => (
+                        {data.map((student, indx) => (
                             <tr key={student.id || indx} className='hover:bg-gray-50 transition border-t cursor-pointer'>
                                 {columns.map((col) => (
-                                    <td key={col.key} className='px-4 py-2 border'>{student[col.key]}</td>
+                                    <td key={col.key} className='px-4 py-2 border'> {col.render ? col.render(student) : student[col.key]}</td>
                                 ))}
                             </tr>
                         ))}

@@ -1,6 +1,6 @@
 import { ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import Button from "./button";
+import Button from "./Button";
 
 const BackButton = ({ label = "Back", className = "" }) => {
   const navigate = useNavigate();

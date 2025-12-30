@@ -54,19 +54,20 @@ const CreateStudent = lazy(() =>
   import("./Components/forms/CreateStudent")
 );
 const StudentList = lazy(() =>
-  import("./Components/pages/admins/list/StudentList")
+  import("./Components/pages/admins/list/student/StudentList")
 );
 const AdminIssueList = lazy(() =>
   import("./Components/pages/admins/issues/AdminIssueList")
 );
-const RoomsList = lazy(() => import("./Components/pages/admins/rooms/RoomsList"))
+const RoomsList = lazy(() => import("./Components/pages/admins/list/room/RoomsList"))
 const LeavesList = lazy(() => import("./Components/pages/admins/leaves/LeavesList"))
-const AdminStudentProfile = lazy(() => import("./Components/pages/admins/studentlist/AdminStudentProfile"))
+const AdminStudentProfile = lazy(() => import("./Components/pages/admins/list/student/AdminStudentProfile"))
 const AdminRoomProfile = lazy(() => import("./Components/pages/admins/rooms/AdminRoomProfile"))
 
 import { HostelOverview, HostelForm, EditHostel, PageLoader } from "./Components/index"
 import { removeLoggedinUser, setLoggedinUser } from './utils/store/logedinUser'
 import api from './utils/api'
+import EditStudent from "./Components/pages/admins/list/student/EditStudent";
 
 function App() {
   const user = useSelector((state) => state.loggedinUser);
@@ -140,7 +141,8 @@ function App() {
                 <Route path="anns/:id/edit" element={<EditAnnouncement />} />
                 <Route path="students" element={<StudentList />} />
                 <Route path="students/new" element={<CreateStudent />} />
-                <Route path="students/:id" element={<AdminStudentProfile student={student} />} />
+                <Route path="students/:id" element={<AdminStudentProfile />} />
+                <Route path="students/:id/edit" element={<EditStudent />} />
                 <Route path="rooms" element={<RoomsList />} />
                 <Route path="rooms/:id" element={<AdminRoomProfile />} />
                 <Route path="issues" element={<AdminIssueList />} />

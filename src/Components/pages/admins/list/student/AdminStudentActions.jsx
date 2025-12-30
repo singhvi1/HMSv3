@@ -1,11 +1,14 @@
+import { useNavigate } from "react-router-dom";
+
 const AdminStudentActions = ({ student }) => {
-  // console.log(student); //we will use this sudent data to perform admin actions
+  const navigate = useNavigate()
+  console.log(student);
   return (
-    <div className="bg-white rounded-xl shadow p-4 space-y-4">
+    <div className="bg-white rounded-xl shadow p-4 my-4 space-y-4">
       <h3 className="font-semibold text-lg">Admin Actions</h3>
 
       <div className="grid sm:grid-cols-6 grid-cols-2 gap-3">
-        <button className="px-2 py-1 rounded bg-blue-600 text-white hover:bg-blue-700">
+        <button className="px-2 py-1 rounded bg-blue-600 text-white hover:bg-blue-700" onClick={() => navigate(`/admin/students/${student._id}/edit`)}>
           Edit Info
         </button>
 

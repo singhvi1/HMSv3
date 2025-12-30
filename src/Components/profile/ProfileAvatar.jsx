@@ -1,7 +1,7 @@
 import { User } from "lucide-react";
 import { useState } from "react";
 
-const ProfileAvatar = ({ image_url, name, size = 36 }) => {
+const ProfileAvatar = ({ image_url, name="", size = 36 }) => {
   const [imgError, setImgError] = useState(false);
   const showImage = image_url && !imgError;
 

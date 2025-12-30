@@ -1,21 +1,36 @@
 import api from '../utils/api';
 
+
+// Announcement related APIs
+export const announcementService = {
+  createAnnouncement: (data) => api.post('/home/announcements', data),
+
+  getAllAnnouncements: () => api.get('/home/announcements'),
+
+  getAnnouncementById: (id) => api.get(`/home/announcements/${id}`),
+
+  updateAnnouncement: (data, id) => api.patch(`/home/announcements/${id}`, data),
+
+  deleteAnnouncement: (id) => api.delete(`/home/announcements/${id}`),
+};
+
 export const studentService = {
-  createUserStudent :(data) => api.post("/students/create",data),
-  createStudent:(data) =>api.post(`/students`,data),
+  createUserStudent: (data) => api.post("/students/create", data),
+  createStudent: (data) => api.post(`/students`, data),
   getAllStudents: (params) => api.get('/students', { params }),
-  getStudent: (userId) => api.get(`/students/${userId}`),
+  getStudentById: (userId) => api.get(`/students/profile/${userId}`),
   updateStudent: (userId, data) => api.patch(`/students/${userId}`, data),
   deleteStudent: (userId) => api.delete(`/students/${userId}`),
 };
-export const userService={
-  createUser:(data) =>api.post(`/users`,data)
+export const userService = {
+  createUser: (data) => api.post(`/users`, data)
 }
 
 export const roomService = {
   getAllRooms: () => api.get('/rooms'),
   assignRoom: (data) => api.patch('/rooms/assign', data),
   vacateRoom: (data) => api.patch('/rooms/vacate', data),
+  toggleRoomStatus:(status)=> api.patch(`/admin/rooms/${status}`),
 };
 
 // Maintenance/Issue related APIs
@@ -32,18 +47,7 @@ export const leaveService = {
   updateLeaveStatus: (id, status) => api.patch(`/leave/${id}/status`, { status }),
 };
 
-// Announcement related APIs
-export const announcementService = {
-  createAnnouncement: (data) => api.post('/home/announcements', data),
 
-  getAllAnnouncements: () => api.get('/home/announcements'),
-
-  getAnnouncementById: (id) => api.get(`/home/announcements/${id}`),
-
-  updateAnnouncement: (data, id) => api.patch(`/home/announcements/${id}`, data),
-
-  deleteAnnouncement: (id) => api.delete(`/home/announcements/${id}`),
-};
 
 // Payment related APIs
 export const paymentService = {
