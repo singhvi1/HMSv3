@@ -1,6 +1,6 @@
 import { Eye, Pencil, Power, PowerOff, Trash2, UserPlus, Check, X } from "lucide-react";
 
-export const studentColumns = (navigate) => [
+export const studentColumns = (navigate) => [   
     { key: "sid", label: "SID" },
     {
         key: "full_name", label: "Name",
@@ -8,7 +8,7 @@ export const studentColumns = (navigate) => [
             <span
                 className=" cursor-pointer hover:underline hover:text-blue-500"
                 onClick={() => {
-                    navigate(`/admin/students/${row._id}`)
+                    navigate(`/admin/students/${row.user_id._id}`)
                 }}
             >
                 {row?.user_id?.full_name}
@@ -17,29 +17,9 @@ export const studentColumns = (navigate) => [
     },
     { key: "branch", label: "Branch" },
     {
-        key: "block", label: "Block",
-        render: (row) => (
-            <span
-                className=" cursor-pointer hover:underline hover:text-blue-500"
-                onClick={() => {
-                    navigate(`/admin/students/${row._id}`)
-                }}
-            >
-                {row?.room_id?.block.toUpperCase()}
-            </span>
-        )
-    },
-    {
         key: "room_number", label: "Room",
         render: (row) => (
-            <span
-                className=" cursor-pointer hover:underline hover:text-blue-500"
-                onClick={() => {
-                    navigate(`/admin/students/${row._id}`)
-                }}
-            >
-                {row?.room_id?.room_number}
-            </span>
+            <span  >{row?.room_id?.block.toUpperCase()} - {row?.room_id?.room_number} </span>
         )
     },
     {
@@ -82,7 +62,15 @@ export const studentColumns = (navigate) => [
 ];
 
 export const roomColumns = (navigate) => [
-    { key: "block", label: "Block" },
+    {
+        key: "block", label: "Block", render: (row) => (
+            <span
+                className=" cursor-pointer hover:underline hover:text-blue-500"
+            >
+                {row.block.toUpperCase()}
+            </span>
+        )
+    },
 
     {
         key: "room_number", label: "Room No", render: (row) => (
@@ -99,8 +87,8 @@ export const roomColumns = (navigate) => [
 
     {
         key: "occupancy",
-        label: "Occupied",
-        render: (row) => `${row.occupancy ? row?.occupancy : ""} ${row.capacity}`
+        label: "Occupied-Capacity",
+        render: (row) => `${row.occupancy ? row?.occupancy + " in" : ""} ${row.capacity}`
     },
 
     {
@@ -202,7 +190,7 @@ export const issueColumns = (navigate) => [
     },
     { key: "title", label: "Title", },
     { key: "category", label: "Category" },
-    { key: "block", label: "Block" },
+    // { key: "block", label: "Block" },
     { key: "room", label: "Room" },
 
     {
@@ -275,7 +263,14 @@ export const leaveColumns = (dispatch, updateLeaveStatus) => [
             </div>
         ),
     },
-    { key: "room_number", label: "Room" },
+    {
+        key: "room_number", label: "Room", render: (row) => (
+            <div>
+                <div className="font-medium">{row.block} - {row.room_number} </div>
+                <div className="text-xs text-gray-400"></div>
+            </div>
+        ),
+    },
     { key: "from_date", label: "From" },
     { key: "to_date", label: "To" },
     { key: "destination", label: "Destination" },

@@ -8,6 +8,7 @@ import Button from "../../../../common/ui/Button";
 import BackButton from "../../../../common/ui/Backbutton";
 import { roomService } from "../../../../../services/apiService";
 import { useEffect } from "react";
+import SearchBar from "../../../../common/table/SearchBar";
 
 const RoomsList = () => {
     const dispatch = useDispatch();
@@ -18,8 +19,8 @@ const RoomsList = () => {
     const fetchRoomList = async () => {
         try {
             const res = await roomService.getAllRooms()
-            console.log(res.data.data)
-            console.log(res.data.count)
+            // console.log(res.data.data)
+            // console.log(res.data.count)
             dispatch(setRooms({
                 items: res.data.data,
                 count: res.data.count
@@ -58,12 +59,7 @@ const RoomsList = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
-                <input
-                    value={filters.search}
-                    onChange={(e) => dispatch(setRoomsFilters({ search: e.target.value }))}
-                    placeholder="Search block / room"
-                    className="input"
-                />
+                <SearchBar search={filters.search} onChange={(v) => dispatch(setRoomsFilters({ search: v }))} placeholder={"Search name"} />
 
                 <select
                     className="input"

@@ -1,4 +1,5 @@
 const Table = ({ columns = [], data = [] }) => {
+    console.log(data[0])
     return (
         <div className='p-6 bg-gray-50 '>
             <h2 className="text-2xl font-semibold mb-4 text-gray-800 ">
@@ -16,7 +17,7 @@ const Table = ({ columns = [], data = [] }) => {
                     </thead>
                     <tbody>
                         {data?.map((student, indx) => (
-                            <tr key={student.id || indx} className='hover:bg-gray-50 transition border-t cursor-pointer'>
+                            <tr key={student._id || indx} className='hover:bg-gray-50 transition border-t cursor-pointer'>
                                 {columns?.map((col) => (
                                     <td key={col.key} className='px-4 py-2 border'> {col.render ? col.render(student) : student[col.key]}</td>
                                 ))}

@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 const AdminStudentActions = ({ student }) => {
   const navigate = useNavigate()
-  console.log(student);
+  // console.log(student);
   return (
     <div className="bg-white rounded-xl shadow p-4 my-4 space-y-4">
       <h3 className="font-semibold text-lg">Admin Actions</h3>

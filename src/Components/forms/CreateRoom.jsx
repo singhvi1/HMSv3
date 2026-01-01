@@ -9,7 +9,7 @@ import { selectRoomById } from '../../utils/store/roomsSlice';
 const CreateRoom = ({ roomId }) => {
     const isEdit = Boolean(roomId);
     const roomFromStore = useSelector(selectRoomById(roomId))
-    console.log(roomFromStore)
+    // console.log(roomFromStore)
     const [loading, setLoading] = useState(false);
     const [form, setForm] = useState({
         block: "",
@@ -48,7 +48,7 @@ const CreateRoom = ({ roomId }) => {
         const fetchStudent = async () => {
             try {
                 const res = await roomService.getStudentById(roomId);
-                console.log(res, "successfully called insdier")
+                // console.log(res, "successfully called insdier")
                 const room = res.data.data;
                 setForm({
                     block: room.block || "",
@@ -83,7 +83,7 @@ const CreateRoom = ({ roomId }) => {
         } catch (error) {
             console.log("Dont able to crate/Update Room", error)
         } finally { setLoading(false) }
-        console.log("handle submit", form)
+        // console.log("handle submit", form)
     }
     const handleChange = (e) => {
         const { name, value } = e.target;

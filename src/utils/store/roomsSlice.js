@@ -23,6 +23,17 @@ const roomsSlice = createSlice({
       state.items = action.payload.items;
       state.pagination.totalItems = action.payload.count
     },
+    setRoom: (state, action) => {
+      const room = action.payload;
+      const index = state.items.findIndex(r => r._id === room._id);
+
+      if (index !== -1) {
+        state.items[index] = room;    
+      } else {
+        state.items.push(room);        
+        state.pagination.totalItems += 1;
+      }
+    },
     setRoomsFilters: (state, action) => {
       state.filters = { ...state.filters, ...action.payload };
       state.pagination.page = 1;
@@ -43,6 +54,7 @@ const roomsSlice = createSlice({
 
 export const {
   setRooms,
+  setRoom,
   setRoomsFilters,
   setRoomsPage,
   setRoomsPageSize,

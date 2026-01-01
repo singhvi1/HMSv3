@@ -1,38 +1,94 @@
-import { Pencil, Trash2, UserX, AlertTriangle, Eye, UserPlus, Power, PowerOff } from "lucide-react";
+import { Pencil, Trash2, UserX, AlertTriangle, Settings, UserPlus, Power, PowerOff } from "lucide-react";
 
-export const getRoomActions = ({ room, navigate }) => {
+// export const getRoomActions = ({ room, navigate }) => {
 
+//     const isFull = room?.occupancy >= room?.capacity;
+//     console.log(room)
+//     return [
+//         {
+//             label: "Add New  Student",
+//             icon: UserPlus,
+//             className: "bg-green-500 text-white hover:bg-green-700",
+//             disabled: isFull || !room?.is_active,
+//             onClick: () =>
+//                 navigate(`/admin/students/new?roomId=${room?._id}`, {
+//                     state: { room }
+//                 })
+//         },
+//         {
+//             label: "Increase Room Capacity",
+//             icon: UserPlus,
+//             className: "bg-green-500 text-white hover:bg-green-700",
+//             onClick: () =>
+//                 navigate(`/admin/students/new?roomId=${room?._id}`, {
+//                     state: { room }
+//                 })
+//         },
+//         {
+//             label: "Remove Student",
+//             icon: UserPlus,
+//             className: "bg-green-500 text-white hover:bg-green-700",
+//             disabled: isFull || !room?.is_active,
+//             onClick: () =>
+//                 navigate(`/admin/students/new?roomId=${room?._id}`, {
+//                     state: { room }
+//                 })
+//         },
+//         {
+//             label: "Change Room Status",
+//             icon: UserPlus,
+//             className: "bg-blue-500 text-white hover:bg-violet-700",
+//             disabled: isFull || !room?.is_active,
+//             onClick: () =>
+//                 navigate(`/admin/rooms/${room?._id}/edit`, {
+//                     state: { room }
+//                 })
+//         },
+
+//         {
+//             label: room?.is_active ? "Deactivate Room" : "Activate Room",
+//             icon: room?.is_active ? PowerOff : Power,
+//             className: room?.is_active
+//                 ? "bg-yellow-500 text-black hover:bg-yellow-600"
+//                 : "bg-indigo-600 text-white hover:bg-indigo-700",
+//             onClick: () => console.log("Toggle room", room?._id)
+//         }
+//     ];
+// };
+
+export const getRoomActions = ({ room }) => {
     const isFull = room?.occupancy >= room?.capacity;
-    console.log(room)
+    console.log(isFull)
     return [
         {
-            label: "Add Student",
+            title: "Add New Student",
+            description: isFull
+                ? "Room is full"
+                : "Assign a student to this room",
             icon: UserPlus,
-            className: "bg-green-500 text-white hover:bg-green-700",
-            disabled: isFull || !room?.is_active,
-            onClick: () =>
-                navigate(`/admin/students/new?roomId=${room?._id}`, {
-                    state: { room }
-                })
+            color: isFull || !room?.is_active
+                ? "bg-gray-100 cursor-not-allowed"
+                : "bg-green-50",
+            to: isFull || !room?.is_active
+                ? "#"
+                : `/admin/students/new?roomId=${room?._id}`
         },
         {
-            label: "Change Type",
-            icon: UserPlus,
-            className: "bg-blue-500 text-white hover:bg-violet-700",
-            disabled: isFull || !room?.is_active,
-            onClick: () =>
-                navigate(`/admin/rooms/${room?._id}/edit`, {
-                    state: { room }
-                })
+            title: "Edit Room",
+            description: "Change room settings or Capacity",
+            icon: Settings,
+            color: "bg-blue-50",
+            to: `/admin/rooms/${room?._id}/edit`
         },
 
         {
-            label: room?.is_active ? "Deactivate Room" : "Activate Room",
+            title: room?.is_active ? "Deactivate Room" : "Activate Room",
+            description: "Toggle room availability",
             icon: room?.is_active ? PowerOff : Power,
-            className: room?.is_active
-                ? "bg-yellow-500 text-black hover:bg-yellow-600"
-                : "bg-indigo-600 text-white hover:bg-indigo-700",
-            onClick: () => console.log("Toggle room", room?._id)
+            color: room?.is_active
+                ? "bg-yellow-50"
+                : "bg-indigo-50",
+            to: `/admin/rooms/${room?._id}/status`
         }
     ];
 };
@@ -58,7 +114,7 @@ export const getStudentActions = ({ student, navigate }) => [
         onClick: () => console.log("Delete student", student._id)
     },
     {
-        label: "Add Discipline",
+        label: "Add Disciplinery Actions",
         icon: AlertTriangle,
         className: "bg-gray-600 text-white hover:bg-gray-700",
         onClick: () => console.log("Add discipline", student._id)

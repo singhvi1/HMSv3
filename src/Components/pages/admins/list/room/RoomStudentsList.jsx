@@ -1,11 +1,11 @@
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const RoomStudentsList = ({ students = [] }) => {
   const navigate = useNavigate();
-
-  const activeStudents = students.filter(s => s.status === "active");
-  const inactiveStudents = students.filter(s => s.status !== "active");
+  console.log(students, "this is student list passed here")
+  const activeStudents = students.filter(s => s.user_id.status === "active");
+  const inactiveStudents = students.filter(s => s.user_id.status == "Inactive");
   return (
     <div className="bg-white rounded-xl shadow p-5 space-y-6">
       {/* Active Students */}
@@ -54,21 +54,22 @@ const StudentRow = ({ student, inactive, navigate }) => (
     `}
   >
     <div className="flex justify-around items-center gap-5">
-      <p className="font-medium cursor-pointer hover:underline" onClick={() => navigate(`/admin/students/${student._id}`)}>Name: {student.full_name}</p>
+      <p className="font-medium cursor-pointer hover:underline" onClick={() => navigate(`/admin/students/${student._id}`)}>Name: {student.user_id.full_name}</p>
       <p className="text-sm">SID: {student.sid}</p>
-      <p className="text-sm">RooomNo: {student.block} -{student.room_number}</p>
-      <p className="text-sm">MobileNo: {student.phone}</p>
+      <p className="text-sm">MobileNo: {student.user_id.phone}</p>
       <p className="text-sm">Address: {student.permanent_address}</p>
       <p className="text-sm">Branch: {student.branch}</p>
-      <ExternalLink size={20} className="cursor-pointer" onClick={() => navigate(`/admin/students/${student._id}`)} />
+      <ExternalLink size={20} className="cursor-pointer"
+        onClick={() => navigate(`/admin/students/${student.user_id.id}`)} />
     </div>
-    <span
+    <div className="flex"><span
       className={`text-xs px-2 py-1 rounded-full
         ${inactive ? "bg-gray-300" : "bg-green-600 text-white"}
       `}
     >
-      {student.status}
-    </span>
+      {student.user_id.status}
+    </span><Trash2 className="mx-3 w-5 h-5 text-red-600 cursor-pointer" />
+    </div>
   </li>
 );
 

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import Table from '../../../../common/table/Table'
 import SearchBar from '../../../../common/table/SearchBar'
 import Pagination from '../../../../common/table/Pagination'
@@ -26,8 +27,8 @@ const StudentList = () => {
                 search: filters.search,
                 status: filters.status,
             })
-            console.log(res.data)
-            console.log("total Pages", res.data.pagination.total)
+            // console.log(res.data)
+            // console.log("total Pages", res.data.pagination.total)
             dispatch(setStudents({
                 items: res.data.students,
                 pagination: {
@@ -43,8 +44,10 @@ const StudentList = () => {
             console.log("dont able to find student", error)
         }
     }
+
     useEffect(() => { fetchData() },
         [filters.search, filters.block, filters.branch, filters.status, pageData.page, pageData.pageSize])
+        
     return (
         <>
             <div className="bg-white rounded-xl shadow p-6">

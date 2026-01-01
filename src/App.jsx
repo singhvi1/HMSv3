@@ -2,7 +2,6 @@ import { useDispatch, useSelector } from "react-redux";
 import './App.css'
 import { Routes, Route, Navigate } from "react-router-dom"
 import { lazy, Suspense, useEffect, useState } from "react";
-import { announcements } from '../data'
 
 const Home = lazy(() => import("./Components/Home"));
 const Login = lazy(() => import("./Components/Login"));
@@ -63,13 +62,13 @@ const RoomsList = lazy(() => import("./Components/pages/admins/list/room/RoomsLi
 const LeavesList = lazy(() => import("./Components/pages/admins/list/leave/LeavesList"))
 const AdminStudentProfile = lazy(() => import("./Components/pages/admins/list/student/AdminStudentProfile"))
 const AdminRoomProfile = lazy(() => import("./Components/pages/admins/list/room/AdminRoomProfile"))
+const EditRoom = lazy(() => import("./Components/pages/admins/list/room/EditRoom"))
+const CreateRoom = lazy(() => import("./Components/forms/CreateRoom"))
+const EditStudent = lazy(() => import("./Components/pages/admins/list/student/EditStudent"))
 
 import { HostelOverview, HostelForm, EditHostel, PageLoader } from "./Components/index"
 import { removeLoggedinUser, setLoggedinUser } from './utils/store/logedinUser'
 import api from './utils/api'
-import EditStudent from "./Components/pages/admins/list/student/EditStudent";
-import CreateRoom from "./Components/forms/CreateRoom";
-import EditRoom from "./Components/pages/admins/list/room/EditRoom";
 
 function App() {
   const user = useSelector((state) => state.loggedinUser);
@@ -78,7 +77,10 @@ function App() {
 
   useEffect(() => {
     const fetchMe = async () => {
-      if (user) return;
+      if (user) {
+        setLoading(false);
+        return;
+      }
       try {
         const res = await api.get("/users/me");
         dispatch(setLoggedinUser(res.data.user));
@@ -138,9 +140,9 @@ function App() {
                 <Route path="hostel/new" element={<HostelForm />} />
                 <Route path="hostel/:id/edit" element={<EditHostel />} />
 
-                <Route path="anns" element={<AnnounceMents announcements={announcements} />} />
+                <Route path="anns" element={<AnnounceMents />} />
                 <Route path="anns/new" element={<CreateAnnouncement />} />
-                <Route path="anns/:id" element={<AnnounceMentDetail announcement={announcements} />} />
+                <Route path="anns/:id" element={<AnnounceMentDetail />} />
                 <Route path="anns/:id/edit" element={<EditAnnouncement />} />
                 <Route path="students" element={<StudentList />} />
                 <Route path="students/new" element={<CreateStudent />} />

@@ -4,7 +4,6 @@ import Pagination from '../../../../common/table/Pagination';
 import Table from '../../../../common/table/Table';
 import { issueColumns } from '../../../../../../MockData';
 import { useNavigate } from 'react-router-dom';
-import { Filters } from '../../../../common/ui/ProfileComponents';
 import BackButton from '../../../../common/ui/Backbutton';
 import SearchBar from '../../../../common/table/SearchBar';
 
@@ -15,9 +14,15 @@ const IssuesList = () => {
     const pageData = useSelector(selectIssuesPageData);
 
     return (
-        <div className="p-6 bg-gray-50 min-h-screen">
+        <div className="bg-white rounded-xl shadow p-6">
 
             <BackButton />
+            <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-gray-800">
+                    Issues List
+                </h2>
+
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
 
                 <SearchBar search={filters.search} onChange={(v) => dispatch(setIssuesFilters({ search: v }))} placeholder={"Search name"} />

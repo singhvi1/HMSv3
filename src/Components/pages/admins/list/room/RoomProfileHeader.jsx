@@ -1,22 +1,30 @@
-import { DoorClosed, DoorOpen, ShieldCheck, User, UserPlus, Users } from "lucide-react";
+import { DoorOpen } from "lucide-react";
 import { GraduationCap, UserCheck, Clock, ClipboardList } from 'lucide-react';
-
 import BackButton from "../../../../common/ui/Backbutton";
 import ProfileAvatar from "../../../../profile/ProfileAvatar";
 import StatCard from "../../../../dashboard/StatCard";
-import { Link } from "react-router-dom";
+import { getFloorLabel } from "../../../../../../data";
 
-const RoomProfileHeader = ({ room, students }) => {
+
+const RoomProfileHeader = ({ room }) => {
     if (!room) return null;
-    const activeStudents = students.filter(s => s.status === "active")
-    const inactiveStudents = students.filter(s => s.status !== "active");
-    console.log(activeStudents)
+    const capacity = room?.capacity || "1"
+    const isFull = room.occupancy >= room.capacity;
+
+    const students = room?.occupants ?? [];
+    console.log(students, "this is studens list")
+    console.log("this is room data given to RoomProfileHeader", room)
+
+    const activeStudents = students.filter((s) => s.user_id.status === "active");
+    const inactiveStudents = students.filter((s) => s.user_id.status === "inactive");
+    console.log("active", activeStudents)
     return (
         <div className="bg-white rounded-xl shadow p-6 mb-8">
             <BackButton />
             <div className="text-center mb-6">
                 <h1 className="text-3xl font-extrabold text-gray-800">
                     <div className="flex items-center justify-center gap-3">
+                        {/* NOTE - we need to make it dynamic */}
                         <ProfileAvatar image_url={"https://img.freepik.com/free-photo/portrait-young-student-happy-be-back-university_23-2148586577.jpg?semt=ais_hybrid&w=740&q=80"} size={100} />
 
                         <h1 className="text-3xl font-extrabold text-gray-800">
@@ -45,11 +53,12 @@ const RoomProfileHeader = ({ room, students }) => {
                             Welcome to {room.room_number}
                         </h2>
                         <p className="text-sm text-gray-500">
-                            Block :{room.block}
+                            Block :{room.block.toUpperCase()}
                         </p>
-                        {room?.floor && <p className="text-sm text-gray-500">
-                            Floor :{room?.floor}
-                        </p>}
+                        {room?.room_number &&
+                            <p className="text-sm text-gray-500">
+                                Floor :{getFloorLabel(room.room_number)}
+                            </p>}
                     </div>
                 </div>
 
@@ -58,8 +67,8 @@ const RoomProfileHeader = ({ room, students }) => {
                     {/* Status Badge */}
                     <span
                         className={`inline-flex items-center px-3 py-1 text-xs font-medium rounded-full border ${room?.is_active
-                                ? "bg-green-50 text-green-700 border-green-200"
-                                : "bg-gray-100 text-gray-700 border-gray-200"
+                            ? "bg-green-50 text-green-700 border-green-200"
+                            : "bg-gray-100 text-gray-700 border-gray-200"
                             }`}
                     >
                         <span className={`w-1.5 h-1.5 rounded-full mr-2 ${room?.is_active ? "bg-green-500" : "bg-gray-400"}`}></span>
@@ -69,10 +78,18 @@ const RoomProfileHeader = ({ room, students }) => {
                     {/* Room Capacity Badge */}
                     <span className="inline-flex items-center px-3 py-1 text-xs font-medium rounded-full bg-blue-50 text-blue-700 border border-blue-200">
                         Type: {
-                            activeStudents?.length === 1 ? "Single"
-                                : activeStudents?.length === 2 ? "Double"
+                            capacity === 1 ? "Single"
+                                : capacity === 2 ? "Double"
                                     : "Triple"
                         }
+                    </span>
+                    <span
+                        className={`inline-flex items-center px-2 py-1 text-sm rounded-full  ${isFull
+                            ? "bg-red-100 text-red-700"
+                            : "bg-green-100 text-green-700"
+                            }`}
+                    >
+                        {isFull ? "Full" : "Available"}
                     </span>
                 </div>
 
@@ -90,7 +107,7 @@ const RoomProfileHeader = ({ room, students }) => {
                 <StatCard
                     icon={<GraduationCap size={18} />} // Replaced Users
                     label="Total Capacity"
-                    value={students.length}
+                    value={capacity}
                     color="bg-blue-50 text-blue-700"
                 />
                 <StatCard
@@ -119,16 +136,8 @@ const RoomProfileHeader = ({ room, students }) => {
                     color="bg-indigo-50 text-indigo-700"
                 />
             </div>
-            {/* <QuickInfo room={room} /> */}
+            
         </div >
     );
 };
-
-const InfoItem = ({ label, value }) => (
-    <div>
-        <p className="text-gray-500">{label}</p>
-        <p className="font-medium">{value ?? "-"}</p>
-    </div>
-);
-
 export default RoomProfileHeader;

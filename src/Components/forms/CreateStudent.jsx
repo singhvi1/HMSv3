@@ -77,7 +77,7 @@ const CreateStudent = ({ studentId }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
     const studentFromStore = useSelector(selectStudentById(studentId))
-    console.log(studentFromStore)
+    // console.log(studentFromStore)
 
     useEffect(() => {
         if (!isEdit) return;
@@ -100,7 +100,6 @@ const CreateStudent = ({ studentId }) => {
         const fetchStudent = async () => {
             try {
                 const res = await studentService.getStudentById(studentId);
-                console.log(res, "successfully called insdier")
                 const student = res.data.student;
                 setForm({
                     full_name: student.full_name || "",
@@ -174,7 +173,7 @@ const CreateStudent = ({ studentId }) => {
                     yearly_rent: Number(form.yearly_rent)
                 };
                 const res = await studentService.createUserStudent(payload)
-                console.log(payload);
+                // console.log(payload);
                 console.log(res);
                 if (!res.data?.success) {
                     throw new Error(res.data?.message || "Student creation failed");

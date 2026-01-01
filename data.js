@@ -19,6 +19,27 @@ export const student = {
     mess_fee: "Paid"
   }
 };
+export const getFloorLabel = (n) => {
+  // 1. Get the hundreds digit (e.g., 101 -> 1, 205 -> 2)
+  const prefix = Math.floor(n / 100);
+
+  // 2. Handle Ground Floor (100 series)
+  if (prefix === 1) return "Ground";
+
+  // 3. Calculate actual floor for display (Prefix - 1)
+  // e.g., 200 series -> 2 - 1 = 1st Floor
+  const floor = prefix - 1;
+
+  // 4. Handle ordinal suffixes
+  const j = floor % 10;
+  const k = floor % 100;
+
+  if (j === 1 && k !== 11) return `${floor}st Floor`;
+  if (j === 2 && k !== 12) return `${floor}nd Floor`;
+  if (j === 3 && k !== 13) return `${floor}rd Floor`;
+
+  return `${floor}th Floor`;
+};
 export const studentColumns = [
   { key: "sid", label: "SID" },
   { key: "full_name", label: "Name" },
@@ -66,7 +87,7 @@ export const issueList = Array.from({ length: 38 }, (_, i) => ({
   _id: `issue_${i + 1}`,
   issue_id: `ISSUE2024${200 + i}`,
 
-  student_id: `st_${(i % 47) + 1}`,
+  raised_by: `st_${(i % 47) + 1}`,
   student_name: `Student ${(i % 47) + 1}`,
 
   category: ["Electrical", "Plumbing", "Furniture", "Internet"][i % 4],

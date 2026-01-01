@@ -1,7 +1,6 @@
 import { Bell, Megaphone } from 'lucide-react';
 import Topbar from './layout/Topbar';
 import Navbar from './layout/NavBar';
-import { announcements, student } from '../../data';
 import AnnounceMents from './dashboard/AnnounceMents';
 import { useSelector } from 'react-redux';
 
@@ -39,7 +38,7 @@ const Home = () => {
 
                 <div className="grid gap-6">
                   {/* here we will show Announcements */}
-                  <AnnounceMents announcements={announcements} />
+                  <AnnounceMents />
 
                 </div>
               </div>

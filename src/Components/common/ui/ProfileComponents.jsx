@@ -21,32 +21,31 @@ const StatusBadge = ({ status }) => {
     );
 };
 export const ProfileHeader = ({ student, InfoItem }) => (
+    
     <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden" data-testid="card-profile-header">
         <div className="p-8 md:flex items-start gap-10">
             <div className="relative group shrink-0 mb-6 md:mb-0">
-                <ProfileAvatar image_url={student.image_url} size={220} />
+                <ProfileAvatar image_url={student?.image_url} size={220} />
 
             </div>
 
             <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
                 <div className="space-y-1">
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tight" data-testid="text-name">{student.full_name}</h1>
-                    <p className="text-indigo-600 font-bold text-lg">{student.email}</p>
-                    <p className="text-slate-500 font-medium">Student ID: {student.sid}</p>
-                    <StatusBadge status={student.status} />
+                    <h1 className="text-4xl font-black text-slate-900 tracking-tight" data-testid="text-name">{student?.user_id?.full_name}</h1>
+                    <p className="text-indigo-600 font-bold text-lg">{student?.user_id?.email}</p>
+                    <p className="text-slate-500 font-medium">Student ID: {student?.sid}</p>
+                    <StatusBadge status={student?.user_id?.status} />
                 </div>
 
 
                 <div className="grid grid-cols-2 gap-4 text-slate-100">
-                    <InfoItem label="Phone" value={student.phone} />
-                    <InfoItem label="Branch" value={student.branch} />
-                    <InfoItem label="Year" value={student.year} />
-                    <InfoItem label="Room" value={student.room_number} />
-                    <InfoItem label="Guardian" value={student.guardian_name} />
-                    <InfoItem label="Guardian Contact" value={student.guardian_contact} />
-                    <div className="col-span-2">
-                        <InfoItem label="Address" value={student.permanent_address} />
-                    </div>
+                    <InfoItem label="Phone" value={student?.user_id?.phone} />
+                    <InfoItem label="Branch" value={student?.branch} />
+                    <InfoItem label="Room" value={student?.room_number} />
+                    <InfoItem label="Guardian" value={student?.guardian_name} />
+                    <InfoItem label="Guardian Contact" value={student?.guardian_contact} />
+                    <InfoItem label="Address" value={student?.permanent_address} />
+                    
                 </div>
             </div>
         </div>

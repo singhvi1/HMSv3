@@ -30,6 +30,16 @@ const studentsSlice = createSlice({
       state.pagination.totalPages = action.payload.pagination.totalPages
       state.pagination.totalItems = action.payload.pagination.totalItems
     },
+    setStudent: (state, action) => {
+      const student = action.payload;
+      const index = state.items.findIndex(r => r._id == student._id);
+      if (index !== -1) {
+        state.items[index] = student;
+      } else {
+        state.items.push(student);
+        state.pagination.totalItems += 1;
+      }
+    },
     setStudentsFilters: (state, action) => {
       state.filters = { ...state.filters, ...action.payload };
       state.pagination.page = 1;
@@ -50,6 +60,7 @@ const studentsSlice = createSlice({
 
 export const {
   setStudents,
+  setStudent,
   setStudentsFilters,
   setStudentsPage,
   setStudentsPageSize,
@@ -61,7 +72,7 @@ export const {
 
 
 const selectStudentsState = (state) => state.students;
-export const selectStudentById = (id) => (state) => state.students.items.find((s) => s._id === id);
+export const selectStudentById = (id) => (state) => state.students.items.find((s) => s.user_id._id === id);
 
 export const selectStudentsItems = (state) => selectStudentsState(state).items
 export const selectStudentsFilters = (state) => selectStudentsState(state).filters

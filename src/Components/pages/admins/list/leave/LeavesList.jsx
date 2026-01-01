@@ -13,9 +13,15 @@ const LeavesList = () => {
     const filters = useSelector(selectLeaveFilters);
     const pageData = useSelector(selectLeavePageData);
     return (
-        <div className="p-6 bg-gray-50 min-h-screen">
+        <div className="bg-white rounded-xl shadow p-6">
 
             <BackButton />
+            <div className="flex items-center justify-between mb-6">
+                <h2 className="text-xl font-semibold text-gray-800">
+                    Leaves List
+                </h2>
+
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
 
                 <SearchBar search={filters.search} onChange={(v) => dispatch(setLeaveFilters({ search: v }))} placeholder={"Search name"} />
