@@ -11,7 +11,7 @@ const store=configureStore({
     reducer:{
         hostel:hostelReducer,
         loggedinUser:loggedinUserReducer,
-        anns:announcementsSlice,
+        announcements:announcementsSlice,
         students:studentReducer,
         rooms: roomsReducer,
         issues: issuesReducer,

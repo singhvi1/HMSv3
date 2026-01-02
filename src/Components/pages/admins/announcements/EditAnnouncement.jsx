@@ -1,59 +1,62 @@
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { AnnouncementForm } from "../../../index";
 import { useDispatch, useSelector } from "react-redux";
-import { setSelectedAnnouncement } from "../../../../utils/store/announcementsSlice";
+import { selectAnnounceMentById, updateOneAnnouncement } from "../../../../utils/store/announcementsSlice";
 import { useEffect, useState } from "react";
 import { announcementService } from "../../../../services/apiService";
 
 const EditAnnouncement = () => {
     const { id } = useParams();
-    const { state } = useLocation(); // announcement data
-    const { selected } = useSelector((state) => state.anns);
+    const announcement = useSelector(selectAnnounceMentById(id));
+    console.log(announcement, "this is announcement from store");
     const dispatch = useDispatch();
-    const [resolved, setResolved] = useState(null);
     const [loading, setLoading] = useState(true);
     // console.log(selected);
     const navigate = useNavigate()
 
 
+
     useEffect(() => {
         const resolve = async () => {
-            if (state?._id) {
-                setResolved(state);
-                dispatch(setSelectedAnnouncement(resolved));
-                return setLoading(false);
+            try {
+                const res = await announcementService.getAnnouncementById(id);
+                dispatch(updateOneAnnouncement(res.data.announcement))
+            } catch (err) {
+                console.log("Not able to fetch announcement", err)
+            } finally {
+                setLoading(false)
             }
-            if (selected?._id === id) {
-                setResolved(selected);
-                return setLoading(false);
-            }
-            const res = await announcementService.getById(id);
-            setResolved(res.data);
-            dispatch(setSelectedAnnouncement(res.data.data));
-            setLoading(false);
         };
-
-        resolve();
-    }, [id]);
+        if (!announcement) {
+            resolve();
+        } else {
+            setLoading(false);
+        }
+    }, [announcement, dispatch, id]);
 
     const handleUpdate = async (data) => {
-        // console.log("Updating announcement:", id, data);
-        const payload = new FormData();
-        Object.entries(data).forEach(([k, v]) => v && payload.append(k, v));
-        const res = await announcementService.updateAnnouncement(payload, id);
-        // console.log(res);
-        navigate(`/admin/anns`)
+        try {
+            const res = await announcementService.updateAnnouncement(data, id);
+            dispatch(updateOneAnnouncement(res.data.announcement))
+            navigate(`/admin/anns/${id}`)
+        } catch (err) {
+            console.error("Not able to update announcement", err);
+        } finally {
+            setLoading(false)
+        }
     };
     if (loading) {
         return <div className="p-6">Loading announcement...</div>;
     }
 
     return (
-        <AnnouncementForm
-            initialData={state || selected}
-            onSubmit={handleUpdate}
-            isEdit={true}
-        />
+        <>
+            <AnnouncementForm
+                initialData={announcement}
+                onSubmit={handleUpdate}
+                isEdit={true}
+            />
+        </>
     );
 };
 

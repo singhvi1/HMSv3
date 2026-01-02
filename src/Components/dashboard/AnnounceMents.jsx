@@ -1,36 +1,35 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { Calendar, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import BackButton from "../common/ui/Backbutton";
 import { categoryIconMap, categoryColorMap, formatDateTime } from "../../utils/constant";
 import { useDispatch, useSelector } from "react-redux";
 import { announcementService } from "../../services/apiService";
-import { clearSelectedAnnouncement, setAnnouncements, setLoading, setSelectedAnnouncement } from "../../utils/store/announcementsSlice";
-import { useEffect } from "react";
+import { setAnnouncements } from "../../utils/store/announcementsSlice";
+import { useEffect, useState } from "react";
 
 
 const AnnounceMents = () => {
     const navigate = useNavigate();
-    // console.log("announcements called");
     const dispatch = useDispatch();
-    dispatch(clearSelectedAnnouncement())
-    const { list, loading } = useSelector((state) => state.anns)
-    // console.log(list, loading)
+    const { list, listFetched } = useSelector((state) => state.announcements)
+    const [loading, setLoading] = useState(false)
 
-    const fetchAnn = async () => {
-        dispatch(setLoading(true))
-        try {
-            const res = await announcementService.getAllAnnouncements();
-            dispatch(setAnnouncements(res.data.announcements));
-        } catch (err) {
-            console.error("Failed to fetch  announcements", err)
-        } finally {
-            dispatch(setLoading(false));
-        }
-    }
     useEffect(() => {
+        if (listFetched) return;
+
+        const fetchAnn = async () => {
+            setLoading(true);
+            try {
+                const res = await announcementService.getAllAnnouncements();
+                dispatch(setAnnouncements(res.data.announcements));
+            } catch (err) {
+                console.error("Failed to fetch  announcements", err)
+            } finally {
+                setLoading(false)
+            }
+        }
         fetchAnn()
-    }, [])
+    }, [listFetched, dispatch])
 
     if (loading) {
         return <div className="p-6">Loading announcements...</div>;
@@ -70,7 +69,6 @@ const AnnounceMents = () => {
                         key={announcement._id}
                         className="transform transition-all duration-300 hover:scale-[1.02] cursor-pointer p-2"
                         onClick={() => {
-                            dispatch(setSelectedAnnouncement(announcement))
                             navigate(`/admin/anns/${announcement._id}`);
                         }}
                     >

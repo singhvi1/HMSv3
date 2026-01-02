@@ -3,41 +3,40 @@ import { Pencil, Trash2, Paperclip } from "lucide-react";
 import BackButton from "../common/ui/Backbutton";
 import { formatDateTime } from "../../utils/constant";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { announcementService } from "../../services/apiService";
-import { removeAnnouncement, setSelectedAnnouncement } from "../../utils/store/announcementsSlice";
+import { removeAnnouncement, selectAnnounceMentById, updateOneAnnouncement } from "../../utils/store/announcementsSlice";
 
 
 const AnnouncementDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { selected } = useSelector((state) => state.anns);
+  const announcement = useSelector(selectAnnounceMentById(id))
+  console.log(announcement)
   const dispatch = useDispatch();
-  const [announcement, setAnnouncement] = useState(null)
   const [loading, setLoading] = useState(true);
+  const deleteRef = useRef(false)
 
   useEffect(() => {
+    if(deleteRef.current) return;
     const loadAnn = async () => {
       try {
-        if (selected && selected._id === id) {
-          setAnnouncement(selected);
-        } else {
-          const res = await announcementService.getAnnouncementById(id);
-          // console.log(res);
-          setAnnouncement(res.data.announcement);
-          dispatch(setSelectedAnnouncement(res.data))
-        }
+        const res = await announcementService.getAnnouncementById(id);
+        dispatch(updateOneAnnouncement(res.data.announcement))
       } catch (err) {
         console.error("Failed to load announcement", err);
       } finally {
         setLoading(false);
       }
-
     }
 
-    loadAnn()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id])
+    console.log("Announcemet detail page mounting ", id)
+    if (!announcement) {
+      loadAnn()
+    } else {
+      setLoading(false);
+    }
+  }, [dispatch, announcement, id])
 
 
   if (loading) {
@@ -59,12 +58,10 @@ const AnnouncementDetail = () => {
       <BackButton />
 
       <div className="max-w-3xl mx-auto bg-white rounded-xl shadow p-6 space-y-5">
-        {/* Title */}
         <h1 className="text-2xl font-bold text-gray-800">
           {announcement?.title || ""}
         </h1>
 
-        {/* Meta */}
         <p className="text-sm text-gray-500">
           published On : <span>
             {formatDateTime(
@@ -77,12 +74,10 @@ const AnnouncementDetail = () => {
           <b>{announcement?.created_by?.full_name} </b>as Warden
         </p>
 
-        {/* Message */}
         <p className="text-gray-700 leading-relaxed">
           {announcement?.message}
         </p>
 
-        {/* Attachment */}
         {announcement?.notice_url && (
           <a
             href={announcement?.notice_url}
@@ -94,15 +89,11 @@ const AnnouncementDetail = () => {
             View attachment
           </a>
         )}
-
-        {/* Actions */}
         <div className="flex gap-3 pt-4 border-t">
 
           <button
             onClick={() =>
-              navigate(`/admin/anns/${id}/edit`, {
-                state: announcement
-              })
+              navigate(`/admin/anns/${id}/edit`)
             }
             className="flex items-center gap-2 px-4 py-2 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700"
           >
@@ -112,10 +103,11 @@ const AnnouncementDetail = () => {
 
           <button
             className="flex items-center gap-2 px-4 py-2 text-sm rounded bg-red-600 text-white hover:bg-red-700"
-            onClick={() => {
-              announcementService.deleteAnnouncement(id)
+            onClick={async () => {
+              deleteRef.current=true
+              await announcementService.deleteAnnouncement(id)
               dispatch(removeAnnouncement(id))
-              navigate(`/admin/ann`)
+              navigate(`/admin/anns`)
             }}
           >
             <Trash2 size={16} />

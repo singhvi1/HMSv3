@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { BackButton } from "../index";
 import { CATEGORIES } from "../../utils/constant"
 
-const AnnouncementForm = ({
-  initialData, onSubmit, loading, isEdit }) => {
+const AnnouncementForm = ({ initialData, onSubmit, loading, isEdit }) => {
 
   const [formData, setFormData] = useState({
     title: "",
@@ -16,10 +15,12 @@ const AnnouncementForm = ({
 
   useEffect(() => {
     if (initialData) {
+      console.log("DETAIL Annform PAGE FETCHING");
       setFormData({
         title: initialData.title || "",
         message: initialData.message || "",
         notice_url: initialData.notice_url || "",
+        category: initialData?.category || "",
         file: null
       });
     }
@@ -34,11 +35,21 @@ const AnnouncementForm = ({
     }));
   };
 
-  const submit = async (e) => {
+  const submit = (e) => {
     e.preventDefault();
-    onSubmit(formData);
 
+    const payload = new FormData();
+
+    payload.append("title", formData.title);
+    payload.append("message", formData.message);
+    payload.append("category", formData.category);
+
+    if (formData.notice_url) {
+      payload.append("notice_url", formData.notice_url);
+    }
+    onSubmit(payload);
   };
+
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
@@ -66,34 +77,32 @@ const AnnouncementForm = ({
             />
           </div>
 
-          {/* Message */}
-          <div>
-            <label className="block text-sm font-medium mb-1">Message</label>
-            <textarea
-              name="message"
-              rows="4"
-              value={formData.message}
-              onChange={handleChange}
-              className="w-full border rounded-md px-3 py-2 text-sm resize-none focus:ring-2 focus:ring-indigo-500"
-              required
-            />
-          </div>
-          <div className="">
-            <select
-              name="category"
-              onChange={handleChange}
-              className="block w-full rounded-md border border-gray-300 p-2 text-sm focus:border-blue-500 focus:ring-blue-500 capitalize"
-            >
-              {/* Default placeholder */}
-              <option value="category">Select a Category</option>
 
-              {/* Dynamic mapping of options */}
-              {CATEGORIES.map((category, index) => (
-                <option key={index} value={category}>
-                  {category}
-                </option>
-              ))}
-            </select></div>
+          <label className="block text-sm font-medium mb-1">Message</label>
+          <textarea
+            name="message"
+            rows="4"
+            value={formData.message}
+            onChange={handleChange}
+            className="w-full border rounded-md px-3 py-2 text-sm resize-none focus:ring-2 focus:ring-indigo-500"
+            required
+          />
+
+          <select
+            name="category"
+            value={formData.category}
+            required
+            onChange={handleChange}
+            className="block w-full rounded-md border border-gray-300 p-2 text-sm  focus:border-blue-500 focus:ring-blue-500 capitalize"
+          >
+            <option value="">Select a Category</option>
+            {/* Dynamic mapping of options */}
+            {CATEGORIES.map((category, index) => (
+              <option key={index} value={category}>
+                {category}
+              </option>
+            ))}
+          </select>
           {/* URL */}
           <div>
             <label className="block text-sm font-medium mb-1">

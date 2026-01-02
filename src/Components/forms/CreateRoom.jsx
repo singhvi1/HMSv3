@@ -9,7 +9,7 @@ import { selectRoomById } from '../../utils/store/roomsSlice';
 const CreateRoom = ({ roomId }) => {
     const isEdit = Boolean(roomId);
     const roomFromStore = useSelector(selectRoomById(roomId))
-    // console.log(roomFromStore)
+    console.log("createRoomMounted")
     const [loading, setLoading] = useState(false);
     const [form, setForm] = useState({
         block: "",

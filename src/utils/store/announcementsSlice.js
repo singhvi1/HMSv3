@@ -2,51 +2,52 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   list: [],
-  selected: null,
-  loading: false,
+  listFetched: false,
 };
 
 const announcementSlice = createSlice({
-  name: "announcement",
+  name: "announcements",
   initialState,
   reducers: {
 
 
     setAnnouncements(state, action) {
       state.list = action.payload;
+      state.listFetched = true;
     },
-
-    setSelectedAnnouncement(state, action) {
-      state.selected = action.payload;
+    addAnnouncement(state, action) {
+      state.list.unshift(action.payload);
     },
+    updateOneAnnouncement(state, action) {
+      const index = state.list.findIndex(
+        (a) => a._id === action.payload._id
+      );
 
-    clearSelectedAnnouncement(state) {
-      state.selected = null;
+      if (index !== -1) {
+        state.list[index] = action.payload;
+      } else {
+        state.list.push(action.payload);
+      }
     },
-
-
     removeAnnouncement(state, action) {
       state.list = state.list.filter(
         (a) => a._id !== action.payload
       );
     },
-
-    setLoading(state, action) {
-      state.loading = action.payload;
-    },
-
-
+    resetAnnouncements: () => initialState,
   }
 });
 
 export const {
   setAnnouncements,
-  setSelectedAnnouncement,
-  clearSelectedAnnouncement,
   addAnnouncement,
-  updateAnnouncement,
+  updateOneAnnouncement,
   removeAnnouncement,
-  setLoading,
+  resetAnnouncements
 } = announcementSlice.actions;
+
+
+export const selectAnnounceMentById = (id) => (state) => state.announcements.list.find((item) => item._id === id);
+
 
 export default announcementSlice.reducer;
