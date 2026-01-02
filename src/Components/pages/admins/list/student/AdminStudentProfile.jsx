@@ -11,8 +11,8 @@ const AdminStudentProfile = () => {
     const { id } = useParams();
     const dispatch = useDispatch()
     const student = useSelector(selectStudentById(id));
-    console.log(student, "this is student passed to admin student Profile")
-    console.log(student?.user_id?.status, "error that we getting ")
+    // console.log(student, "this is student passed to admin student Profile")
+    // console.log(student?.user_id?.status, "error that we getting ")
     const fetchStudent = async () => {
         try {
             const res = await studentService.getStudentById(id)

@@ -1,5 +1,5 @@
 import { createSelector, createSlice } from "@reduxjs/toolkit";
-import { leaves as mockLeaves } from "../../../data";
+import { leaves as mockLeaves, parseDDMMYYYY } from "../../../data";
 
 const initialState = {
   items: mockLeaves,
@@ -56,12 +56,12 @@ export const selectLeavesFiltered = createSelector(
   [selectLeaveItems, selectLeaveFilters],
   (items, filters) => {
     const search = filters.search.toLowerCase().trim();
-    const filterFrom = filters.fromDate
-      ? new Date(filters.fromDate).getTime()
+    const filterFrom = filters.from_date
+      ? new Date(filters.from_date).getTime()
       : null;
 
-    const filterTo = filters.toDate
-      ? new Date(filters.toDate).getTime()
+    const filterTo = filters.to_date
+      ? new Date(filters.to_date).getTime()
       : null;
     return items.filter((l) => {
       const name = (l.full_name || "").toLowerCase();
@@ -71,8 +71,21 @@ export const selectLeavesFiltered = createSelector(
       const status = (l.status || "").toLowerCase();
       const room = (l.room_number || "").toLowerCase();
       const destination = (l.destination || "").toLowerCase();
-      const leaveFrom = new Date(l.from_date).getTime();
-      const leaveTo = new Date(l.to_date).getTime();
+      const leaveFrom = parseDDMMYYYY(l.from_date);
+      const leaveTo = parseDDMMYYYY(l.to_date);
+
+      let matchesDate = true;
+
+      if (filterFrom && !filterTo) {
+        matchesDate = leaveFrom >= filterFrom;
+      }
+
+      if (filterFrom && filterTo) {
+        matchesDate =
+          leaveFrom >= filterFrom &&
+          leaveTo <= filterTo;
+      }
+
       const matchesSearch =
         !search ||
         name.includes(search) ||
@@ -82,16 +95,14 @@ export const selectLeavesFiltered = createSelector(
 
       const matchesBranch =
         !filters.branch || branch === filters.branch.toLowerCase();
+
       const matchesBlock =
         !filters.block || block === filters.block.toLowerCase();
+
       const matchesStatus =
         !filters.status || status === filters.status.toLowerCase();
-      const matchesFromDate =
-        !filterFrom || leaveFrom >= filterFrom;
 
-      const matchesToDate =
-        !filterTo || leaveTo <= filterTo;
-      return matchesSearch && matchesBranch && matchesBlock && matchesStatus && matchesFromDate && matchesToDate;
+      return matchesSearch && matchesBranch && matchesBlock && matchesStatus && matchesDate;
     });
   }
 );

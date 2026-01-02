@@ -9,14 +9,16 @@ import BackButton from "../../../../common/ui/Backbutton";
 import { roomService } from "../../../../../services/apiService";
 import { useEffect } from "react";
 import SearchBar from "../../../../common/table/SearchBar";
+import useRoomStateToggle from "../../../../../customHooks/useRoomStateToggle";
 
 const RoomsList = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const filters = useSelector(selectRoomsFilters);
     const pageData = useSelector(selectRoomsPageData);
-
+    const { toggleRoomStatus, loadingId } = useRoomStateToggle();
     const fetchRoomList = async () => {
+
         try {
             const res = await roomService.getAllRooms()
 
@@ -96,7 +98,7 @@ const RoomsList = () => {
                 </div>
             </div>
 
-            <Table columns={roomColumns(navigate)} data={pageData.items} />
+            <Table columns={roomColumns(navigate ,toggleRoomStatus,loadingId)} data={pageData.items} />
 
             <Pagination
                 currPage={pageData.page}

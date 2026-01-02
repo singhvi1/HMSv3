@@ -40,6 +40,30 @@ export const getFloorLabel = (n) => {
 
   return `${floor}th Floor`;
 };
+
+//later update it 
+export const initialForm = {
+  full_name: "",
+  email: "",
+  phone: "",
+  password: "",
+  sid: "",
+  branch: "",
+  permanent_address: "",
+  guardian_name: "",
+  guardian_contact: "",
+  block: "",
+  room_number: "",
+  capacity: "1",
+  yearly_rent: 7500,
+};
+
+export const parseDDMMYYYY = (dateStr) => {
+  if (!dateStr) return NaN;
+  const [dd, mm, yyyy] = dateStr.split("-");
+  return new Date(`${yyyy}-${mm}-${dd}`).getTime();
+};
+
 export const studentColumns = [
   { key: "sid", label: "SID" },
   { key: "full_name", label: "Name" },
@@ -298,8 +322,8 @@ export const leaves = Array.from({ length: 85 }, (_, i) => {
     branch: s.branch,
     block: s.block,
     room_number: s.room_number,
-    from_date: from.format("YYYY-MM-DD"),
-    to_date: to.format("YYYY-MM-DD"),
+    from_date: from.format("DD-MM-YYYY"),
+    to_date: to.format("DD-MM-YYYY"),
     destination: destinations[i % destinations.length],
     reason: reasons[i % reasons.length],
     status: i % 6 === 0 ? "approved" : i % 9 === 0 ? "rejected" : "pending",

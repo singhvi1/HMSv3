@@ -1,5 +1,6 @@
 import { Eye, Pencil, Power, PowerOff, Trash2, UserPlus, Check, X } from "lucide-react";
 
+
 export const studentColumns = (navigate) => [
     { key: "sid", label: "SID" },
     {
@@ -43,13 +44,13 @@ export const studentColumns = (navigate) => [
                     size={16}
                     className="cursor-pointer text-blue-600"
                     onClick={() => {
-                        navigate(`/admin/students/${row._id}`)
+                        navigate(`/admin/students/${row.user_id?._id}`)
                     }}
                 />
                 <Pencil
                     size={16}
                     className="cursor-pointer text-green-600"
-                    onClick={() => navigate(`/admin/students/${row._id}/edit`)}
+                    onClick={() => navigate(`/admin/students/${row.user_id._id}/edit`)}
                 />
                 <Trash2
                     size={16}
@@ -61,19 +62,16 @@ export const studentColumns = (navigate) => [
     }
 ];
 
-export const roomColumns = (navigate) => [
+export const roomColumns = (navigate, toggleRoomStatus, loadingId) => [
     {
         key: "block", label: "Block", render: (row) => (
-            <span
-                className=" cursor-pointer hover:underline hover:text-blue-500"
-            >
-                {row.block.toUpperCase()}
-            </span>
+            <span>{row.block.toUpperCase()}</span>
         )
     },
 
     {
-        key: "room_number", label: "Room No", render: (row) => (
+        key: "room_number", label: "Room No",
+        render: (row) => (
             <span
                 className=" cursor-pointer hover:underline hover:text-blue-500"
                 onClick={() => {
@@ -88,7 +86,7 @@ export const roomColumns = (navigate) => [
     {
         key: "occupancy",
         label: "Occupied-Capacity",
-        render: (row) => `${row.occupancy ? row?.occupancy + " in" : ""} ${row.capacity}`
+        render: (row) => `${row.occupancy ? row?.occupancy + " in" : "0 in "}${row.capacity}`
     },
 
     {
@@ -104,7 +102,7 @@ export const roomColumns = (navigate) => [
 
             return (
                 <div className="flex items-center gap-2">
-                    {/* View Room */}
+
                     <button
                         title="View Room"
                         className="p-2 rounded hover:bg-gray-100"
@@ -113,7 +111,7 @@ export const roomColumns = (navigate) => [
                         <Eye size={18} className="text-gray-700" />
                     </button>
 
-                    {/* Add Student */}
+
                     {!isFull && room.is_active && (
                         <button
                             title="Add Student"
@@ -126,14 +124,15 @@ export const roomColumns = (navigate) => [
                         </button>
                     )}
 
-                    {/* Activate / Deactivate */}
+
                     <button
+                        disabled={loadingId === room._id}
                         title={room.is_active ? "Deactivate Room" : "Activate Room"}
                         className={`p-2 rounded ${room.is_active
                             ? "hover:bg-yellow-100"
                             : "hover:bg-blue-100"
                             }`}
-                    // onClick={() => dispatch(toggleRoomStatus(room._id))}
+                        onClick={() => toggleRoomStatus(room._id, room.is_active)}
                     >
                         {room.is_active ? (
                             <PowerOff size={18} className="text-yellow-600" />
@@ -148,7 +147,7 @@ export const roomColumns = (navigate) => [
 
     {
         key: "status",
-        label: "Status",
+        label: "Avalibility",
         render: (row) => {
             if (!row.is_active) {
                 return (
@@ -171,7 +170,8 @@ export const roomColumns = (navigate) => [
                 </span>
             );
         }
-    }
+    },
+
 ];
 
 
@@ -187,7 +187,7 @@ export const issueColumns = (navigate) => [
         render: (row) => (
             <span
                 className="cursor-pointer hover:underline hover:text-blue-500"
-                onClick={() => navigate(`/admin/issues/${row._id}`)}
+                onClick={() => navigate(`/admin/students/${row?.raised_by?.user_id?._id}`)}
             >
                 {row?.raised_by?.user_id?.full_name}
             </span>
@@ -198,7 +198,7 @@ export const issueColumns = (navigate) => [
     {
         key: "room", label: "Room",
         render: (row) => (
-            <span>{((row?.raised_by?.room_id?.block)||"").toUpperCase()} - {row?.raised_by?.room_id?.room_number}</span>
+            <span>{((row?.raised_by?.room_id?.block) || "").toUpperCase()} - {row?.raised_by?.room_id?.room_number}</span>
         )
     },
 

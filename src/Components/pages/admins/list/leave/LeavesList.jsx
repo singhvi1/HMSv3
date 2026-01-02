@@ -41,18 +41,18 @@ const LeavesList = () => {
                 <input
                     type="date"
                     className="input"
-                    value={filters.fromDate}
+                    value={filters.from_date}
                     onChange={(e) =>
-                        dispatch(setLeaveFilters({ fromDate: e.target.value }))
+                        dispatch(setLeaveFilters({ from_date: e.target.value }))
                     }
                 />
 
                 <input
                     type="date"
                     className="input"
-                    value={filters.toDate}
+                    value={filters.to_date}
                     onChange={(e) =>
-                        dispatch(setLeaveFilters({ toDate: e.target.value }))
+                        dispatch(setLeaveFilters({ to_date: e.target.value }))
                     }
                 />
 

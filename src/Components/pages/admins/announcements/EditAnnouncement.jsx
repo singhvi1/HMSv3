@@ -37,7 +37,7 @@ const EditAnnouncement = () => {
     }, [id]);
 
     const handleUpdate = async (data) => {
-        console.log("Updating announcement:", id, data);
+        // console.log("Updating announcement:", id, data);
         const payload = new FormData();
         Object.entries(data).forEach(([k, v]) => v && payload.append(k, v));
         const res = await announcementService.updateAnnouncement(payload, id);

@@ -56,8 +56,9 @@ import { Pencil, Trash2, UserX, AlertTriangle, Settings, UserPlus, Power, PowerO
 //     ];
 // };
 
-export const getRoomActions = ({ room }) => {
+export const getRoomActions = ({ room ,toggleRoomStatus }) => {
     const isFull = room?.occupancy >= room?.capacity;
+
     // console.log(isFull)
     return [
         {
@@ -88,7 +89,7 @@ export const getRoomActions = ({ room }) => {
             color: room?.is_active
                 ? "bg-yellow-50"
                 : "bg-indigo-50",
-            to: `/admin/rooms/${room?._id}/status`
+            onClick: () => (toggleRoomStatus(room._id, room.is_active))
         }
     ];
 };

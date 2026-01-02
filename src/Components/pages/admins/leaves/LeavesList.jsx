@@ -16,7 +16,7 @@ const LeavesList = () => {
 
   return (
     <div className="bg-white rounded-xl shadow p-6">
-      <h2 className="text-xl font-bold mb-4">Leave Requests</h2>
+      <h2 className="text-xl font-bold mb-4">Le</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
         <input

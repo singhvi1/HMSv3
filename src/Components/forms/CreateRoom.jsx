@@ -15,25 +15,11 @@ const CreateRoom = ({ roomId }) => {
         block: "",
         room_number: "",
         capacity: "1",
-        floor: "",
         yearly_rent: 75500,
 
     });
     const navigate = useNavigate()
     const [error, setError] = useState("");
-    useEffect(() => {
-        if (form.room_number) {
-            setForm(prev => ({
-                ...prev,
-                floor: Math.floor(Number(form.room_number) / 100)
-            }))
-        } else {
-            setForm((prev) => ({
-                ...prev,
-                floor: "",
-            }))
-        }
-    }, [form.room_number])
 
     useEffect(() => {
         if (!isEdit) return;
@@ -72,11 +58,10 @@ const CreateRoom = ({ roomId }) => {
                 room_number: Number(form.room_number),
                 block: form.block,
                 capacity: Number(form.capacity),
-                floor: form.floor,
                 yearly_rent: Number(form.yearly_rent),
             }
             const res = await roomService.createRoom(payload)
-            console.log(res.data.data);
+            // console.log(res.data.data);
             const room = res.data.data
             toast.success("Room created Successfully")
             navigate(`/admin/rooms/${room._id}`)
@@ -118,14 +103,6 @@ const CreateRoom = ({ roomId }) => {
                             type="number"
                             onChange={handleChange}
                             value={form.room_number}
-                            className="input"
-                        />
-                        <input
-                            name="floor"
-                            placeholder="Floor"
-                            type="number"
-                            onChange={handleChange}
-                            value={form.floor}
                             className="input"
                         />
                         <input

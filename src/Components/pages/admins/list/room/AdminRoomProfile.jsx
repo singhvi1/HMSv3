@@ -9,6 +9,7 @@ import QuickActionsGrid from "../../../../common/QuickActionGrid"
 import { roomService } from '../../../../../services/apiService';
 import { useEffect } from 'react';
 import Button from '../../../../common/ui/Button';
+import useRoomStateToggle from '../../../../../customHooks/useRoomStateToggle';
 
 
 
@@ -17,7 +18,7 @@ const AdminRoomProfile = () => {
     const navigate = useNavigate()
     const { id } = useParams();
     const dispatch = useDispatch()
-
+    const {toggleRoomStatus} = useRoomStateToggle()
     const room = useSelector(selectRoomById(id));
     // console.log(room)
 
@@ -49,13 +50,13 @@ const AdminRoomProfile = () => {
 
 
     const roomStudents = room?.occupants ?? [];
-
+    // console.log("roomStudents occupants", roomStudents)
     return (
         <div className="space-y-6">
             <RoomProfileHeader room={room} />
             <QuickActionsGrid
                 title="Room Actions"
-                actions={getRoomActions({ room })}
+                actions={getRoomActions({ room, toggleRoomStatus })}
             />
 
 

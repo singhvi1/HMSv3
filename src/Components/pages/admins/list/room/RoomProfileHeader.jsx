@@ -12,8 +12,8 @@ const RoomProfileHeader = ({ room }) => {
     const isFull = room.occupancy >= room.capacity;
 
     const students = room?.occupants ?? [];
-    console.log(students, "this is studens list")
-    console.log("this is room data given to RoomProfileHeader", room)
+    // console.log(students, "this is studens list")
+    // console.log("this is room data given to RoomProfileHeader", room)
 
     const activeStudents = students.filter((s) => s.user_id.status === "active");
     const inactiveStudents = students.filter((s) => s.user_id.status === "inactive");

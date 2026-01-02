@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useDispatch, useSelector } from 'react-redux';
 import { selectIssuesFilters, selectIssuesItems, selectIssuesPagination, setIssues, setIssuesFilters, setIssuesPage, setIssuesPageSize } from '../../../../../utils/store/issuesSlice';
 import Pagination from '../../../../common/table/Pagination';
@@ -27,7 +28,7 @@ const IssuesList = () => {
                 room_number: filters.room_number,
                 limit: pagination.pageSize,
                 page: pagination.page,
-                student_search: filters.student_search,  
+                student_search: filters.student_search,
             });
 
             dispatch(setIssues(res.data));
@@ -41,11 +42,11 @@ const IssuesList = () => {
         fetchData();
     }, [filters.status, filters.student_search, filters.category, filters.search, filters.sid, filters.block, filters.room_number, pagination.page, pagination.pageSize]);
 
-    console.log("ISSUE FILTERS →", {
-        ...filters,
-        page: pagination.page,
-        limit: pagination.pageSize
-    });
+    // console.log("ISSUE FILTERS →", {
+    //     ...filters,
+    //     page: pagination.page,
+    //     limit: pagination.pageSize
+    // });
 
 
 

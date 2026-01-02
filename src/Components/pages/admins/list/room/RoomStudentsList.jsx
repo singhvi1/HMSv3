@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 
 const RoomStudentsList = ({ students = [] }) => {
   const navigate = useNavigate();
-  console.log(students, "this is student list passed here")
+  // console.log(students, "this is student list passed here")
   const activeStudents = students.filter(s => s.user_id.status === "active");
-  const inactiveStudents = students.filter(s => s.user_id.status == "Inactive");
+  const inactiveStudents = students.filter(s => s.user_id.status == "inactive");
+  // console.log(activeStudents, "this is totall inactive student")
   return (
     <div className="bg-white rounded-xl shadow p-5 space-y-6">
       {/* Active Students */}
+
       <div>
         <h2 className="text-lg font-semibold mb-3">
           Active Students ({activeStudents.length})
@@ -54,7 +56,7 @@ const StudentRow = ({ student, inactive, navigate }) => (
     `}
   >
     <div className="flex justify-around items-center gap-5">
-      <p className="font-medium cursor-pointer hover:underline" onClick={() => navigate(`/admin/students/${student._id}`)}>Name: {student.user_id.full_name}</p>
+      <p className="font-medium cursor-pointer hover:underline" onClick={() => navigate(`/admin/students/${student.user_id._id}`)}>Name: {student.user_id.full_name}</p>
       <p className="text-sm">SID: {student.sid}</p>
       <p className="text-sm">MobileNo: {student.user_id.phone}</p>
       <p className="text-sm">Address: {student.permanent_address}</p>
