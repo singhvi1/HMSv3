@@ -1,16 +1,15 @@
 import { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import BackButton from '../common/ui/Backbutton';
 import { roomService } from '../../services/apiService';
 import toast from 'react-hot-toast';
-import { useSelector } from 'react-redux';
-import { selectRoomById } from '../../utils/store/roomsSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectRoomById, setRoom } from '../../utils/store/roomsSlice';
 
 const CreateRoom = ({ roomId }) => {
     const isEdit = Boolean(roomId);
     const roomFromStore = useSelector(selectRoomById(roomId))
-    console.log("createRoomMounted")
-    const [loading, setLoading] = useState(false);
+
     const [form, setForm] = useState({
         block: "",
         room_number: "",
@@ -19,22 +18,27 @@ const CreateRoom = ({ roomId }) => {
 
     });
     const navigate = useNavigate()
+    const dispatch = useDispatch()
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+
+
 
     useEffect(() => {
         if (!isEdit) return;
         if (roomFromStore) {
             setForm({
-                block: roomFromStore.block || "",
-                room_number: roomFromStore.room_number || "",
-                capacity: roomFromStore.capacity || "",
+                block: roomFromStore?.block || "",
+                room_number: roomFromStore?.room_number || "",
+                capacity: roomFromStore?.capacity || "",
+                yearly_rent: roomFromStore?.yearly_rent || "",
             });
             return;
         }
         const fetchStudent = async () => {
             try {
-                const res = await roomService.getStudentById(roomId);
-                // console.log(res, "successfully called insdier")
+                const res = await roomService.getRoomById(roomId);
+                console.log(res, "successfully called insdier")
                 const room = res.data.data;
                 setForm({
                     block: room.block || "",
@@ -46,9 +50,13 @@ const CreateRoom = ({ roomId }) => {
                 console.log("Failed to load student", error);
             }
         }
-        fetchStudent()
+        if (!roomFromStore) {
+            fetchStudent()
+        }
 
     }, [isEdit, roomId, roomFromStore])
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
@@ -60,16 +68,24 @@ const CreateRoom = ({ roomId }) => {
                 capacity: Number(form.capacity),
                 yearly_rent: Number(form.yearly_rent),
             }
-            const res = await roomService.createRoom(payload)
-            // console.log(res.data.data);
+            let res;
+            if (isEdit) {
+                res = await roomService.updateRoom(roomId, payload);
+                toast.success("Room Updated SuccessFully")
+            } else {
+                res = await roomService.createRoom(payload);
+                toast.success("Room Created SccessfullY")
+            }
+
             const room = res.data.data
+            dispatch(setRoom(res.data.data));
             toast.success("Room created Successfully")
             navigate(`/admin/rooms/${room._id}`)
         } catch (error) {
             console.log("Dont able to crate/Update Room", error)
         } finally { setLoading(false) }
-        // console.log("handle submit", form)
     }
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setForm(prev => ({ ...prev, [name]: value }))
@@ -87,9 +103,9 @@ const CreateRoom = ({ roomId }) => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <select name="block" onChange={handleChange} value={form.block} className="input">
                             <option value="">Select Block</option>
-                            <option value="A">Block A</option>
-                            <option value="B">Block B</option>
-                            <option value="C">Block C</option>
+                            <option value="a">Block A</option>
+                            <option value="b">Block B</option>
+                            <option value="c">Block C</option>
                         </select>
                         <select name="capacity" onChange={handleChange} value={form.capacity} className="input">
                             <option value="1">Single</option>
@@ -102,7 +118,7 @@ const CreateRoom = ({ roomId }) => {
                             placeholder="Room Number"
                             type="number"
                             onChange={handleChange}
-                            value={form.room_number}
+                            value={form?.room_number || ""}
                             className="input"
                         />
                         <input
@@ -110,7 +126,7 @@ const CreateRoom = ({ roomId }) => {
                             placeholder="Yearly Rent"
                             type="number"
                             onChange={handleChange}
-                            value={form.yearly_rent}
+                            value={form?.yearly_rent || ""}
                             className="input"
                         />
                     </div>

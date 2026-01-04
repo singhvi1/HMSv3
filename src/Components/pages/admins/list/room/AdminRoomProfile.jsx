@@ -18,7 +18,7 @@ const AdminRoomProfile = () => {
     const navigate = useNavigate()
     const { id } = useParams();
     const dispatch = useDispatch()
-    const {toggleRoomStatus} = useRoomStateToggle()
+    const { toggleRoomStatus } = useRoomStateToggle()
     const room = useSelector(selectRoomById(id));
     // console.log(room)
 
@@ -26,7 +26,6 @@ const AdminRoomProfile = () => {
         try {
             const res = await roomService.getRoomById(id)
             dispatch(setRoom(res.data.data));
-            // console.log("data from api for room",res.data.data)
         } catch (error) {
             console.log("Not able to find room", error);
         }
@@ -50,7 +49,6 @@ const AdminRoomProfile = () => {
 
 
     const roomStudents = room?.occupants ?? [];
-    // console.log("roomStudents occupants", roomStudents)
     return (
         <div className="space-y-6">
             <RoomProfileHeader room={room} />
@@ -61,7 +59,6 @@ const AdminRoomProfile = () => {
 
 
             <RoomStudentsList students={roomStudents} />
-            {/* Future sections */}
             <div className="my-6 bg-white p-2">
                 <h1 className='text-3xl text-center'>Maintaince History</h1>
                 <h3>1.Mataince History</h3>

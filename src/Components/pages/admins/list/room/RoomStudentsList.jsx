@@ -1,11 +1,14 @@
 import { ExternalLink, Trash2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import useStudentDelete from "../../../../../customHooks/useStudentDelete";
+import Button from "../../../../common/ui/Button";
 
 const RoomStudentsList = ({ students = [] }) => {
+  const { deleteStudent } = useStudentDelete();
   const navigate = useNavigate();
   // console.log(students, "this is student list passed here")
-  const activeStudents = students.filter(s => s.user_id.status === "active");
-  const inactiveStudents = students.filter(s => s.user_id.status == "inactive");
+  const activeStudents = students.filter(s => s.user_id?.status === "active");
+  const inactiveStudents = students.filter(s => s.user_id?.status == "inactive");
   // console.log(activeStudents, "this is totall inactive student")
   return (
     <div className="bg-white rounded-xl shadow p-5 space-y-6">
@@ -21,7 +24,7 @@ const RoomStudentsList = ({ students = [] }) => {
         ) : (
           <ul className="space-y-2">
             {activeStudents.map(s => (
-              <StudentRow key={s._id} student={s} navigate={navigate} />
+              <StudentRow key={s._id} student={s} navigate={navigate} deleteStudent={deleteStudent} />
             ))}
           </ul>
         )}
@@ -38,7 +41,7 @@ const RoomStudentsList = ({ students = [] }) => {
         ) : (
           <ul className="space-y-2">
             {inactiveStudents.map(s => (
-              <StudentRow key={s._id} student={s} inactive navigate={navigate} />
+              <StudentRow key={s._id} student={s} inactive navigate={navigate} deleteStudent={deleteStudent} />
             ))}
           </ul>
         )}
@@ -47,7 +50,7 @@ const RoomStudentsList = ({ students = [] }) => {
   );
 };
 
-const StudentRow = ({ student, inactive, navigate }) => (
+const StudentRow = ({ student, inactive, navigate, deleteStudent }) => (
 
 
   <li
@@ -62,15 +65,19 @@ const StudentRow = ({ student, inactive, navigate }) => (
       <p className="text-sm">Address: {student.permanent_address}</p>
       <p className="text-sm">Branch: {student.branch}</p>
       <ExternalLink size={20} className="cursor-pointer"
-        onClick={() => navigate(`/admin/students/${student.user_id.id}`)} />
+        onClick={() => navigate(`/admin/students/${student.user_id._id}`)} />
     </div>
-    <div className="flex"><span
-      className={`text-xs px-2 py-1 rounded-full
+    <div className="flex">
+      <span
+        className={`text-xs px-2 py-1 rounded-full
         ${inactive ? "bg-gray-300" : "bg-green-600 text-white"}
       `}
-    >
-      {student.user_id.status}
-    </span><Trash2 className="mx-3 w-5 h-5 text-red-600 cursor-pointer" />
+      >
+        {student.user_id.status}
+      </span>
+      <Button variant="text" onClick={() => deleteStudent({ userId: student.user_id._id })}>
+        <Trash2 className="mx-3 w-5 h-5 text-red-600 cursor-pointer" />
+      </Button>
     </div>
   </li>
 );

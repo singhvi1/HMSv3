@@ -44,10 +44,9 @@ export const studentActions = [
 export const adminActions = [
   {
     title: "Hostel",
-    description: "Create or edit hostels",
     icon: Building2,
+    description: "Create or edit hostels",
     color: "bg-yellow-50",
-    // to: "*"
     to: "/admin/hostel"
   },
   {

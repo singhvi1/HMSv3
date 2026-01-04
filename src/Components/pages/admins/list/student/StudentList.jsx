@@ -1,43 +1,48 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import Table from '../../../../common/table/Table'
 import SearchBar from '../../../../common/table/SearchBar'
 import Pagination from '../../../../common/table/Pagination'
 import { studentColumns } from '../../../../../../MockData'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectStudentPageData, selectStudentsFilters, selectStudentsItems, selectStudentsPagination, setStudents, setStudentsFilters, setStudentsPage, setStudentsPageSize } from '../../../../../utils/store/studentSlice'
+import { selectStudentPageData, selectStudentsFilters, setStudents, setStudentsFilters, setStudentsPage, setStudentsPageSize } from '../../../../../utils/store/studentSlice'
 import Button from '../../../../common/ui/Button'
 import { useNavigate } from 'react-router-dom'
 import BackButton from '../../../../common/ui/Backbutton'
 import { studentService } from '../../../../../services/apiService'
-import { useEffect } from 'react'
+import { useCallback, useEffect } from 'react'
+import { useDebounce } from '../../../../../customHooks/useDebounce'
+import useStudentDelete from '../../../../../customHooks/useStudentDelete'
 
 const StudentList = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch();
     const filters = useSelector(selectStudentsFilters);
-    const pageData = useSelector(selectStudentsPagination);
-    const students = useSelector(selectStudentsItems);
+    const { items, page, pageSize, totalPages } = useSelector(selectStudentPageData);
+    // const listFetched = useSelector(state => state.students.listFetched);// for stopping refresh 
+    const { deleteStudent } = useStudentDelete()
 
 
-    const fetchData = async () => {
+    const debouncedSearch = useDebounce(filters.search, 900);
+    const fetchData = useCallback(async () => {
         try {
             const res = await studentService.getAllStudents({
-                page: pageData.page,
-                limit: pageData.pageSize,
+                page: page,
+                limit: pageSize,
                 block: filters.block,
                 branch: filters.branch,
-                search: filters.search,
+                search: debouncedSearch,
                 status: filters.status,
-            })
+            });
             dispatch(setStudents(res.data))
-
         } catch (error) {
             console.log("dont able to find student", error)
         }
-    }
+    }, [filters.block, filters.branch, debouncedSearch, pageSize, page, filters.status, dispatch]);
 
-    useEffect(() => { fetchData() },
-        [filters.search, filters.block, filters.branch, filters.status, pageData.page, pageData.pageSize, pageData.totalPages, pageData.totalItems])
+
+    useEffect(() => {
+        fetchData();
+    }, [fetchData]);
+
 
     return (
         <>
@@ -58,7 +63,7 @@ const StudentList = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
                     <SearchBar search={filters.search} onChange={(v) => dispatch(setStudentsFilters({ search: v }))} placeholder={"Search name, sid, RoomNo"} />
-                    
+
                     <select
                         className="input"
                         value={filters.block}
@@ -95,7 +100,7 @@ const StudentList = () => {
                         <option value="">All Status</option>
                     </select><select
                         className="input"
-                        value={pageData.pageSize}
+                        value={pageSize}
                         onChange={(e) =>
                             dispatch(setStudentsPageSize(Number(e.target.value)))
                         }
@@ -105,13 +110,15 @@ const StudentList = () => {
                         <option value={50}>50 / page</option>
                     </select>
                 </div>
-                <Table columns={studentColumns(navigate)}
-                    data={students} />
+                <Table columns={studentColumns(navigate,deleteStudent)}
+                    data={items} />
 
                 <Pagination
-                    currPage={pageData.page}
-                    totalPages={pageData.totalPages}
-                    onPageChange={(p) => dispatch(setStudentsPage(p))} />
+                    currPage={page}
+                    totalPages={totalPages}
+                    onPageChange={(p) => dispatch(setStudentsPage(p))}
+
+                />
             </div>
         </>
     )

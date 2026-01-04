@@ -21,11 +21,12 @@ const StatusBadge = ({ status }) => {
     );
 };
 export const ProfileHeader = ({ student, InfoItem }) => (
-    
+
     <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden" data-testid="card-profile-header">
         <div className="p-8 md:flex items-start gap-10">
             <div className="relative group shrink-0 mb-6 md:mb-0">
-                <ProfileAvatar image_url={student?.image_url} size={220} />
+                <ProfileAvatar image_url={student?.image_url}
+                    size={220} />
 
             </div>
 
@@ -39,13 +40,13 @@ export const ProfileHeader = ({ student, InfoItem }) => (
 
 
                 <div className="grid grid-cols-2 gap-4 text-slate-100">
-                    <InfoItem label="Phone" value={student?.user_id?.phone} />
                     <InfoItem label="Branch" value={student?.branch} />
-                    <InfoItem label="Room" value={student?.room_number} />
+                    <InfoItem label="Personal Contact" value={student?.user_id?.phone} />
+                    <InfoItem label="Room" value={student?.room_id ? `${student.room_id?.block.toUpperCase()}-${student.room_id?.room_number}` : "-"} />
                     <InfoItem label="Guardian" value={student?.guardian_name} />
                     <InfoItem label="Guardian Contact" value={student?.guardian_contact} />
                     <InfoItem label="Address" value={student?.permanent_address} />
-                    
+
                 </div>
             </div>
         </div>

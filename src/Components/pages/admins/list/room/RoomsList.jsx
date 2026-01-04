@@ -7,7 +7,7 @@ import { roomColumns } from "../../../../../../MockData";
 import Button from "../../../../common/ui/Button";
 import BackButton from "../../../../common/ui/Backbutton";
 import { roomService } from "../../../../../services/apiService";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import SearchBar from "../../../../common/table/SearchBar";
 import useRoomStateToggle from "../../../../../customHooks/useRoomStateToggle";
 
@@ -17,7 +17,8 @@ const RoomsList = () => {
     const filters = useSelector(selectRoomsFilters);
     const pageData = useSelector(selectRoomsPageData);
     const { toggleRoomStatus, loadingId } = useRoomStateToggle();
-    const fetchRoomList = async () => {
+
+    const fetchRoomList = useCallback(async () => {
 
         try {
             const res = await roomService.getAllRooms()
@@ -29,11 +30,11 @@ const RoomsList = () => {
         } catch (error) {
             console.log("Not able to fetch roomList form db", error)
         }
-    }
+    }, [dispatch])
 
     useEffect(() => {
         fetchRoomList();
-    }, [])
+    }, [fetchRoomList])
     return (
         <div className="bg-white rounded-xl shadow p-6">
             <BackButton />
@@ -98,7 +99,7 @@ const RoomsList = () => {
                 </div>
             </div>
 
-            <Table columns={roomColumns(navigate ,toggleRoomStatus,loadingId)} data={pageData.items} />
+            <Table columns={roomColumns(navigate, toggleRoomStatus, loadingId)} data={pageData.items} />
 
             <Pagination
                 currPage={pageData.page}

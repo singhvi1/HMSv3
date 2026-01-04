@@ -7,7 +7,7 @@ export const announcementService = {
 
   getAnnouncementById: (id) => api.get(`/home/announcements/${id}`),
 
-  updateAnnouncement: (data, id) => api.patch(`/home/announcements/${id}`, data),
+  updateAnnouncement: (data, user_id) => api.patch(`/home/announcements/${user_id}`, data),
 
   deleteAnnouncement: (id) => api.delete(`/home/announcements/${id}`),
 };
@@ -21,7 +21,8 @@ export const studentService = {
 
   getStudentById: (id) => api.get(`/students/profile/${id}`),
 
-  updateStudent: (userId, data) => api.patch(`/students/${userId}`, data),
+  updateStudent: (user_id, data) => api.patch(`/students/edit/${user_id}`, data),
+  toogleStudentStatus: (user_id) => api.patch(`/students/status/${user_id}`,),
   deleteStudent: (userId) => api.delete(`/students/${userId}`),
 };
 
@@ -33,7 +34,10 @@ export const roomService = {
 
   toggleRoomStatus: (id) => api.patch(`/admin/rooms/${id}/toggle`),
 
-  getRoomById: (id) => api.get(`/admin/rooms/${id}`)
+  getRoomById: (id) => api.get(`/admin/rooms/${id}`),
+
+  updateRoom: (room_id, data) => api.patch(`/admin/rooms/${room_id}`, data),
+
 
 };
 

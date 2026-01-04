@@ -28,9 +28,9 @@ const roomsSlice = createSlice({
       const index = state.items.findIndex(r => r._id === room._id);
 
       if (index !== -1) {
-        state.items[index] = room;    
+        state.items[index] = room;
       } else {
-        state.items.push(room);        
+        state.items.push(room);
         state.pagination.totalItems += 1;
       }
     },

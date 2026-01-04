@@ -3,7 +3,7 @@ import { createSelector, createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   items: [],
-
+  listFetched: false,
   filters: {
     search: "",
     branch: "",
@@ -25,8 +25,9 @@ const studentsSlice = createSlice({
   reducers: {
     setStudents: (state, action) => {
       state.items = action.payload.students;
-      state.pagination.totalPages = action.payload.pagination.pages
-      state.pagination.totalItems = action.payload.pagination.total
+      state.pagination.totalPages = action.payload.pagination.pages;
+      state.pagination.totalItems = action.payload.pagination.total;
+      state.listFetched = true
     },
     setStudent: (state, action) => {
       const student = action.payload;
@@ -38,27 +39,45 @@ const studentsSlice = createSlice({
         state.pagination.totalItems += 1;
       }
     },
+    setStudentStatus: (state, action) => {
+      const { user_id, status } = action.payload;
+      const student = state.items.find(s => s.user_id?._id == user_id)
+      if (student) {
+        student.user_id.status = status
+      }
+    },
+    removeStudent: (state, action) => {
+      const user_id = action.payload;
+      state.items = state?.items?.filter(s => s.user_id._id.toString() !== user_id);
+      state.totalItems = state.totalItems - 1;
+    },
     setStudentsFilters: (state, action) => {
       state.filters = { ...state.filters, ...action.payload };
       state.pagination.page = 1;
+      state.listFetched = false
     },
     setStudentsPage: (state, action) => {
       state.pagination.page = action.payload;
+      state.listFetched = false;
     },
     setStudentsPageSize: (state, action) => {
       state.pagination.pageSize = action.payload;
       state.pagination.page = 1;
+      state.listFetched = false
     },
     resetStudentsFilters: (state) => {
       state.filters = initialState.filters;
       state.pagination = initialState.pagination;
-    }
+    },
+    resetStudents: () => initialState
   }
 });
 
 export const {
   setStudents,
   setStudent,
+  setStudentStatus,
+  removeStudent,
   setStudentsFilters,
   setStudentsPage,
   setStudentsPageSize,
@@ -70,7 +89,7 @@ export const {
 
 
 const selectStudentsState = (state) => state.students;
-export const selectStudentById = (id) => (state) => state.students.items.find((s) => s.user_id._id === id);
+export const selectStudentByUserId = (id) => (state) => state.students.items.find((s) => s.user_id._id === id);
 
 export const selectStudentsItems = (state) => selectStudentsState(state).items
 export const selectStudentsFilters = (state) => selectStudentsState(state).filters

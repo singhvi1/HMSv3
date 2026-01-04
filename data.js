@@ -58,6 +58,26 @@ export const initialForm = {
   yearly_rent: 7500,
 };
 
+ export const mapFormToCreateStudentPayload = (form = {}) => ({
+  full_name: (form.full_name ?? "").trim(),
+  email: (form.email ?? "").trim().toLowerCase(),
+  phone: (form.phone ?? "").toString().trim(),
+  password: form.password ?? "",
+  role: "student",
+
+  sid: (form.sid ?? "").trim(),
+  branch: (form.branch ?? "").trim(),
+  permanent_address: (form.permanent_address ?? "").trim(),
+  guardian_name: (form.guardian_name ?? "").trim(),
+  guardian_contact: (form.guardian_contact ?? "").toString().trim(),
+
+  block: (form.block ?? "").toLowerCase(),
+  room_number: Number(form.room_number ?? 0),
+  capacity: Number(form.capacity ?? 1),
+  yearly_rent: Number(form.yearly_rent ?? 0),
+});
+
+
 export const parseDDMMYYYY = (dateStr) => {
   if (!dateStr) return NaN;
   const [dd, mm, yyyy] = dateStr.split("-");

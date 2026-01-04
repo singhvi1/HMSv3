@@ -1,48 +1,57 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { BackButton } from "../index"
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { BackButton, Button } from "../index"
 import { roomService, studentService } from "../../services/apiService";
 import toast from "react-hot-toast";
-import { useSelector } from "react-redux";
-import { selectStudentById } from "../../utils/store/studentSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectStudentByUserId, setStudent } from "../../utils/store/studentSlice";
 import { selectRoomById } from "../../utils/store/roomsSlice";
+import { mapFormToCreateStudentPayload } from "../../../data";
+import { initialForm } from "../../../data";
+
+const mapRoomToForm = (room) => ({
+    block: room?.block || "",
+    room_number: room?.room_number || "",
+    capacity: room?.capacity || "1",
+});
+
+const mapStudentToForm = (student) => ({
+    full_name: student?.user_id?.full_name || "",
+    email: student?.user_id?.email || "",
+    phone: student?.user_id?.phone || "",
+    sid: student?.sid || "",
+    branch: student?.branch || "",
+    permanent_address: student?.permanent_address || "",
+    guardian_name: student?.guardian_name || "",
+    guardian_contact: student?.guardian_contact || "",
+    block: student?.room_id?.block || "",
+    room_number: student?.room_id?.room_number || "",
+    capacity: student?.room_id?.capacity || "1",
+});
 
 const CreateStudent = ({ studentId }) => {
     const isEdit = Boolean(studentId);
-    const navigate = useNavigate()
-    const [form, setForm] = useState({
-        full_name: "",
-        email: "",
-        phone: "",
-        password: "",
-
-        sid: "",
-        branch: "",
-        permanent_address: "",
-        guardian_name: "",
-        guardian_contact: "",
-
-        block: "",
-        room_number: "",
-        capacity: "1",
-        yearly_rent: 7500,
-    });
+    const navigate = useNavigate();
+    const dispatch = useDispatch()
+    const [form, setForm] = useState(initialForm);
     const [searchParams] = useSearchParams()
     const roomId = searchParams.get("roomId")
+    console.log(roomId)
     const roomByStore = useSelector(selectRoomById(roomId))
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState("");
+    const studentFromStore = useSelector(selectStudentByUserId(studentId))
 
-
+    //fetching room by id in room if admin want to add student 
     useEffect(() => {
-        if (isEdit) return;
+        if (isEdit || !roomId) return;
         const fetchRoomById = async (id) => {
             try {
                 const res = await roomService.getRoomById(id)
                 const room = res.data.room
+                console.log("room fetching by id create Student ")
                 setForm(prev => ({
-                    ...prev,
-                    block: room.block,
-                    room_number: room.room_number,
-                    capacity: room.capacity,
+                    ...prev, ...mapRoomToForm(room)
                 }));
             } catch (err) {
                 console.log(err, "fetching error roomId")
@@ -50,10 +59,7 @@ const CreateStudent = ({ studentId }) => {
         }
         if (roomByStore) {
             setForm(prev => ({
-                ...prev,
-                block: roomByStore.block,
-                room_number: roomByStore.room_number,
-                capacity: roomByStore.capacity
+                ...prev, ...mapRoomToForm(roomByStore)
             }));
             return;
         }
@@ -62,46 +68,22 @@ const CreateStudent = ({ studentId }) => {
         }
     }, [isEdit, roomByStore, roomId]);
 
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState("");
-    const studentFromStore = useSelector(selectStudentById(studentId))
 
     useEffect(() => {
         if (!isEdit) return;
         if (studentFromStore) {
-            setForm({
-                full_name: studentFromStore?.user_id.full_name || "",
-                email: studentFromStore?.user_id.email || "",
-                phone: studentFromStore?.user_id.phone || "",
-                sid: studentFromStore?.sid || "",
-                branch: studentFromStore?.branch || "",
-                permanent_address: studentFromStore?.permanent_address || "",
-                guardian_name: studentFromStore?.guardian_name || "",
-                guardian_contact: studentFromStore?.guardian_contact || "",
-                block: studentFromStore?.room_id.block || "",
-                room_number: studentFromStore?.room_id.room_number || "",
-                capacity: studentFromStore?.room_id.capacity || "",
-            });
+            setForm(prev => ({
+                ...prev, ...mapStudentToForm(studentFromStore)
+            }));
             return;
         }
         const fetchStudent = async () => {
             try {
                 const res = await studentService.getStudentById(studentId);
                 const student = res.data.student;
-                setForm({
-                    full_name: student?.user_id.full_name || "",
-                    email: student?.user_id.email || "",
-                    phone: student?.user_id.phone || "",
-                    sid: student?.sid || "",
-                    branch: student?.branch || "",
-                    permanent_address: student?.permanent_address || "",
-                    guardian_name: student?.guardian_name || "",
-                    guardian_contact: student?.guardian_contact || "",
-                    block: student?.room_id.block || "",
-                    room_number: student?.room_id.room_number || "",
-                    capacity: student?.room_id.capacity || "",
-                })
-
+                setForm(prev => ({
+                    ...prev, ...mapStudentToForm(student)
+                }));
             } catch (error) {
                 console.log("Failed to load student", error);
             }
@@ -110,65 +92,41 @@ const CreateStudent = ({ studentId }) => {
 
     }, [isEdit, studentId, studentFromStore])
 
-
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm(prev => ({ ...prev, [name]: value }));
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!form.block || !form.room_number) {
+            toast.error("Room assignment is required");
+            setLoading(false);
+            return;
+        }
+
         setError("");
         setLoading(true);
 
         try {
             if (isEdit) {
                 const { password, ...updatedPayload } = form;
-                await studentService.updateStudent(studentId, updatedPayload);
+                console.log(updatedPayload)
+                const res = await studentService.updateStudent(studentId, updatedPayload);
+                console.log("updating student")
+                dispatch(setStudent(res.data.student))
                 toast.success("Student Updated Successfully")
+                navigate(`/admin/students/${res.data.student.user_id._id}`);
+
             }
             else {
                 const payload = {
-                    full_name: form.full_name,
-                    email: form.email,
-                    phone: form.phone,
-                    password: form.password,
-                    role: "student",
-
-                    sid: form.sid,
-                    branch: form.branch,
-                    permanent_address: form.permanent_address,
-                    guardian_name: form.guardian_name,
-                    guardian_contact: form.guardian_contact,
-                    block: form.block,
-                    room_number: Number(form.room_number),
-                    capacity: Number(form.capacity),
-                    yearly_rent: Number(form.yearly_rent)
-                };
+                    ...mapFormToCreateStudentPayload(form),
+                    ...(roomId && { roomId })
+                }
                 const res = await studentService.createUserStudent(payload)
-                // console.log(payload);
-                // console.log(res);
                 if (!res.data?.success) {
                     throw new Error(res.data?.message || "Student creation failed");
                 }
+                dispatch(setStudent(res.data.data.student));
                 alert("Student created successfully");
+                navigate(`/admin/students/${res.data.data.student.user_id._id}`);
             }
-            setForm({
-                full_name: "",
-                email: "",
-                phone: "",
-                password: "",
-                sid: "",
-                branch: "",
-                permanent_address: "",
-                guardian_name: "",
-                guardian_contact: "",
-                block: "",
-                room_number: "",
-                capacity: "",
-                yearly_rent: "",
-            });
-            navigate('/admin/students')
         } catch (err) {
             setError(err?.response?.data?.message || "Something went wrong");
             toast.error("Something went wrong")
@@ -176,10 +134,12 @@ const CreateStudent = ({ studentId }) => {
             setLoading(false);
         }
     };
-
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setForm(prev => ({ ...prev, [name]: value }));
+    };
     return (
         <div className="max-w-3xl mx-auto bg-white shadow rounded-lg p-6">
-            {/* Back button */}
             <BackButton />
             <h1 className="text-2xl font-bold mb-6">{isEdit ? "Edit Student" : "Create Student"}</h1>
 
@@ -187,7 +147,6 @@ const CreateStudent = ({ studentId }) => {
 
             <form onSubmit={handleSubmit} className={`space-y-6 ${loading ? "opacity-70 pointer-events-none" : ""}`}>
 
-                {/* ACCOUNT DETAILS */}
                 <section>
                     <h2 className="font-semibold text-lg mb-3">Account Details</h2>
 
@@ -204,7 +163,6 @@ const CreateStudent = ({ studentId }) => {
                     </div>
                 </section>
 
-                {/* STUDENT INFO */}
                 <section>
                     <h2 className="font-semibold text-lg mb-3">Student Information</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -229,15 +187,14 @@ const CreateStudent = ({ studentId }) => {
                     />
                 </section>
 
-                {/* ROOM ASSIGNMENT */}
                 <section>
                     <h2 className="font-semibold text-lg mb-3">Room Assignment</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <select name="block" onChange={handleChange} value={form.block} className="input">
+                        <select name="block" onChange={handleChange} value={form.block} className="input" required>
                             <option value="">Select Block</option>
-                            <option value="A">Block A</option>
-                            <option value="B">Block B</option>
-                            <option value="C">Block C</option>
+                            <option value="a">Block A</option>
+                            <option value="b">Block B</option>
+                            <option value="c">Block C</option>
                         </select>
                         <select name="capacity" onChange={handleChange} value={form.capacity} className="input">
                             <option value="1">Single</option>
@@ -251,6 +208,7 @@ const CreateStudent = ({ studentId }) => {
                             onChange={handleChange}
                             value={form.room_number}
                             className="input"
+                            required
                         />
                         <input
                             name="yearly_rent"
@@ -264,14 +222,11 @@ const CreateStudent = ({ studentId }) => {
                     </div>
                 </section>
 
-                <button
-                    disabled={loading}
-                    className="bg-indigo-600 text-white px-6 py-2 rounded hover:bg-indigo-700 disabled:opacity-60"
-                >
+                <Button type="submit" disabled={loading} variant='success' className="px-6 py-2 ">
                     {loading
                         ? isEdit ? "updating..." : " Creating..."
                         : isEdit ? "Update Student" : "Create Student"}
-                </button>
+                </Button>
             </form>
         </div>
     );

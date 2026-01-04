@@ -9,13 +9,13 @@ import { getFloorLabel } from "../../../../../../data";
 const RoomProfileHeader = ({ room }) => {
     if (!room) return null;
     const capacity = room?.capacity || "1"
-    const isFull = room.occupancy >= room.capacity;
 
-    const students = room?.occupants ?? [];
     // console.log(students, "this is studens list")
     // console.log("this is room data given to RoomProfileHeader", room)
+    const students = room?.occupants ?? [];
 
     const activeStudents = students.filter((s) => s.user_id.status === "active");
+    const isFull = activeStudents >= room.capacity;
     const inactiveStudents = students.filter((s) => s.user_id.status === "inactive");
     console.log("active", activeStudents)
     return (
@@ -136,7 +136,7 @@ const RoomProfileHeader = ({ room }) => {
                     color="bg-indigo-50 text-indigo-700"
                 />
             </div>
-            
+
         </div >
     );
 };

@@ -11,7 +11,6 @@ const useRoomStateToggle = () => {
 
     const toggleRoomStatus = async (roomId, isActive) => {
         const action = isActive ? "deactivate" : "activate";
-
         const confirmMsg = isActive
             ? "Deactivate this room?"
             : "Activate this room?";

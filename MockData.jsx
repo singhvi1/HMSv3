@@ -1,7 +1,7 @@
 import { Eye, Pencil, Power, PowerOff, Trash2, UserPlus, Check, X } from "lucide-react";
 
 
-export const studentColumns = (navigate) => [
+export const studentColumns = (navigate, deleteStudent) => [
     { key: "sid", label: "SID" },
     {
         key: "full_name", label: "Name",
@@ -24,16 +24,22 @@ export const studentColumns = (navigate) => [
         )
     },
     {
-        key: "status", label: "Status", render: (row) => (
-            <span
-                className=" cursor-pointer hover:underline hover:text-blue-500"
-                onClick={() => {
-                    navigate(`/admin/students/${row._id}`)
-                }}
-            >
-                {row?.user_id?.status}
-            </span>
-        )
+        key: "status",
+        label: "Status",
+        render: (row) => {
+            const status = row?.user_id?.status;
+
+            return (
+                <span
+                    className={`px-2 py-1 text-sm rounded-full font-medium ${status === "active"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                        }`}
+                >
+                    {status === "active" ? "Active" : "Inactive"}
+                </span>
+            );
+        }
     },
     {
         key: "actions",
@@ -55,7 +61,7 @@ export const studentColumns = (navigate) => [
                 <Trash2
                     size={16}
                     className="cursor-pointer text-red-600"
-                    onClick={() => console.log("Delete", row._id)}
+                    onClick={() => deleteStudent({ userId: row.user_id._id })}
                 />
             </div>
         )
@@ -64,7 +70,8 @@ export const studentColumns = (navigate) => [
 
 export const roomColumns = (navigate, toggleRoomStatus, loadingId) => [
     {
-        key: "block", label: "Block", render: (row) => (
+        key: "block", label: "Block",
+        render: (row) => (
             <span>{row.block.toUpperCase()}</span>
         )
     },
@@ -86,7 +93,12 @@ export const roomColumns = (navigate, toggleRoomStatus, loadingId) => [
     {
         key: "occupancy",
         label: "Occupied-Capacity",
-        render: (row) => `${row.occupancy ? row?.occupancy + " in" : "0 in "}${row.capacity}`
+        render: (row) => {
+            const activeStudentsCount =
+                row?.occupants?.filter(s => s.user_id.status === "active").length ?? 0;
+
+            return `${activeStudentsCount ? activeStudentsCount + " in" : "0 in "} ${row.capacity}`
+        }
     },
 
     {
@@ -98,8 +110,9 @@ export const roomColumns = (navigate, toggleRoomStatus, loadingId) => [
         key: "actions",
         label: "Actions",
         render: (room) => {
-            const isFull = room.occupancy >= room.capacity;
-
+            const activeStudentsCount = room?.occupants?.filter(s => s.user_id.status === "active").length ?? 0;
+            const isEmpty=activeStudentsCount === 0;
+            const isFull = activeStudentsCount >= room?.capacity;
             return (
                 <div className="flex items-center gap-2">
 
@@ -125,7 +138,7 @@ export const roomColumns = (navigate, toggleRoomStatus, loadingId) => [
                     )}
 
 
-                    <button
+                    {isEmpty && <button
                         disabled={loadingId === room._id}
                         title={room.is_active ? "Deactivate Room" : "Activate Room"}
                         className={`p-2 rounded ${room.is_active
@@ -139,7 +152,7 @@ export const roomColumns = (navigate, toggleRoomStatus, loadingId) => [
                         ) : (
                             <Power size={18} className="text-blue-600" />
                         )}
-                    </button>
+                    </button>}
                 </div>
             );
         }
@@ -156,8 +169,10 @@ export const roomColumns = (navigate, toggleRoomStatus, loadingId) => [
                     </span>
                 );
             }
+            const activeStudentsCount =
+                row?.occupants?.filter(s => s.user_id.status === "active").length ?? 0;
 
-            const isFull = row.occupancy >= row.capacity;
+            const isFull = activeStudentsCount >= row.capacity;
 
             return (
                 <span
