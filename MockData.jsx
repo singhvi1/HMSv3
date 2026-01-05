@@ -1,4 +1,5 @@
 import { Eye, Pencil, Power, PowerOff, Trash2, UserPlus, Check, X } from "lucide-react";
+import { parseDDMMYYYY } from "./data.js";
 
 
 export const studentColumns = (navigate, deleteStudent) => [
@@ -50,13 +51,13 @@ export const studentColumns = (navigate, deleteStudent) => [
                     size={16}
                     className="cursor-pointer text-blue-600"
                     onClick={() => {
-                        navigate(`/admin/students/${row.user_id?._id}`)
+                        navigate?.(`/admin/students/${row.user_id?._id}`)
                     }}
                 />
                 <Pencil
                     size={16}
                     className="cursor-pointer text-green-600"
-                    onClick={() => navigate(`/admin/students/${row.user_id._id}/edit`)}
+                    onClick={() => navigate?.(`/admin/students/${row.user_id._id}/edit`)}
                 />
                 <Trash2
                     size={16}
@@ -111,7 +112,7 @@ export const roomColumns = (navigate, toggleRoomStatus, loadingId) => [
         label: "Actions",
         render: (room) => {
             const activeStudentsCount = room?.occupants?.filter(s => s.user_id.status === "active").length ?? 0;
-            const isEmpty=activeStudentsCount === 0;
+            const isEmpty = activeStudentsCount === 0;
             const isFull = activeStudentsCount >= room?.capacity;
             return (
                 <div className="flex items-center gap-2">
@@ -130,7 +131,7 @@ export const roomColumns = (navigate, toggleRoomStatus, loadingId) => [
                             title="Add Student"
                             className="p-2 rounded hover:bg-green-100"
                             onClick={() =>
-                                navigate(`/admin/students/new?roomId=${room._id}`, { state: { room } })
+                                navigate(`/admin/students/new?roomId=${room._id}`)
                             }
                         >
                             <UserPlus size={18} className="text-green-600" />
@@ -190,7 +191,7 @@ export const roomColumns = (navigate, toggleRoomStatus, loadingId) => [
 ];
 
 
-export const issueColumns = (navigate) => [
+export const issueColumns = (navigate, deleteIssueFxn) => [
     {
         key: "sid", label: "SID",
         render: (row) => (
@@ -238,21 +239,17 @@ export const issueColumns = (navigate) => [
         key: "actions",
         label: "Actions",
         render: (row) => (
-            <div className="flex gap-2">
+            <div className="flex justify-around">
                 <Eye
                     size={16}
                     className="cursor-pointer text-blue-600"
                     onClick={() => navigate(`/admin/issues/${row._id}`)}
                 />
-                <Pencil
-                    size={16}
-                    className="cursor-pointer text-green-600"
-                    onClick={() => navigate(`/admin/issues/${row._id}/edit`)}
-                />
+
                 <Trash2
                     size={16}
                     className="cursor-pointer text-red-600"
-                    onClick={() => console.log("Delete issue", row._id)}
+                    onClick={() => deleteIssueFxn(row._id)}
                 />
             </div>
         )
@@ -261,13 +258,17 @@ export const issueColumns = (navigate) => [
 
 
 
-export const leaveColumns = (dispatch, updateLeaveStatus) => [
+export const leaveColumns = (updateStatus, navigate) => [
     {
         key: "student",
         label: "Student",
         render: (row) => (
-            <div>
-                <div className="font-medium">{row.full_name}</div>
+            <div
+                className="cursor-pointer hover:underline hover:text-blue-500"
+                onClick={() => navigate?.(`/admin/students/${row?.student_id?.user_id?._id}`)}
+            >
+                <div className="font-medium">{row?.student_id?.user_id?.full_name}</div>
+                <p className="text-gray-300">{row?.student_id?.sid}</p>
                 <div className="text-xs text-gray-400">{row.sid}</div>
             </div>
         ),
@@ -275,14 +276,44 @@ export const leaveColumns = (dispatch, updateLeaveStatus) => [
     {
         key: "room_number", label: "Room", render: (row) => (
             <div>
-                <div className="font-medium">{row.block} - {row.room_number} </div>
+                <div className="font-medium">{row?.student_id?.block && row?.student_id?.block?.toUpperCase()} - {row?.student_id?.room_number} </div>
                 <div className="text-xs text-gray-400"></div>
             </div>
         ),
     },
-    { key: "from_date", label: "From" },
-    { key: "to_date", label: "To" },
-    { key: "destination", label: "Destination" },
+    {
+        key: "from_date",
+        label: "From",
+        render: ((row) =>
+            row.from_date ? new Date(row.from_date).toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+            }) : "-"
+        )
+    },
+    {
+        key: "to_date", label: "To",
+        render: ((row) =>
+            row.to_date ? new Date(row.to_date).toLocaleDateString("en-IN", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+            }) : "-"
+        )
+    },
+    {
+        key: "destination",
+        label: "Destination",
+        render: (row) => (
+            <span
+                className="cursor-help underline decoration-dotted"
+                title={row.reason || "No reason provided"}
+            >
+                {row.destination}
+            </span>
+        )
+    },
     {
         key: "status",
         label: "Status",
@@ -295,7 +326,7 @@ export const leaveColumns = (dispatch, updateLeaveStatus) => [
                         : "bg-yellow-100 text-yellow-700"
                     }`}
             >
-                {row.status}
+                {row?.status}
             </span>
         ),
     },
@@ -306,7 +337,11 @@ export const leaveColumns = (dispatch, updateLeaveStatus) => [
             <div className="flex gap-2">
                 <button
                     onClick={() =>
-                        dispatch(updateLeaveStatus({ id: row._id, status: "approved" }))
+                        updateStatus({
+                            id: row._id,
+                            status: "approved",
+                            reason: "approved by admin"
+                        })
                     }
                     disabled={row.status !== "pending"}
                     className="bg-green-500 p-2 rounded-xl text-white disabled:bg-gray-400"
@@ -316,13 +351,18 @@ export const leaveColumns = (dispatch, updateLeaveStatus) => [
 
                 <button
                     onClick={() =>
-                        dispatch(updateLeaveStatus({ id: row._id, status: "rejected" }))
+                        updateStatus({
+                            id: row._id,
+                            status: "rejected",
+                            reason: "Rejected by admin"
+                        })
                     }
                     disabled={row.status !== "pending"}
                     className="bg-red-500 p-2 rounded-xl text-white disabled:bg-gray-400"
                 >
                     <X size={16} />
                 </button>
+
             </div>
         ),
     },

@@ -14,9 +14,9 @@ const initialState = {
   },
   pagination: {
     page: 1,
-    pageSize: 10,
+    limit: 10,
     total: 0,
-    totalPages: 1,
+    pages: 1,
   }
 };
 
@@ -25,11 +25,36 @@ const issuesSlice = createSlice({
   initialState,
   reducers: {
     setIssues: (state, action) => {
-      state.items = action.payload.issues
-      state.pagination.total = action.payload.pagination.total;
-      state.pagination.totalPages = action.payload.pagination.pages;
+      const { issues, pagination } = action.payload;
+      state.items = issues;
+      state.pagination.total = pagination.total;
+      state.pagination.page = pagination.page;
+      state.pagination.limit = pagination.limit;
+      state.pagination.pages = pagination.pages;
     },
-
+    setIssue: (state, action) => {
+      const issue = action.payload;
+      const index = state.items.findIndex(i => i._id === issue._id);
+      if (index !== -1) {
+        state.items[index] = issue
+      } else {
+        state.items.unshift(issue);
+      }
+    },
+    updateIssueStatus: (state, action) => {
+      const { id, status } = action.payload;
+      const index = state.items.findIndex(i => i._id === id);
+      if (index !== -1) {
+        state.items[index].status = status;
+      } else {
+        return
+      }
+    },
+    removeOneIssue: (state, action) => {
+      const id = action.payload
+      state.items = state?.items.filter(item => item?._id !== id)
+      state.pagination.total = state.pagination.total - 1;
+    },
     setIssuesFilters: (state, action) => {
       state.filters = { ...state.filters, ...action.payload };
       state.pagination.page = 1;
@@ -37,8 +62,8 @@ const issuesSlice = createSlice({
     setIssuesPage: (state, action) => {
       state.pagination.page = action.payload;
     },
-    setIssuesPageSize: (state, action) => {
-      state.pagination.pageSize = action.payload;
+    setIssueslimit: (state, action) => {
+      state.pagination.limit = action.payload;
       state.pagination.page = 1;
     },
     resetIssuesFilters: (state) => {
@@ -50,14 +75,19 @@ const issuesSlice = createSlice({
 
 export const {
   setIssues,
+  setIssue,
+  updateIssueStatus,
+  removeOneIssue,
   setIssuesFilters,
   setIssuesPage,
-  setIssuesPageSize,
+  setIssueslimit,
   resetIssuesFilters
 } = issuesSlice.actions;
 
 const selectIssuesState = (state) => state.issues;
+
 export const selectIssuesItems = (state) => selectIssuesState(state).items;
+export const selectIssueById = (id) => (state) => state?.issues?.items.find(item => item._id === id);
 export const selectIssuesFilters = (state) => selectIssuesState(state).filters;
 export const selectIssuesPagination = (state) => selectIssuesState(state).pagination;
 export const selectIssuesTotalCount = (state) => selectIssuesState(state).pagination.total;
@@ -91,25 +121,16 @@ export const selectIssuesTotalCount = (state) => selectIssuesState(state).pagina
   }
 );*/
 
-/*export const selectIssuesPageData = createSelector(
-  [selectIssuesFiltered, selectIssuesPagination],
-  (filtered, pagination) => {
-    const total = filtered.length;
-    const pageSize = pagination.pageSize;
-    const totalPages = Math.max(1, Math.ceil(total / pageSize));
-    const page = Math.min(Math.max(1, pagination.page), totalPages);
-    const start = (page - 1) * pageSize;
-    const end = start + pageSize;
+export const selectIssuesPageData = createSelector(
+  [selectIssuesPagination],
+  (pagination) => ({
+    page: pagination.page,
+    limit: pagination.limit,
+    total: pagination.total,
+    pages: pagination.pages,
+  })
+);
 
-    return {
-      page,
-      pageSize,
-      total,
-      totalPages,
-      items: filtered.slice(start, end)
-    };
-  }
-);*/
 
 export const selectIssuesPendingCount = createSelector(
   [selectIssuesItems],

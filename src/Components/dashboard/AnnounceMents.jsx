@@ -1,11 +1,12 @@
-import { Calendar, AlertCircle } from "lucide-react";
+import { Calendar, AlertCircle, Megaphone } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import BackButton from "../common/ui/Backbutton";
 import { categoryIconMap, categoryColorMap, formatDateTime } from "../../utils/constant";
 import { useDispatch, useSelector } from "react-redux";
 import { announcementService } from "../../services/apiService";
 import { setAnnouncements } from "../../utils/store/announcementsSlice";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import Button from "../common/ui/Button";
 
 
 const AnnounceMents = () => {
@@ -14,25 +15,27 @@ const AnnounceMents = () => {
     const { list, listFetched } = useSelector((state) => state.announcements)
     const [loading, setLoading] = useState(false)
 
+
+    const fetchAnn = useCallback(async () => {
+        setLoading(true);
+        try {
+            const res = await announcementService.getAllAnnouncements();
+            dispatch(setAnnouncements(res.data.announcements));
+        } catch (err) {
+            console.error("Failed to fetch  announcements", err)
+        } finally {
+            setLoading(false)
+        }
+    }, [dispatch])
+
     useEffect(() => {
         if (listFetched) return;
-
-        const fetchAnn = async () => {
-            setLoading(true);
-            try {
-                const res = await announcementService.getAllAnnouncements();
-                dispatch(setAnnouncements(res.data.announcements));
-            } catch (err) {
-                console.error("Failed to fetch  announcements", err)
-            } finally {
-                setLoading(false)
-            }
-        }
         fetchAnn()
-    }, [listFetched, dispatch])
+    }, [fetchAnn, listFetched])
+
 
     if (loading) {
-        return <div className="p-6">Loading announcements...</div>;
+        return <div className="p-6 text-center justify-center">Loading announcements...</div>;
     }
 
     if (!list.length) {
@@ -44,16 +47,19 @@ const AnnounceMents = () => {
     }
 
     return (
-        <div>
-            <div className="flex items-center justify-between mb-4">
+        <div >
+            <div className="flex items-center justify-between mb-6">
                 <BackButton />
-
-                <button
-                    onClick={() => navigate("/admin/anns/new")}
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition"
+                <h1 className="text-3xl font-bold flex items-center gap-3">
+                    <Megaphone className="w-8 h-8" />
+                    Announcements
+                </h1>
+                <Button
+                    variant="success"
+                    className="px-4 py-2 rounded-lg text-white hover:bg-indigo-700 transition"
                 >
                     + Add Announcement
-                </button>
+                </Button>
             </div>
 
             {list.map((announcement) => {
@@ -74,12 +80,10 @@ const AnnounceMents = () => {
                     >
                         <div className="border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                             <div className="flex items-start p-4">
-                                {/* Icon */}
                                 <div className={`rounded-lg p-3 ${color} mr-4`}>
                                     <Icon className="w-6 h-6" />
                                 </div>
 
-                                {/* Content */}
                                 <div className="flex-1">
                                     <h3 className="font-semibold text-lg text-gray-800">
                                         {announcement.title}

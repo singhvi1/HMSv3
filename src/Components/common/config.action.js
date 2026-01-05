@@ -1,5 +1,6 @@
-// config.action.js
+// config.action.js  for Quick Action Grid
 import {
+  AlertCircle,
   Wrench,
   CalendarDays,
   CreditCard,
@@ -8,6 +9,7 @@ import {
   Megaphone,
   UserPlus,
   HousePlus,
+  Trash2
 } from "lucide-react";
 
 export const studentActions = [
@@ -85,3 +87,24 @@ export const adminActions = [
     to: "/student/notfound"
   }
 ];
+
+
+export const issuesAdminActions = [
+  {
+    title: "Change Status",
+    description: "All issues By this Student",
+    icon: AlertCircle,
+    color: "bg-blue-100",
+    to: "*"
+    // to: "/admin/issues"
+  },
+  {
+    title: "Delete Issue",
+    description: "Delete This Issue",
+    icon: Trash2,
+    color: "bg-red-100",
+    to: "*"
+    // to: "/admin/issues"
+  },
+];
+

@@ -3,7 +3,7 @@ import CreateStudent from '../../../../forms/CreateStudent'
 
 const EditStudent = () => {
     const { id } = useParams()
-    console.log(id)
+    // console.log(id)
     return (
         <div>
             <CreateStudent studentId={id} />

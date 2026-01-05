@@ -1,11 +1,12 @@
 import { createSelector, createSlice } from "@reduxjs/toolkit";
-import { leaves as mockLeaves, parseDDMMYYYY } from "../../../data";
+import { leaves as mockLeaves } from "../../../data";
+import { Pagination } from "antd";
 
 const initialState = {
   items: mockLeaves,
   filters: {
-    search: "",
-    branch: "",
+    sid: "",
+    room_number: "",
     block: "",
     status: "",
     from_date: "",
@@ -13,7 +14,9 @@ const initialState = {
   },
   pagination: {
     page: 1,
-    pageSize: 10,
+    limit: 10,
+    total: 1,
+    pages: 0,
   },
 };
 
@@ -21,6 +24,14 @@ const leaveSlice = createSlice({
   name: "leaves",
   initialState,
   reducers: {
+    setLeaveList: (state, action) => {
+      const { leaveRequests, pagination } = action.payload;
+      state.items = leaveRequests
+      state.pagination.page = pagination.page
+      state.pagination.limit = pagination.limit
+      state.pagination.pages = pagination.pages
+      state.pagination.total = pagination.total
+    },
     setLeaveFilters(state, action) {
       state.filters = { ...state.filters, ...action.payload };
       state.pagination.page = 1;
@@ -29,17 +40,20 @@ const leaveSlice = createSlice({
       state.pagination.page = action.payload;
     },
     setLeavePageSize(state, action) {
-      state.pagination.pageSize = action.payload;
+      state.pagination.limit = action.payload;
       state.pagination.page = 1;
     },
     updateLeaveStatus(state, action) {
-      const leave = state.items.find((l) => l._id === action.payload.id);
-      if (leave) leave.status = action.payload.status;
+      const updatedleaveRequest = action.payload.leaveRequest;
+      const index = state.items.findIndex(l => l._id === updatedleaveRequest._id);
+      if (index !== -1) state.items[index] = updatedleaveRequest;
     },
+
   },
 });
 
 export const {
+  setLeaveList,
   setLeaveFilters,
   setLeavePage,
   setLeavePageSize,
@@ -51,78 +65,19 @@ export const selectLeaveFilters = (state) => selectLeavesState(state).filters;
 export const selectLeavePagination = (state) =>
   selectLeavesState(state).pagination;
 export const selectLeaveItems = (state) => selectLeavesState(state).items;
+export const selectAllLeaveRequestById = (id) => (state) => state.leaves.items.filter(item => item._id === id);
 
-export const selectLeavesFiltered = createSelector(
-  [selectLeaveItems, selectLeaveFilters],
-  (items, filters) => {
-    const search = filters.search.toLowerCase().trim();
-    const filterFrom = filters.from_date
-      ? new Date(filters.from_date).getTime()
-      : null;
-
-    const filterTo = filters.to_date
-      ? new Date(filters.to_date).getTime()
-      : null;
-    return items.filter((l) => {
-      const name = (l.full_name || "").toLowerCase();
-      const sid = (l.sid || "").toLowerCase();
-      const branch = (l.branch || "").toLowerCase();
-      const block = (l.block || "").toLowerCase();
-      const status = (l.status || "").toLowerCase();
-      const room = (l.room_number || "").toLowerCase();
-      const destination = (l.destination || "").toLowerCase();
-      const leaveFrom = parseDDMMYYYY(l.from_date);
-      const leaveTo = parseDDMMYYYY(l.to_date);
-
-      let matchesDate = true;
-
-      if (filterFrom && !filterTo) {
-        matchesDate = leaveFrom >= filterFrom;
-      }
-
-      if (filterFrom && filterTo) {
-        matchesDate =
-          leaveFrom >= filterFrom &&
-          leaveTo <= filterTo;
-      }
-
-      const matchesSearch =
-        !search ||
-        name.includes(search) ||
-        sid.includes(search) ||
-        room.includes(search) ||
-        destination.includes(search)
-
-      const matchesBranch =
-        !filters.branch || branch === filters.branch.toLowerCase();
-
-      const matchesBlock =
-        !filters.block || block === filters.block.toLowerCase();
-
-      const matchesStatus =
-        !filters.status || status === filters.status.toLowerCase();
-
-      return matchesSearch && matchesBranch && matchesBlock && matchesStatus && matchesDate;
-    });
-  }
-);
 
 export const selectLeavePageData = createSelector(
-  [selectLeavesFiltered, selectLeavePagination],
-  (filtered, pagination) => {
-    const total = filtered.length;
-    const pageSize = pagination.pageSize;
-    const totalPages = Math.max(1, Math.ceil(total / pageSize));
-    const page = Math.min(Math.max(1, pagination.page), totalPages);
-    const start = (page - 1) * pageSize;
+  [selectLeaveItems, selectLeavePagination],
+  (items, pagination) => ({
+    items,
+    page: pagination.page,
+    limit: pagination.limit,
+    total: pagination.total,
+    pages: pagination.pages,
 
-    return {
-      page,
-      pageSize,
-      totalPages,
-      items: filtered.slice(start, start + pageSize),
-    };
-  }
+  })
 );
 
 export default leaveSlice.reducer;

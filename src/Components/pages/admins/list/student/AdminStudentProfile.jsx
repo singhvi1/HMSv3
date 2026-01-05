@@ -9,16 +9,18 @@ import QuickActionsGrid from '../../../../common/QuickActionGrid';
 import { getStudentActions } from '../../../../common/config.AdminAction';
 import useStudentToggle from '../../../../../customHooks/useStudentToggle';
 import useStudentDelete from '../../../../../customHooks/useStudentDelete';
+import List from '../../../Student/studentPersonalList/List';
 
 const AdminStudentProfile = () => {
     const { id } = useParams();
+    console.log(id, "from params")
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const student = useSelector(selectStudentByUserId(id));
     const [loading, setLoading] = useState(false);
-    const userId = student?.user_id?._id
+    const userId = id;
     const status = student?.user_id?.status
-    console.log(userId, "userId passed from adminProfile ")
+    console.log(userId, "userId passing from adminProfile ")
     const { toggleStudentFxn } = useStudentToggle();
     const { deleteStudent } = useStudentDelete();
     const fetchStudent = useCallback(async () => {
@@ -55,9 +57,8 @@ const AdminStudentProfile = () => {
             <BackButton />
             <ProfileHeader student={student} InfoItem={InfoItem} />
             <QuickActionsGrid title="Student Actions" actions={getStudentActions({ userId, status, navigate, toggleStudentFxn, deleteStudent })} />
-            <h1>Leave request </h1>
-            <h1>Maintainace requests</h1>
-            <h1>Disciplinary Actions</h1>
+
+            <List studentId={student._id} />
         </div>
     )
 }

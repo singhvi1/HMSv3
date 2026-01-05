@@ -1,5 +1,5 @@
 const Table = ({ columns = [], data = [] }) => {
-    console.log(data[0])
+    // console.log(data[0])
 
     return (
         <div className='p-6 bg-gray-50 '>

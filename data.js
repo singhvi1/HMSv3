@@ -58,7 +58,7 @@ export const initialForm = {
   yearly_rent: 7500,
 };
 
- export const mapFormToCreateStudentPayload = (form = {}) => ({
+export const mapFormToCreateStudentPayload = (form = {}) => ({
   full_name: (form.full_name ?? "").trim(),
   email: (form.email ?? "").trim().toLowerCase(),
   phone: (form.phone ?? "").toString().trim(),
@@ -79,10 +79,35 @@ export const initialForm = {
 
 
 export const parseDDMMYYYY = (dateStr) => {
-  if (!dateStr) return NaN;
-  const [dd, mm, yyyy] = dateStr.split("-");
-  return new Date(`${yyyy}-${mm}-${dd}`).getTime();
+  if (!dateStr || typeof dateStr !== "string") return NaN;
+
+  const [dd, mm, yyyy] = dateStr.split("-").map(Number);
+
+  // basic validation
+  if (
+    !dd || !mm || !yyyy ||
+    dd < 1 || dd > 31 ||
+    mm < 1 || mm > 12 ||
+    yyyy < 1900
+  ) {
+    return NaN;
+  }
+
+  // Create date in LOCAL timezone (important)
+  const date = new Date(yyyy, mm - 1, dd);
+
+  // Extra guard (handles invalid dates like 31-02-2026)
+  if (
+    date.getFullYear() !== yyyy ||
+    date.getMonth() !== mm - 1 ||
+    date.getDate() !== dd
+  ) {
+    return NaN;
+  }
+
+  return date.getTime();
 };
+
 
 export const studentColumns = [
   { key: "sid", label: "SID" },

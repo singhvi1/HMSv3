@@ -1,6 +1,6 @@
 const Pagination = ({ currPage = 1, totalPages, onPageChange }) => {
     if (totalPages <= 1) return null;
-
+    console.log(currPage, "currpage", totalPages, "pages")
     return (
         <div className="flex justify-center items-center gap-2 mt-6">
             <button

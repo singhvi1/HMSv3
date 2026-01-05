@@ -1,4 +1,4 @@
-import api from '../utils/api';
+import api from './api.js';
 
 export const announcementService = {
   createAnnouncement: (data) => api.post('/home/announcements', data),
@@ -42,15 +42,37 @@ export const roomService = {
 };
 
 export const issueService = {
+
   getAllIssues: (params) => api.get('/issues', { params }),
-  getIssue: (id) => api.get(`/issues/${id}`),
+
+  getIssueById: (id) => api.get(`/issues/${id}`),
+
+  getAllIssueOfStudent: (params) => api.get(`/issues`, { params }),
   updateIssueStatus: (id, status) => api.patch(`/issues/${id}/status`, { status }),
   deleteIssue: (id) => api.delete(`/issues/${id}`),
+
+};
+export const issueCommentService = {
+
+  createComment: (data) => api.post(`/issue-comments`, data),
+
+  getIssueAllCommetents: (issue_id) => api.get(`/issue-comments/all/${issue_id}`),
+
+  getCommetent: (id) => api.get(`/issue-comments/${id}`),
+
+
+  updateComment: (id) => api.patch(`/issue-comments/${id}/status`),
+
+  deleteComment: (id) => api.delete(`/issue-comments/${id}`),
 };
 
 export const leaveService = {
-  getAllLeaves: () => api.get('/leave'),
-  updateLeaveStatus: (id, status) => api.patch(`/leave/${id}/status`, { status }),
+  getAllLeaves: (params) => api.get('/leave-requests', { params }),
+  
+  getStudentAllLeaves: (params) => api.get(`/leave-requests`,
+    { params }),
+
+  updateLeaveStatus: (id, status, reason) => api.patch(`/leave-requests/${id}/status`, { status, reason }),
 };
 
 export const paymentService = {
@@ -65,10 +87,12 @@ export const dashboardService = {
 export const authService = {
   loginUser: (email, password) => api.post('/login', { email, password }),
   logoutUser: () => api.post('/logout'),
+
 }
 
 export const userService = {
-  createUser: (data) => api.post(`/users`, data)
+  createUser: (data) => api.post(`/users`, data),
+  getMe: () => api.get(`/users/me`)
 }
 //future : 
 export const hostelService = {

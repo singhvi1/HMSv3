@@ -60,7 +60,7 @@ export const getRoomActions = ({ room, toggleRoomStatus }) => {
     const activeStudentsCount =
         room?.occupants?.filter(s => s.user_id.status === "active").length ?? 0;
     const isFull = activeStudentsCount >= room?.capacity;
-    console.log(room, "this is room detail ")
+    // console.log(room, "this is room detail ")
     return [
         {
             title: "Add New Student",

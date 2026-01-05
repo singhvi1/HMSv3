@@ -1,6 +1,5 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useDispatch, useSelector } from 'react-redux';
-import { selectIssuesFilters, selectIssuesItems, selectIssuesPagination, setIssues, setIssuesFilters, setIssuesPage, setIssuesPageSize } from '../../../../../utils/store/issuesSlice';
+import { selectIssuesFilters, selectIssuesItems, selectIssuesPagination, setIssues, setIssuesFilters, setIssuesPage, setIssueslimit } from '../../../../../utils/store/issuesSlice';
 import Pagination from '../../../../common/table/Pagination';
 import Table from '../../../../common/table/Table';
 import { issueColumns } from '../../../../../../MockData';
@@ -8,7 +7,9 @@ import { useNavigate } from 'react-router-dom';
 import BackButton from '../../../../common/ui/Backbutton';
 import SearchBar from '../../../../common/table/SearchBar';
 import { issueService } from '../../../../../services/apiService';
-import { useEffect } from 'react';
+import { useCallback, useEffect } from 'react';
+import { useDebounce } from '../../../../../customHooks/useDebounce';
+import useIssueDelete from '../../../../../customHooks/useIssueDelete';
 
 const IssuesList = () => {
     const dispatch = useDispatch();
@@ -16,37 +17,40 @@ const IssuesList = () => {
     const filters = useSelector(selectIssuesFilters);
     const items = useSelector(selectIssuesItems);
     const pagination = useSelector(selectIssuesPagination);
+    const debouncedSearchValue = useDebounce(filters.search, 600);
+    const debouncedSidValue = useDebounce(filters.sid, 600);
+    const debouncedRoomNoValue = useDebounce(filters.room_number, 600);
+    const debouncedStudentValue = useDebounce(filters.student_search, 400);
+    const deleteIssueFxn = useIssueDelete()
 
-    const fetchData = async () => {
+
+
+
+
+    const fetchData = useCallback(async () => {
         try {
             const res = await issueService.getAllIssues({
                 status: filters.status,
                 category: filters.category,
-                search: filters.search,
-                sid: filters.sid,
+                search: debouncedSearchValue,
+                sid: debouncedSidValue,
                 block: filters.block,
-                room_number: filters.room_number,
+                room_number: debouncedRoomNoValue,
                 limit: pagination.pageSize,
                 page: pagination.page,
-                student_search: filters.student_search,
+                student_search: debouncedStudentValue,
             });
 
             dispatch(setIssues(res.data));
         } catch (error) {
             console.log("Not able to fetch issues list", error);
         }
-    };
+    }, [filters.status, filters.category, debouncedSidValue, filters.block, debouncedRoomNoValue, debouncedStudentValue, debouncedSearchValue, pagination.pageSize, pagination.page, dispatch]);
 
 
     useEffect(() => {
         fetchData();
-    }, [filters.status, filters.student_search, filters.category, filters.search, filters.sid, filters.block, filters.room_number, pagination.page, pagination.pageSize]);
-
-    // console.log("ISSUE FILTERS →", {
-    //     ...filters,
-    //     page: pagination.page,
-    //     limit: pagination.pageSize
-    // });
+    }, [fetchData]);
 
 
 
@@ -109,7 +113,7 @@ const IssuesList = () => {
                     <select
                         className="input"
                         value={pagination.pageSize}
-                        onChange={(e) => dispatch(setIssuesPageSize(Number(e.target.value)))}
+                        onChange={(e) => dispatch(setIssueslimit(Number(e.target.value)))}
                     >
                         <option value={10}>10</option>
                         <option value={20}>20</option>
@@ -120,13 +124,13 @@ const IssuesList = () => {
 
 
             <Table
-                columns={issueColumns(navigate)}
+                columns={issueColumns(navigate, deleteIssueFxn)}
                 data={items}
             />
 
             <Pagination
                 currPage={pagination.page}
-                totalPages={pagination.totalPages}
+                totalPages={pagination.pages}
                 onPageChange={(p) => dispatch(setIssuesPage(p))}
             />
         </div>

@@ -15,7 +15,7 @@ const AnnouncementForm = ({ initialData, onSubmit, loading, isEdit }) => {
 
   useEffect(() => {
     if (initialData) {
-      console.log("DETAIL Annform PAGE FETCHING");
+      // console.log("DETAIL Annform PAGE FETCHING");
       setFormData({
         title: initialData.title || "",
         message: initialData.message || "",

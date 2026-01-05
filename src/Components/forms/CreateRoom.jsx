@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import BackButton from '../common/ui/Backbutton';
 import { roomService } from '../../services/apiService';
 import toast from 'react-hot-toast';
@@ -38,7 +38,7 @@ const CreateRoom = ({ roomId }) => {
         const fetchStudent = async () => {
             try {
                 const res = await roomService.getRoomById(roomId);
-                console.log(res, "successfully called insdier")
+                // console.log(res, "successfully called insdier")
                 const room = res.data.data;
                 setForm({
                     block: room.block || "",

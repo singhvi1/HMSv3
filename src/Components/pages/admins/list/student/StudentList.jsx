@@ -15,6 +15,7 @@ import useStudentDelete from '../../../../../customHooks/useStudentDelete'
 const StudentList = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch();
+
     const filters = useSelector(selectStudentsFilters);
     const { items, page, pageSize, totalPages } = useSelector(selectStudentPageData);
     // const listFetched = useSelector(state => state.students.listFetched);// for stopping refresh 
@@ -110,7 +111,7 @@ const StudentList = () => {
                         <option value={50}>50 / page</option>
                     </select>
                 </div>
-                <Table columns={studentColumns(navigate,deleteStudent)}
+                <Table columns={studentColumns(navigate, deleteStudent)}
                     data={items} />
 
                 <Pagination

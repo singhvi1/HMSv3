@@ -12,13 +12,13 @@ const AnnouncementDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const announcement = useSelector(selectAnnounceMentById(id))
-  console.log(announcement)
+  // console.log(announcement)
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
   const deleteRef = useRef(false)
 
   useEffect(() => {
-    if(deleteRef.current) return;
+    if (deleteRef.current) return;
     const loadAnn = async () => {
       try {
         const res = await announcementService.getAnnouncementById(id);
@@ -30,7 +30,7 @@ const AnnouncementDetail = () => {
       }
     }
 
-    console.log("Announcemet detail page mounting ", id)
+    // console.log("Announcemet detail page mounting ", id)
     if (!announcement) {
       loadAnn()
     } else {
@@ -104,7 +104,7 @@ const AnnouncementDetail = () => {
           <button
             className="flex items-center gap-2 px-4 py-2 text-sm rounded bg-red-600 text-white hover:bg-red-700"
             onClick={async () => {
-              deleteRef.current=true
+              deleteRef.current = true
               await announcementService.deleteAnnouncement(id)
               dispatch(removeAnnouncement(id))
               navigate(`/admin/anns`)

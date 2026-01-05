@@ -8,7 +8,7 @@ import { announcementService } from "../../../../services/apiService";
 const EditAnnouncement = () => {
     const { id } = useParams();
     const announcement = useSelector(selectAnnounceMentById(id));
-    console.log(announcement, "this is announcement from store");
+    // console.log(announcement, "this is announcement from store");
     const dispatch = useDispatch();
     const [loading, setLoading] = useState(true);
     // console.log(selected);

@@ -65,10 +65,12 @@ const AdminRoomProfile = lazy(() => import("./Components/pages/admins/list/room/
 const EditRoom = lazy(() => import("./Components/pages/admins/list/room/EditRoom"))
 const CreateRoom = lazy(() => import("./Components/forms/CreateRoom"))
 const EditStudent = lazy(() => import("./Components/pages/admins/list/student/EditStudent"))
-
+const AdminIssueProfile = lazy(() => import("./Components/pages/admins/list/issues/AdminIssueProfile"));
 import { HostelOverview, HostelForm, EditHostel, PageLoader } from "./Components/index"
 import { removeLoggedinUser, setLoggedinUser } from './utils/store/logedinUser'
-import api from './utils/api'
+import api from './services/api'
+import { userService } from "./services/apiService";
+
 
 function App() {
   const user = useSelector((state) => state.loggedinUser);
@@ -82,9 +84,8 @@ function App() {
         return;
       }
       try {
-        const res = await api.get("/users/me");
+        const res = await userService.getMe();
         dispatch(setLoggedinUser(res.data.user));
-        // console.log("auto login called")
       } catch (err) {
         dispatch(removeLoggedinUser());
         console.log(err)
@@ -135,7 +136,6 @@ function App() {
             {user.role === "admin" && (
               <Route path="/admin" element={<AdminDashBoard />}>
                 <Route index element={<AdminHome />} />
-                {/* <Route path="test" element={<StudentList1 />} /> */}
                 <Route path="hostel" element={<HostelOverview />} />
                 <Route path="hostel/new" element={<HostelForm />} />
                 <Route path="hostel/:id/edit" element={<EditHostel />} />
@@ -153,6 +153,7 @@ function App() {
                 <Route path="rooms/:id" element={<AdminRoomProfile />} />
                 <Route path="rooms/:id/edit" element={<EditRoom />} />
                 <Route path="issues" element={<IssuesList />} />
+                <Route path="issues/:id" element={<AdminIssueProfile />} />
                 <Route path="leaves" element={<LeavesList />} />
                 <Route path="*" element={<NotFound />} />
 

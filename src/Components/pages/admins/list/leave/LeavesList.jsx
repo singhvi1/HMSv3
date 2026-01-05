@@ -1,17 +1,57 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { selectLeaveFilters, selectLeavePageData, setLeaveFilters, setLeavePage, setLeavePageSize, updateLeaveStatus } from '../../../../../utils/store/leaveSlice';
+import { selectLeaveFilters, selectLeavePageData, setLeaveFilters, setLeaveList, setLeavePage, setLeavePageSize } from '../../../../../utils/store/leaveSlice';
 import { leaveColumns } from '../../../../../../MockData';
 import BackButton from '../../../../common/ui/Backbutton';
 import SearchBar from '../../../../common/table/SearchBar';
 import Table from '../../../../common/table/Table';
 import Pagination from '../../../../common/table/Pagination';
+import { useCallback, useEffect, useState } from 'react';
+import { leaveService } from '../../../../../services/apiService';
+import { useDebounce } from '../../../../../customHooks/useDebounce';
+import { useLeaveStatus } from '../../../../../customHooks/useLeaveStatus';
 
 const LeavesList = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const filters = useSelector(selectLeaveFilters);
-    const pageData = useSelector(selectLeavePageData);
+    const { page, pages, limit, items } = useSelector(selectLeavePageData)
+    const debouncedSid = useDebounce(filters.sid, 900)
+    const debouncedRoomNumber = useDebounce(filters.room_number, 600)
+    const debouncedFromDate = useDebounce(filters.to_date, 600)
+    const debouncedToDate = useDebounce(filters.from_date, 600)
+    const [loading, setLoading] = useState(false)
+    const { updateStatus } = useLeaveStatus()
+
+
+    const fetchLeave = useCallback(async () => {
+        try {
+            setLoading(true)
+            const res = await leaveService.getAllLeaves({
+                page,
+                limit,
+                sid: debouncedSid,
+                room_number: debouncedRoomNumber,
+                from_date: debouncedFromDate,
+                to_date: debouncedToDate,
+                status: filters.status,
+                block: filters.block,
+
+            })
+            console.log(res, "Api called")
+            dispatch(setLeaveList(res.data))
+        } catch (err) {
+            console.log(err, "Not able to fetch leave Request")
+        } finally {
+            setLoading(false)
+        }
+    }, [page, limit, debouncedSid, debouncedRoomNumber, debouncedFromDate, debouncedToDate, filters.status, filters.block, dispatch])
+
+    useEffect(() => {
+        fetchLeave()
+    }, [fetchLeave])
+
+
     return (
         <div className="bg-white rounded-xl shadow p-6">
 
@@ -24,7 +64,9 @@ const LeavesList = () => {
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
 
-                <SearchBar search={filters.search} onChange={(v) => dispatch(setLeaveFilters({ search: v }))} placeholder={"Search name"} />
+                <SearchBar search={filters.sid} onChange={(v) => dispatch(setLeaveFilters({ sid: v }))} placeholder={"Sid"} />
+
+                <SearchBar search={filters.room_number} onChange={(v) => dispatch(setLeaveFilters({ room_number: v }))} placeholder={"RoomNumber"} />
 
                 <select
                     className="input"
@@ -38,23 +80,23 @@ const LeavesList = () => {
                     <option value="b">Block B</option>
                     <option value="c">Block C</option>
                 </select>
-                <input
+                {/* <input
                     type="date"
                     className="input"
                     value={filters.from_date}
                     onChange={(e) =>
                         dispatch(setLeaveFilters({ from_date: e.target.value }))
                     }
-                />
+                /> */}
 
-                <input
+                {/* <input
                     type="date"
                     className="input"
                     value={filters.to_date}
                     onChange={(e) =>
                         dispatch(setLeaveFilters({ to_date: e.target.value }))
                     }
-                />
+                /> */}
 
 
 
@@ -73,7 +115,7 @@ const LeavesList = () => {
 
                     <select
                         className="input"
-                        value={pageData.pageSize}
+                        value={limit}
                         onChange={(e) => dispatch(setLeavePageSize(Number(e.target.value)))}
                     >
                         <option value={10}>10</option>
@@ -85,13 +127,13 @@ const LeavesList = () => {
 
 
             <Table
-                columns={leaveColumns(navigate, updateLeaveStatus)}
-                data={pageData.items}
+                columns={leaveColumns(updateStatus, navigate)}
+                data={items}
             />
 
             <Pagination
-                currPage={pageData.page}
-                totalPages={pageData.totalPages}
+                currPage={page}
+                totalPages={pages}
                 onPageChange={(p) => dispatch(setLeavePage(p))}
             />
         </div>
