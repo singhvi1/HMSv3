@@ -16,6 +16,8 @@ const AdminIssueProfile = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const deleteIssueFxn = useIssueDelete()
+    const role = useSelector((store) => store.loggedinUser.role)
+
     const issue = useSelector(selectIssueById(id));
     const [Loading, setLoading] = useState(false)
     const fetchIssue = useCallback(async () => {
@@ -77,6 +79,7 @@ const AdminIssueProfile = () => {
                 <div className="space-y-6">
                     <IssueSidebarInfo issue={issue} />
                     <IssueActions
+                        role={role}
                         issue={issue}
                         onStatusChange={handleStatusChange}
                         onDelete={handleDelete}

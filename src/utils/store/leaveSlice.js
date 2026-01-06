@@ -1,9 +1,9 @@
 import { createSelector, createSlice } from "@reduxjs/toolkit";
-import { leaves as mockLeaves } from "../../../data";
-import { Pagination } from "antd";
 
 const initialState = {
-  items: mockLeaves,
+  items: [],
+  loading: true,
+  error: null,
   filters: {
     sid: "",
     room_number: "",
@@ -26,41 +26,69 @@ const leaveSlice = createSlice({
   reducers: {
     setLeaveList: (state, action) => {
       const { leaveRequests, pagination } = action.payload;
-      state.items = leaveRequests
-      state.pagination.page = pagination.page
-      state.pagination.limit = pagination.limit
-      state.pagination.pages = pagination.pages
-      state.pagination.total = pagination.total
+      state.items = leaveRequests;
+      state.pagination = pagination;
+      state.loading = false;
+      state.error = null;
+
+    },
+    setLeaveError: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    forceLeaveRefresh: (state) => {
+      state.loading = true;
+      state.error = null;
     },
     setLeaveFilters(state, action) {
       state.filters = { ...state.filters, ...action.payload };
       state.pagination.page = 1;
+      state.loading = true;
+      state.error = null;
     },
     setLeavePage(state, action) {
       state.pagination.page = action.payload;
+      state.loading = true;
+      state.error = null;
     },
     setLeavePageSize(state, action) {
       state.pagination.limit = action.payload;
       state.pagination.page = 1;
+      state.loading = true;
+      state.error = null;
+
     },
     updateLeaveStatus(state, action) {
       const updatedleaveRequest = action.payload.leaveRequest;
       const index = state.items.findIndex(l => l._id === updatedleaveRequest._id);
       if (index !== -1) state.items[index] = updatedleaveRequest;
     },
-
+    resetLeaveSlice: () => initialState,
   },
 });
 
 export const {
   setLeaveList,
+  setLeaveError,
+  forceLeaveRefresh,
   setLeaveFilters,
   setLeavePage,
   setLeavePageSize,
   updateLeaveStatus,
+  resetLeaveSlice,
 } = leaveSlice.actions;
 
 const selectLeavesState = (state) => state.leaves;
+export const selectAllLeaveState = createSelector(
+  [selectLeavesState],
+  (leaves) => ({
+    items: leaves.items,
+    loading: leaves.loading,
+    error: leaves.error
+  })
+)
+
+
 export const selectLeaveFilters = (state) => selectLeavesState(state).filters;
 export const selectLeavePagination = (state) =>
   selectLeavesState(state).pagination;

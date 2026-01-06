@@ -1,9 +1,9 @@
 import { createSelector, createSlice } from "@reduxjs/toolkit";
-// import { students as mockStudents } from "../../../data";
 
 const initialState = {
   items: [],
-  listFetched: false,
+  loading: true,
+  error: null,
   filters: {
     search: "",
     branch: "",
@@ -13,9 +13,9 @@ const initialState = {
   },
   pagination: {
     page: 1,
-    pageSize: 10,
-    totalPages: 1,
-    totalItems: 0,
+    limit: 10,
+    pages: 1,
+    total: 0,
   }
 };
 
@@ -25,9 +25,9 @@ const studentsSlice = createSlice({
   reducers: {
     setStudents: (state, action) => {
       state.items = action.payload.students;
-      state.pagination.totalPages = action.payload.pagination.pages;
-      state.pagination.totalItems = action.payload.pagination.total;
-      state.listFetched = true
+      state.pagination = action.payload.pagination;
+      state.loading = false;
+      state.error = null;
     },
     setStudent: (state, action) => {
       const student = action.payload;
@@ -35,8 +35,8 @@ const studentsSlice = createSlice({
       if (index !== -1) {
         state.items[index] = student;
       } else {
-        state.items.push(student);
-        state.pagination.totalItems += 1;
+        state.items.unshift(student);
+        state.pagination.total += 1;
       }
     },
     setStudentStatus: (state, action) => {
@@ -49,25 +49,38 @@ const studentsSlice = createSlice({
     removeStudent: (state, action) => {
       const user_id = action.payload;
       state.items = state?.items?.filter(s => s.user_id._id.toString() !== user_id);
-      state.totalItems = state.totalItems - 1;
+      state.pagination.total -= 1;
+    },
+    setStudentError: (state, action) => {
+      state.error = action.payload;
+      state.loading = false;
+    },
+    forceStudentRefresh: (state) => {
+      state.loading = true;
+      state.error = null;
     },
     setStudentsFilters: (state, action) => {
       state.filters = { ...state.filters, ...action.payload };
       state.pagination.page = 1;
-      state.listFetched = false
+      state.loading = true
+      state.error = null;
     },
     setStudentsPage: (state, action) => {
       state.pagination.page = action.payload;
-      state.listFetched = false;
+      state.loading = true;
+      state.error = null;
     },
     setStudentsPageSize: (state, action) => {
-      state.pagination.pageSize = action.payload;
+      state.pagination.limit = action.payload;
       state.pagination.page = 1;
-      state.listFetched = false
+      state.loading = true
+      state.error = null;
     },
     resetStudentsFilters: (state) => {
-      state.filters = initialState.filters;
-      state.pagination = initialState.pagination;
+      state.filters = { ...initialState.filters }
+      state.pagination = { ...initialState.pagination }
+      state.loading = true;
+      state.error = null;
     },
     resetStudents: () => initialState
   }
@@ -76,12 +89,16 @@ const studentsSlice = createSlice({
 export const {
   setStudents,
   setStudent,
+  setStudentsPageSize,
   setStudentStatus,
   removeStudent,
+  setStudentError,
+  forceStudentRefresh,
   setStudentsFilters,
   setStudentsPage,
-  setStudentsPageSize,
-  resetStudentsFilters
+  setStudentslimit,
+  resetStudentsFilters,
+  resetStudents,
 } = studentsSlice.actions;
 
 
@@ -89,19 +106,27 @@ export const {
 
 
 const selectStudentsState = (state) => state.students;
-export const selectStudentByUserId = (id) => (state) => state.students.items.find((s) => s.user_id._id === id);
+export const selectStudentByUserId = (id) => (state) => state.students.items.find((s) => s.user_id?._id === id);
 
 export const selectStudentsItems = (state) => selectStudentsState(state).items
 export const selectStudentsFilters = (state) => selectStudentsState(state).filters
 export const selectStudentsPagination = (state) => selectStudentsState(state).pagination;
-export const selectStudentsTotalCount = (state) => selectStudentsState(state).pagination.totalItems
+export const selectStudentsTotalCount = (state) => selectStudentsState(state).pagination.total
 
-
-export const selectStudentPageData = createSelector([selectStudentsItems, selectStudentsPagination], (items, pagination) => ({
-  items,
-  page: pagination.page,
-  pageSize: pagination.pageSize,
-  totalPages: pagination.totalPages,
-}))
+export const selectStudentAllState = createSelector(
+  [selectStudentsState],
+  (students) => ({
+    items: students.items,
+    loading: students.loading,
+    error: students.error
+  })
+)
+export const selectStudentPageData = createSelector([selectStudentsItems, selectStudentsPagination],
+  (items, pagination) => ({
+    items,
+    page: pagination.page,
+    limit: pagination.limit,
+    pages: pagination.pages,
+  }))
 
 export default studentsSlice.reducer;

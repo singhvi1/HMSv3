@@ -1,20 +1,20 @@
-import { Calendar, AlertCircle, Megaphone } from "lucide-react";
+import { Calendar, Clock, Megaphone } from "lucide-react"; // Removed unused imports
 import { useNavigate } from "react-router-dom";
 import BackButton from "../common/ui/Backbutton";
-import { categoryIconMap, categoryColorMap, formatDateTime } from "../../utils/constant";
+import { categoryColorMap, formatDateTime } from "../../utils/constant";
 import { useDispatch, useSelector } from "react-redux";
 import { announcementService } from "../../services/apiService";
 import { setAnnouncements } from "../../utils/store/announcementsSlice";
 import { useCallback, useEffect, useState } from "react";
 import Button from "../common/ui/Button";
+import RoleGuard from "../../services/auth.role";
+import PageLoader from "../common/PageLoader";
 
-
-const AnnounceMents = () => {
+const Announcements = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { list, listFetched } = useSelector((state) => state.announcements)
-    const [loading, setLoading] = useState(false)
-
+    const { list, listFetched } = useSelector((state) => state.announcements);
+    const [loading, setLoading] = useState(false);
 
     const fetchAnn = useCallback(async () => {
         setLoading(true);
@@ -22,103 +22,161 @@ const AnnounceMents = () => {
             const res = await announcementService.getAllAnnouncements();
             dispatch(setAnnouncements(res.data.announcements));
         } catch (err) {
-            console.error("Failed to fetch  announcements", err)
+            console.error("Failed to fetch announcements", err);
         } finally {
-            setLoading(false)
+            setLoading(false);
         }
-    }, [dispatch])
+    }, [dispatch]);
 
     useEffect(() => {
         if (listFetched) return;
-        fetchAnn()
-    }, [fetchAnn, listFetched])
-
+        fetchAnn();
+    }, [fetchAnn, listFetched]);
 
     if (loading) {
-        return <div className="p-6 text-center justify-center">Loading announcements...</div>;
+        return <PageLoader />
     }
 
     if (!list.length) {
         return (
-            <div className="p-6 text-gray-500 text-center">
-                No announcements found
+            <div className="flex flex-col items-center justify-center h-64 text-slate-400 bg-slate-50 rounded-2xl border border-dashed border-slate-300 m-6">
+                <Megaphone size={48} className="mb-4 opacity-20" />
+                <p>No announcements found</p>
+                <div className="mt-4">
+                     <BackButton />
+                </div>
             </div>
         );
     }
 
     return (
-        <div >
-            <div className="flex items-center justify-between mb-6">
-                <BackButton />
-                <h1 className="text-3xl font-bold flex items-center gap-3">
-                    <Megaphone className="w-8 h-8" />
-                    Announcements
-                </h1>
-                <Button
-                    variant="success"
-                    className="px-4 py-2 rounded-lg text-white hover:bg-indigo-700 transition"
-                >
-                    + Add Announcement
-                </Button>
+        <div className="max-w-5xl mx-auto px-4"> 
+            {/* --- LAYOUT FIX START --- */}
+            {/* We use a 3-column Grid. The title is placed in the center column explicitly. */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mb-8 mt-6">
+                
+                {/* Column 1: Back Button (Aligns Left) */}
+                <div className="justify-self-start">
+                    <BackButton />
+                </div>
+
+                {/* Column 2: Title (Aligns Center) */}
+                {/* This will always stay centered, even if Col 3 is empty */}
+                <div className="text-center justify-self-center w-full">
+                    <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+                        Announcements
+                    </h1>
+                    <p className="text-slate-500 text-sm mt-1">
+                        Stay updated with latest news and events
+                    </p>
+                </div>
+
+                {/* Column 3: Action Button (Aligns Right) */}
+                <div className="justify-self-end">
+                    <RoleGuard allow={["admin"]}>
+                        <Button
+                            variant="success"
+                            onClick={() => navigate("/admin/anns/create")} // Ensure this route is correct
+                            className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all active:scale-95"
+                        >
+                            <Megaphone size={18} />
+                            <span className="hidden sm:inline">Make Announcement</span>
+                        </Button>
+                    </RoleGuard>
+                </div>
             </div>
+            {/* --- LAYOUT FIX END --- */}
 
-            {list.map((announcement) => {
-                const Icon =
-                    categoryIconMap[announcement.category] || AlertCircle;
-
-                const color =
-                    categoryColorMap[announcement.category] ||
-                    "bg-gray-100 text-gray-600";
-
-                return (
-                    <div
+            {/* Grid Layout for Cards */}
+            <div className="grid grid-cols-1 gap-6 pb-10">
+                {list.map((announcement) => (
+                    <AnnouncementCard
                         key={announcement._id}
-                        className="transform transition-all duration-300 hover:scale-[1.02] cursor-pointer p-2"
-                        onClick={() => {
-                            navigate(`/admin/anns/${announcement._id}`);
-                        }}
-                    >
-                        <div className="border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-                            <div className="flex items-start p-4">
-                                <div className={`rounded-lg p-3 ${color} mr-4`}>
-                                    <Icon className="w-6 h-6" />
-                                </div>
-
-                                <div className="flex-1">
-                                    <h3 className="font-semibold text-lg text-gray-800">
-                                        {announcement.title}
-                                    </h3>
-
-                                    <p className="text-gray-600 mt-1">
-                                        {announcement.message}
-                                    </p>
-
-                                    <div className="flex items-center mt-2 text-sm text-gray-500">
-                                        <Calendar className="w-4 h-4 mr-1" />
-
-                                        <span>
-                                            {formatDateTime(
-                                                announcement.updatedAt &&
-                                                    announcement.updatedAt !== announcement.createdAt
-                                                    ? announcement.updatedAt
-                                                    : announcement.createdAt
-                                            )}
-                                        </span>
-                                        <span className="ml-auto flex items-center gap-2">
-                                            <span className="text-gray-400">•</span>
-                                            <span className="px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                                                Admin
-                                            </span>
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                );
-            })}
-        </div >
+                        data={announcement}
+                        navigate={navigate}
+                    />
+                ))}
+            </div>
+        </div>
     );
 };
 
-export default AnnounceMents;
+// Extracted Card Component
+const AnnouncementCard = ({ data, navigate }) => {
+    // You are using 'loggedinUser' in store, make sure this selector matches your Redux setup
+    const role = useSelector((store) => store.auth?.user?.role || store.loggedinUser?.role || "student"); 
+
+    const categoryStyle = categoryColorMap[data.category] || "bg-gray-100 text-gray-600 border-gray-200";
+    const hasImage = data.image && data.image.length > 0;
+
+    return (
+        <div
+            onClick={() => navigate(`/${role}/anns/${data._id}`)}
+            className="group bg-white rounded-2xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden"
+        >
+            <div className="flex flex-col md:flex-row min-h-45">
+
+                {/* Left Side: Content */}
+                <div className="flex-1 p-6 flex flex-col justify-between">
+                    <div>
+                        {/* Meta Header */}
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-sm">
+                                    {data.created_by?.full_name?.charAt(0) || "A"}
+                                </div>
+                                <div>
+                                    <p className="text-sm font-bold text-slate-900">
+                                        {data.created_by?.full_name || "Admin"}
+                                    </p>
+                                    <p className="text-xs text-slate-500 capitalize">
+                                        {data.created_by?.role || "Admin"}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <span className={`px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border ${categoryStyle}`}>
+                                {data.category}
+                            </span>
+                        </div>
+
+                        {/* Title & Message */}
+                        <h3 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-indigo-600 transition-colors">
+                            {data.title}
+                        </h3>
+                        <p className="text-slate-600 leading-relaxed line-clamp-2 mb-2 text-sm">
+                            {data.message}
+                        </p>
+                    </div>
+
+                    {/* Footer Date */}
+                    <div className="flex items-center gap-4 text-xs font-medium text-slate-400 mt-4 pt-4 border-t border-slate-50">
+                        <div className="flex items-center gap-1.5">
+                            <Calendar size={14} />
+                            {formatDateTime(data.createdAt)}
+                        </div>
+                        {data.updatedAt !== data.createdAt && (
+                            <div className="flex items-center gap-1.5 text-indigo-400">
+                                <Clock size={14} />
+                                Edited
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Right Side: Image Thumbnail */}
+                {hasImage && (
+                    <div className="md:w-64 h-48 md:h-auto shrink-0 relative bg-slate-50 flex items-center justify-center p-4 border-l border-slate-100">
+                        <img
+                            src={data.image[0]}
+                            alt={data.title}
+                            className="max-w-full max-h-full object-contain mix-blend-multiply"
+                        />
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default Announcements;

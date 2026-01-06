@@ -97,7 +97,7 @@ const CreateRoom = ({ roomId }) => {
 
             {error && <p className="text-red-600 mb-4">{error}</p>}
 
-            <form onSubmit={handleSubmit} className={`space-y-6 ${loading ? "opacity-70 pointer-events-none" : ""}`}>
+            <form onSubmit={handleSubmit} className={`space-y-6 ${loading ? "opacity-50 pointer-events-none" : ""}`}>
                 <section>
                     <h2 className="font-semibold text-lg mb-3">Room Assignment</h2>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

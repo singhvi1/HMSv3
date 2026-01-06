@@ -1,25 +1,28 @@
 import { useState } from 'react';
 import IssuesList from './IssuesList';
 import LeaveList from './LeaveList';
+import Button from '../../../common/ui/Button';
 
 const List = ({ studentId }) => {
-    console.log(studentId)
+    // console.log(studentId)
     const [tab, setTab] = useState("issue")
 
     return (
         <>
             <div className="mt-6">
                 <div className="flex justify-around border-b mb-4">
-                    <button
+                    <Button
+                        variant='text'
                         onClick={() => setTab("issue")}
                         className={`px-4 py-2 ${tab === "issue"
                             ? "border-b-2 border-blue-600 text-blue-600"
                             : "text-gray-500"
                             }`}
                     >
-                        Maintenance Requests
-                    </button>
-                    <button
+                        Issues List
+                    </Button>
+                    <Button
+                        variant='text'
                         onClick={() => setTab("leave")}
                         className={`px-4 py-2 ${tab === "leave"
                             ? "border-b-2 border-blue-600 text-blue-600"
@@ -27,13 +30,15 @@ const List = ({ studentId }) => {
                             }`}
                     >
                         Leave Requests
-                    </button>
+                    </Button>
 
 
                 </div>
 
                 {tab === "issue" && <IssuesList studentId={studentId} />}
                 {tab === "leave" && <LeaveList studentId={studentId} />}
+
+
             </div>
         </>
     )

@@ -3,6 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { removeLoggedinUser, setLoggedinUser } from "../../utils/store/logedinUser";
 import { authService } from "../../services/apiService";
+import { removeAnnouncement } from "../../utils/store/announcementsSlice";
+import { clearHostel } from "../../utils/store/hostelSlice";
+import { resetStudents, resetStudentsFilters } from "../../utils/store/studentSlice";
+import { resetRoomsFilters, resetRoomSlice } from "../../utils/store/roomsSlice";
+import { resetLeaveSlice } from "../../utils/store/leaveSlice";
+import { resetIssuesFilters, resetIssuesSlice } from "../../utils/store/issuesSlice";
+import { reSetStudent } from "../../utils/store/studentProfile";
 
 const Navbar = ({ onMenuClick }) => {
   const navigate = useNavigate();
@@ -11,8 +18,14 @@ const Navbar = ({ onMenuClick }) => {
 
   const handleLogout = async () => {
     const res = await authService.logoutUser();
-    dispatch(setLoggedinUser(null));   // clear redux state
-    // console.log(res)              // SPA navigation
+    dispatch(removeAnnouncement(null));
+    dispatch(clearHostel(null));
+    dispatch(resetIssuesSlice());
+    dispatch(removeLoggedinUser(null));
+    dispatch(resetLeaveSlice());
+    dispatch(resetRoomSlice());
+    dispatch(reSetStudent());
+    dispatch(resetStudents());
   };
 
   return (

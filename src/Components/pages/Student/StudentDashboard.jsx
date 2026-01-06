@@ -4,10 +4,10 @@ import SideBar from "../../layout/SideBar";
 import { student } from "../../../../data";
 import Topbar from "../../layout/Topbar";
 import { Outlet } from "react-router-dom";
+import BackButton from "../../common/ui/Backbutton";
 
 const StudentDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  // console.log("studentDashBoard rendring")
   return (
     <div className="min-h-screen bg-gray-100">
       {/*ye mobie ke liye  */}
@@ -21,12 +21,7 @@ const StudentDashboard = () => {
         />
 
         <main className="flex-1 p-6">
-          {/* Your dashboard content */}
-          {/* <section className="flex-1 p-4 md:p-6 space-y-6">
-            <ProfileHero student={student} />
-            <QuickActions />
-
-          </section> */}
+          {/* <BackButton /> */}
           <Outlet />
         </main>
       </div>

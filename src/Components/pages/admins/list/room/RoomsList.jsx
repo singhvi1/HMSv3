@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from "react-redux";
-import { selectRoomsFilters, selectRoomsPageData, setRooms, setRoomsFilters, setRoomsPage, setRoomsPageSize } from "../../../../../utils/store/roomsSlice";
+import { forceRoomRefresh, selectAllRoomState, selectRoomsFilters, selectRoomsPageData, setRoomError, setRooms, setRoomsFilters, setRoomsPage, setRoomsPageSize } from "../../../../../utils/store/roomsSlice";
 import { useNavigate } from "react-router-dom";
 import Table from "../../../../common/table/Table";
 import Pagination from "../../../../common/table/Pagination";
@@ -10,7 +10,9 @@ import { roomService } from "../../../../../services/apiService";
 import { useCallback, useEffect } from "react";
 import SearchBar from "../../../../common/table/SearchBar";
 import useRoomStateToggle from "../../../../../customHooks/useRoomStateToggle";
-import { useDebounce } from '../../../../../customHooks/useDebounce'
+import PageLoader from "../../../../common/PageLoader";
+import { RefreshCcw } from "lucide-react";
+
 
 
 
@@ -18,31 +20,48 @@ const RoomsList = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const filters = useSelector(selectRoomsFilters);
-    const pageData = useSelector(selectRoomsPageData);
+    const { items, pages, limit, page } = useSelector(selectRoomsPageData);
+    const { loading, error } = useSelector(selectAllRoomState);
     const { toggleRoomStatus, loadingId } = useRoomStateToggle();
-    const fetchRoomList = useCallback(async () => {
+    console.log(items, "data for table")
+    console.log(pages, limit, page, "data for table")
 
+
+
+
+    const fetchRoomList = useCallback(async () => {
         try {
             const res = await roomService.getAllRooms()
-
-            dispatch(setRooms({
-                items: res.data.data,
-                count: res.data.count
-            }))
+            dispatch(setRooms(res.data))
         } catch (error) {
-            console.log("Not able to fetch roomList form db", error)
+            dispatch(setRoomError(error?.message || "Not able to fetch issue"))
+            console.log("Not able to fetch issues list", error?.message);
         }
     }, [dispatch])
 
     useEffect(() => {
+        if (!loading) return;
         fetchRoomList();
-    }, [fetchRoomList])
+    }, [fetchRoomList, loading])
+
+    if (loading && items.length === 0) {
+        return <PageLoader />
+    }
+    else if (error) {
+        return <h1>Error Page : {error}</h1>
+    }
+
+
     return (
         <div className="bg-white rounded-xl shadow p-6">
             <BackButton />
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-gray-800">
-                    Room List
+                    Room List  <Button variant="text" className="py-3"
+                        onClick={() => dispatch(forceRoomRefresh())}
+                    >
+                        <RefreshCcw size={20} />
+                    </Button>
                 </h2>
                 <div className="space-x-2">
                     <Button
@@ -71,9 +90,9 @@ const RoomsList = () => {
                     onChange={(e) => dispatch(setRoomsFilters({ block: e.target.value }))}
                 >
                     <option value="">All Block</option>
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
+                    <option value="a">A</option>
+                    <option value="b">B</option>
+                    <option value="c">C</option>
                 </select>
 
 
@@ -91,7 +110,7 @@ const RoomsList = () => {
 
                     <select
                         className="input"
-                        value={pageData.pageSize}
+                        value={limit}
                         onChange={(e) => dispatch(setRoomsPageSize(Number(e.target.value)))}
                     >
                         <option value={10}>10</option>
@@ -101,11 +120,11 @@ const RoomsList = () => {
                 </div>
             </div>
 
-            <Table columns={roomColumns(navigate, toggleRoomStatus, loadingId)} data={pageData.items} />
+            <Table columns={roomColumns(navigate, toggleRoomStatus, loadingId)} data={items} />
 
             <Pagination
-                currPage={pageData.page}
-                totalPages={pageData.totalPages}
+                currPage={page}
+                totalPages={pages}
                 onPageChange={(p) => dispatch(setRoomsPage(p))}
             />
         </div>

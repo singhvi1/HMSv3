@@ -1,6 +1,6 @@
 import { Eye, Pencil, Power, PowerOff, Trash2, UserPlus, Check, X } from "lucide-react";
-import { parseDDMMYYYY } from "./data.js";
-
+import RoleGuard from "./src/services/auth.role";
+import Button from "./src/Components/common/ui/Button";
 
 export const studentColumns = (navigate, deleteStudent) => [
     { key: "sid", label: "SID" },
@@ -191,7 +191,7 @@ export const roomColumns = (navigate, toggleRoomStatus, loadingId) => [
 ];
 
 
-export const issueColumns = (navigate, deleteIssueFxn) => [
+export const issueColumns = (role, navigate, deleteIssueFxn) => [
     {
         key: "sid", label: "SID",
         render: (row) => (
@@ -243,14 +243,14 @@ export const issueColumns = (navigate, deleteIssueFxn) => [
                 <Eye
                     size={16}
                     className="cursor-pointer text-blue-600"
-                    onClick={() => navigate(`/admin/issues/${row._id}`)}
+                    onClick={() => navigate(`/${role}/issues/${row._id}`)}
                 />
 
-                <Trash2
+                {((role === "student" && row?.status === "pending") || (role === "admin")) && (<Trash2
                     size={16}
                     className="cursor-pointer text-red-600"
                     onClick={() => deleteIssueFxn(row._id)}
-                />
+                />)}
             </div>
         )
     }
@@ -334,37 +334,43 @@ export const leaveColumns = (updateStatus, navigate) => [
         key: "actions",
         label: "Actions",
         render: (row) => (
-            <div className="flex gap-2">
-                <button
-                    onClick={() =>
-                        updateStatus({
-                            id: row._id,
-                            status: "approved",
-                            reason: "approved by admin"
-                        })
-                    }
-                    disabled={row.status !== "pending"}
-                    className="bg-green-500 p-2 rounded-xl text-white disabled:bg-gray-400"
-                >
-                    <Check size={16} />
-                </button>
+            <RoleGuard allow={["admin"]} >
+                <div className="flex gap-2">
+                    <Button
+                        variant="text"
+                        onClick={() =>
+                            updateStatus({
+                                id: row._id,
+                                status: "approved",
+                                reason: "approved by admin"
+                            })
+                        }
+                        disabled={row.status !== "pending"}
+                        className="bg-green-500 p-2 rounded-xl text-white disabled:bg-gray-400"
+                    >
+                        <Check size={16} />
+                    </Button>
 
-                <button
-                    onClick={() =>
-                        updateStatus({
-                            id: row._id,
-                            status: "rejected",
-                            reason: "Rejected by admin"
-                        })
-                    }
-                    disabled={row.status !== "pending"}
-                    className="bg-red-500 p-2 rounded-xl text-white disabled:bg-gray-400"
-                >
-                    <X size={16} />
-                </button>
+                    <Button
+                        variant="text"
+                        onClick={() =>
+                            updateStatus({
+                                id: row._id,
+                                status: "rejected",
+                                reason: "Rejected by admin"
+                            })
+                        }
+                        disabled={row.status !== "pending"}
+                        className="bg-red-500 p-2 rounded-xl text-white disabled:bg-gray-400"
+                    >
+                        <X size={16} />
+                    </Button>
 
-            </div>
+                </div>
+            </RoleGuard>
         ),
     },
+
+
 ];
 

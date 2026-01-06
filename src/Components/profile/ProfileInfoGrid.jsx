@@ -3,12 +3,11 @@
 const ProfileInfoGrid = ({ student }) => {
   const room =
     student?.block && student?.room_number
-      ? `${student.block}-${student.room_number}`
+      ? `${student.block.toUpperCase()}-${student.room_number}`
       : null;
   const items = [
-    ["Phone", student.phone],
+    ["Phone", student?.user_id?.phone],
     ["Branch", student.branch],
-    ["Year", student.year],
     ["Room", room],
     ["Guardian", student.guardian_name],
     ["Guardian Contact", student.guardian_contact],

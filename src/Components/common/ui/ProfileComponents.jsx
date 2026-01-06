@@ -6,7 +6,7 @@ export const InfoItem = ({ label, value }) => (
         <p className="text-sm font-bold text-slate-800 leading-tight">{value}</p>
     </div>
 );
-const StatusBadge = ({ status }) => {
+export const StatusBadge = ({ status }) => {
     const isActive = status === 'active';
 
     return (
@@ -21,11 +21,10 @@ const StatusBadge = ({ status }) => {
     );
 };
 export const ProfileHeader = ({ student, InfoItem }) => (
-
-    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden" data-testid="card-profile-header">
+    <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="p-8 md:flex items-start gap-10">
             <div className="relative group shrink-0 mb-6 md:mb-0">
-                <ProfileAvatar image_url={student?.image_url}
+                <ProfileAvatar image_url={student?.image_url || "	https://avatars.githubusercontent.com/u/120703712?v=4"}
                     size={220} />
 
             </div>

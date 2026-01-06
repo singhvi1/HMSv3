@@ -1,18 +1,29 @@
 import { LogOut, Home } from "lucide-react";
 import { Link } from "react-router-dom";
 import ProfileAvatar from "../profile/ProfileAvatar";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { removeLoggedinUser } from "../../utils/store/logedinUser";
 import { authService } from "../../services/apiService";
 import { removeAnnouncement } from "../../utils/store/announcementsSlice";
+import { clearHostel } from "../../utils/store/hostelSlice";
+import { resetStudents } from "../../utils/store/studentSlice";
+import { resetRoomSlice } from "../../utils/store/roomsSlice";
+import { resetLeaveSlice } from "../../utils/store/leaveSlice";
+import { resetIssuesSlice } from "../../utils/store/issuesSlice";
+import { reSetStudent } from "../../utils/store/studentProfile";
 
 const Topbar = ({ user }) => {
   const dispatch = useDispatch();
   const handleLogout = async () => {
     const res = await authService.logoutUser();
-    dispatch(removeLoggedinUser(null));   // clear redux state
-    dispatch(removeAnnouncement(null));   // clear redux state
-    // console.log(res)                // SPA navigation
+    dispatch(removeAnnouncement(null));
+    dispatch(clearHostel(null));
+    dispatch(resetIssuesSlice());
+    dispatch(removeLoggedinUser(null));
+    dispatch(resetLeaveSlice());
+    dispatch(resetRoomSlice());
+    dispatch(reSetStudent());
+    dispatch(resetStudents());
   };
 
   return (

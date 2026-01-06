@@ -22,11 +22,11 @@ const MaintenanceList = lazy(() =>
 );
 
 const MaintenanceForm = lazy(() =>
-  import("./Components/pages/Student/MaintenanceForm")
+  import("./Components/forms/MaintenanceForm")
 );
 
 const LeaveForm = lazy(() =>
-  import("./Components/pages/Student/LeaveForm")
+  import("./Components/forms/LeaveForm")
 );
 
 const AnnounceMents = lazy(() =>
@@ -46,6 +46,7 @@ const CreateAnnouncement = lazy(() =>
 const AnnounceMentDetail = lazy(() =>
   import("./Components/dashboard/AnnounceMentDetail")
 );
+
 const EditAnnouncement = lazy(() =>
   import("./Components/pages/admins/announcements/EditAnnouncement")
 );
@@ -68,8 +69,9 @@ const EditStudent = lazy(() => import("./Components/pages/admins/list/student/Ed
 const AdminIssueProfile = lazy(() => import("./Components/pages/admins/list/issues/AdminIssueProfile"));
 import { HostelOverview, HostelForm, EditHostel, PageLoader } from "./Components/index"
 import { removeLoggedinUser, setLoggedinUser } from './utils/store/logedinUser'
-import api from './services/api'
 import { userService } from "./services/apiService";
+import List from "./Components/pages/Student/studentPersonalList/List";
+
 
 
 function App() {
@@ -95,7 +97,7 @@ function App() {
     };
 
     fetchMe();
-  }, [dispatch]);
+  }, [dispatch, user]);
 
 
   if (loading) {
@@ -109,7 +111,6 @@ function App() {
         {user ? (
           <>
             <Route path="/login" element={<Navigate to="/" replace />} />
-
             <Route path="/"
               element={
                 <Navigate
@@ -118,19 +119,25 @@ function App() {
                 />
               }
             />
+
+
             {user.role === "student" && (
               <Route path="/student" element={<StudentDashboard />}>
                 <Route index element={<StudentHome />} />
                 <Route path="leave/new" element={<LeaveForm />} />
                 <Route path="issues" element={<MaintenanceList />} />
+                <Route path="list" element={<List />} />
+                <Route path="issues/:id" element={<AdminIssueProfile />} />
                 <Route path="issues/new" element={<MaintenanceForm />} />
                 <Route path="anns" element={<AnnounceMents />} />
+                <Route path="anns/:id" element={<AnnounceMentDetail />} />
                 <Route path="*" element={<NotFound />} />
 
               </Route>
             )}
 
             <Route path="/" element={<Home />} />
+
 
 
             {user.role === "admin" && (

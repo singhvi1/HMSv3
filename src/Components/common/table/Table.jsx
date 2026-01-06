@@ -1,11 +1,17 @@
+import { useDispatch } from "react-redux"
+import { forceIssuesRefresh } from "../../../utils/store/issuesSlice"
+import Button from "../ui/Button"
+import { RefreshCcw } from "lucide-react"
+
 const Table = ({ columns = [], data = [] }) => {
     // console.log(data[0])
-
     return (
         <div className='p-6 bg-gray-50 '>
             <h2 className="text-2xl font-semibold mb-4 text-gray-800 ">
-                List
-            </h2>
+                List 
+            </h2><div className="flex justify-center w-full mt-4">
+
+            </div>
             <div className="overflow-x-auto bg-white rounded-lg shadow">
                 <table className='min-w-full border border-gray-200 text-sm'>
                     <thead className="bg-gray-100">

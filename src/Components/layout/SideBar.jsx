@@ -1,4 +1,4 @@
-import { User, CreditCard, Wrench, CalendarDays, X, Megaphone } from "lucide-react";
+import { User, CreditCard, Wrench, CalendarDays, X, Megaphone, List } from "lucide-react";
 import SideBarItem from "./SidebarItem";
 import { useNavigate } from "react-router-dom";
 
@@ -44,7 +44,15 @@ const SideBar = ({ isOpen, onClose }) => {
             icon={<Megaphone size={18} />}
             label="Announcements"
             onClick={() => {
-              navigate("/student/ann");
+              navigate("/student/anns");
+              onClose();
+            }}
+          />
+          <SideBarItem
+            icon={<List size={18} />}
+            label="Lists"
+            onClick={() => {
+              navigate("/student/list");
               onClose();
             }}
           />
@@ -59,7 +67,7 @@ const SideBar = ({ isOpen, onClose }) => {
 
             label="Leave"
             onClick={() => {
-              navigate("/student/leave/new");
+              navigate("/student/leave");
               onClose();
             }}
           />

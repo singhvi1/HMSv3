@@ -3,7 +3,7 @@ import SearchBar from '../../../../common/table/SearchBar'
 import Pagination from '../../../../common/table/Pagination'
 import { studentColumns } from '../../../../../../MockData'
 import { useDispatch, useSelector } from 'react-redux'
-import { selectStudentPageData, selectStudentsFilters, setStudents, setStudentsFilters, setStudentsPage, setStudentsPageSize } from '../../../../../utils/store/studentSlice'
+import { forceStudentRefresh, selectStudentAllState, selectStudentPageData, selectStudentsFilters, setStudentError, setStudents, setStudentsFilters, setStudentsPage, setStudentsPageSize } from '../../../../../utils/store/studentSlice'
 import Button from '../../../../common/ui/Button'
 import { useNavigate } from 'react-router-dom'
 import BackButton from '../../../../common/ui/Backbutton'
@@ -11,14 +11,17 @@ import { studentService } from '../../../../../services/apiService'
 import { useCallback, useEffect } from 'react'
 import { useDebounce } from '../../../../../customHooks/useDebounce'
 import useStudentDelete from '../../../../../customHooks/useStudentDelete'
+import PageLoader from '../../../../common/PageLoader'
+import { RefreshCcw } from 'lucide-react'
+
 
 const StudentList = () => {
     const navigate = useNavigate()
     const dispatch = useDispatch();
 
     const filters = useSelector(selectStudentsFilters);
-    const { items, page, pageSize, totalPages } = useSelector(selectStudentPageData);
-    // const listFetched = useSelector(state => state.students.listFetched);// for stopping refresh 
+    const { items, page, limit, pages } = useSelector(selectStudentPageData);
+    const { loading, error } = useSelector(selectStudentAllState);
     const { deleteStudent } = useStudentDelete()
 
 
@@ -27,7 +30,7 @@ const StudentList = () => {
         try {
             const res = await studentService.getAllStudents({
                 page: page,
-                limit: pageSize,
+                limit: limit,
                 block: filters.block,
                 branch: filters.branch,
                 search: debouncedSearch,
@@ -35,15 +38,22 @@ const StudentList = () => {
             });
             dispatch(setStudents(res.data))
         } catch (error) {
-            console.log("dont able to find student", error)
+            dispatch(setStudentError(error?.message || "Not able to fetch student"));
+            console.log("Not able to fetch student list", error?.message);
         }
-    }, [filters.block, filters.branch, debouncedSearch, pageSize, page, filters.status, dispatch]);
-
+    }, [page, limit, filters.block, filters.branch, filters.status, debouncedSearch, dispatch]);
 
     useEffect(() => {
+        if (!loading) return;
         fetchData();
-    }, [fetchData]);
+    }, [fetchData, loading]);
 
+    if (loading && items.length === 0) {
+        return <PageLoader />
+    }
+    else if (error) {
+        return <h1>Error Page : {error}</h1>
+    }
 
     return (
         <>
@@ -51,7 +61,11 @@ const StudentList = () => {
                 <BackButton />
                 <div className="flex items-center justify-between mb-6">
                     <h2 className="text-xl font-semibold text-gray-800">
-                        Student List
+                        Student List <Button variant="text" className="py-3"
+                            onClick={() => dispatch(forceStudentRefresh())}
+                        >
+                            <RefreshCcw size={20} />
+                        </Button>
                     </h2>
                     <Button
                         variant="success"
@@ -73,9 +87,10 @@ const StudentList = () => {
                         }
                     >
                         <option value="">All Blocks</option>
-                        <option value="A">A</option>
-                        <option value="B">B</option>
-                        <option value="C">C</option>
+                        <option value="a">A</option>
+                        <option value="b">B</option>
+                        <option value="c">C</option>
+                        <option value="c">C</option>
                     </select>
                     <select
                         className="input"
@@ -88,6 +103,7 @@ const StudentList = () => {
                         <option value="CSE">CSE</option>
                         <option value="ECE">ECE</option>
                         <option value="ME">ME</option>
+                        <option value="electrical">EE</option>
                     </select>
                     <select
                         className="input"
@@ -101,7 +117,7 @@ const StudentList = () => {
                         <option value="">All Status</option>
                     </select><select
                         className="input"
-                        value={pageSize}
+                        value={limit}
                         onChange={(e) =>
                             dispatch(setStudentsPageSize(Number(e.target.value)))
                         }
@@ -116,9 +132,8 @@ const StudentList = () => {
 
                 <Pagination
                     currPage={page}
-                    totalPages={totalPages}
+                    totalPages={pages}
                     onPageChange={(p) => dispatch(setStudentsPage(p))}
-
                 />
             </div>
         </>

@@ -1,124 +1,187 @@
 import { useParams, useNavigate } from "react-router-dom";
-import { Pencil, Trash2, Paperclip } from "lucide-react";
+import {
+  Pencil, Trash2, Calendar, Clock, ChevronDown, ChevronUp,
+  AlertCircle, Paperclip, Download, Image as ImageIcon
+} from "lucide-react";
 import BackButton from "../common/ui/Backbutton";
-import { formatDateTime } from "../../utils/constant";
+import Button from "../common/ui/Button";
+import { formatDateTime, categoryColorMap } from "../../utils/constant";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useRef, useState } from "react";
 import { announcementService } from "../../services/apiService";
 import { removeAnnouncement, selectAnnounceMentById, updateOneAnnouncement } from "../../utils/store/announcementsSlice";
+import PageLoader from "../common/PageLoader";
+import RoleGuard from "../../services/auth.role";
+import { AccordionItem } from "../common/AccordionItem";
+import CommentsSection from "../common/issue/CommentsSection";
 
-
+// --- Main Component ---
 const AnnouncementDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const announcement = useSelector(selectAnnounceMentById(id))
-  // console.log(announcement)
   const dispatch = useDispatch();
-  const [loading, setLoading] = useState(true);
-  const deleteRef = useRef(false)
+  const [loading, setLoading] = useState(false);
+  const deleteRef = useRef(false);
 
+  // Select Data from Redux
+  const announcement = useSelector(selectAnnounceMentById(id));
+
+  // Fetch Logic
   useEffect(() => {
     if (deleteRef.current) return;
-    const loadAnn = async () => {
+    if (!announcement) {
+      const loadAnn = async () => {
+        try {
+          setLoading(true);
+          const res = await announcementService.getAnnouncementById(id);
+          dispatch(updateOneAnnouncement(res.data.announcement));
+        } catch (err) {
+          console.error(err);
+        } finally {
+          setLoading(false);
+        }
+      };
+      loadAnn();
+    }
+  }, [dispatch, announcement, id]);
+
+  // Delete Logic
+  const handleDelete = async () => {
+    if (window.confirm("Delete this announcement? This cannot be undone.")) {
+      deleteRef.current = true;
       try {
-        const res = await announcementService.getAnnouncementById(id);
-        dispatch(updateOneAnnouncement(res.data.announcement))
-      } catch (err) {
-        console.error("Failed to load announcement", err);
-      } finally {
-        setLoading(false);
+        await announcementService.deleteAnnouncement(id);
+        dispatch(removeAnnouncement(id));
+        navigate(`/admin/anns`);
+      } catch (error) {
+        console.error(error);
+        deleteRef.current = false;
       }
     }
+  };
 
-    // console.log("Announcemet detail page mounting ", id)
-    if (!announcement) {
-      loadAnn()
-    } else {
-      setLoading(false);
-    }
-  }, [dispatch, announcement, id])
+  if (loading) return <PageLoader />;
+  if (!announcement) return <NotFoundView navigate={navigate} />;
 
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-gray-500">
-        Loading announcement...
-      </div>
-    );
-  }
-  if (!announcement) {
-    return (
-      <div className="min-h-screen flex items-center justify-center text-gray-500">
-        Announcement not found.
-      </div>
-    );
-  }
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
-      <BackButton />
+    <div className="min-h-screen bg-gray-50/50 pb-20">
+      <div className="max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
+        <HeaderNav />
 
-      <div className="max-w-3xl mx-auto bg-white rounded-xl shadow p-6 space-y-5">
-        <h1 className="text-2xl font-bold text-gray-800">
-          {announcement?.title || ""}
-        </h1>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+          <AnnouncementHeader data={announcement} />
+          <AnnouncementBody message={announcement.message} />
+          <AnnouncementFooter
+            data={announcement}
+            onEdit={() => navigate(`/admin/anns/${id}/edit`)}
+            onDelete={handleDelete}
+          />
+        </div>
+      </div>
+      <h1>Comments Comming Soon ...</h1>
+    </div>
+  );
+};
 
-        <p className="text-sm text-gray-500">
-          published On : <span>
-            {formatDateTime(
-              announcement?.updatedAt &&
-                announcement?.updatedAt !== announcement?.createdAt
-                ? announcement?.updatedAt
-                : announcement?.createdAt
-            )}
-          </span> by{" "}
-          <b>{announcement?.created_by?.full_name} </b>as Warden
-        </p>
+// --- Sub-Components ---
 
-        <p className="text-gray-700 leading-relaxed">
-          {announcement?.message}
-        </p>
+const HeaderNav = () => (
+  <div className="flex items-center justify-between">
+    <BackButton />
+    <span className="font-bold text-gray-700 hidden sm:block text-xl">Announcement Detail</span>
+    <div className="w-10" />
+  </div>
+);
 
-        {announcement?.notice_url && (
-          <a
-            href={announcement?.notice_url}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex items-center text-sm text-indigo-600 hover:underline"
-          >
-            <Paperclip size={16} className="mr-1 opacity-70" />
-            View attachment
-          </a>
-        )}
-        <div className="flex gap-3 pt-4 border-t">
+const NotFoundView = ({ navigate }) => (
+  <div className="min-h-screen flex flex-col items-center justify-center text-gray-500 gap-4">
+    <AlertCircle size={48} className="text-gray-300" />
+    <p>Announcement not found.</p>
+    <Button variant="primary" onClick={() => navigate(-1)} className="px-6 py-2">Go Back</Button>
+  </div>
+);
 
-          <button
-            onClick={() =>
-              navigate(`/admin/anns/${id}/edit`)
-            }
-            className="flex items-center gap-2 px-4 py-2 text-sm rounded bg-indigo-600 text-white hover:bg-indigo-700"
-          >
-            <Pencil size={16} />
-            Edit
-          </button>
+const AnnouncementHeader = ({ data }) => {
+  const categoryStyle = categoryColorMap[data.category] || "bg-gray-100 text-gray-600 border-gray-200";
+  const isEdited = data.updatedAt && data.updatedAt !== data.createdAt;
 
-          <button
-            className="flex items-center gap-2 px-4 py-2 text-sm rounded bg-red-600 text-white hover:bg-red-700"
-            onClick={async () => {
-              deleteRef.current = true
-              await announcementService.deleteAnnouncement(id)
-              dispatch(removeAnnouncement(id))
-              navigate(`/admin/anns`)
-            }}
-          >
-            <Trash2 size={16} />
-            Delete
-          </button>
+  return (
+    <div className="p-8 border-b border-gray-100 bg-gray-50/30">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider border ${categoryStyle}`}>
+          {data.category || "General"}
+        </span>
+        <div className="flex items-center gap-2 text-sm text-gray-500 font-medium">
+          <Calendar size={14} /> {formatDateTime(data.createdAt)}
+        </div>
+      </div>
+
+      <h1 className="text-3xl md:text-4xl font-black text-gray-900 leading-tight mb-8">
+        {data.title}
+      </h1>
+
+      <div className="flex items-center gap-4">
+        <div className="w-12 h-12 rounded-xl bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold text-xl">
+          {data.created_by?.full_name?.charAt(0) || "A"}
+        </div>
+        <div>
+          <p className="text-sm font-bold text-gray-900">{data.created_by?.full_name || "Unknown Author"}</p>
+          <div className="flex items-center gap-2 text-xs text-gray-500">
+            <span className="bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded font-medium">
+              {data.created_by?.role || "Warden"}
+            </span>
+            {isEdited && <span className="flex items-center gap-1 text-gray-400">• <Clock size={12} /> Edited</span>}
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
+const AnnouncementBody = ({ message }) => (
+  <div className="p-8 md:p-10">
+    <div className="prose prose-slate max-w-none text-gray-700 leading-relaxed whitespace-pre-wrap">
+      {message}
+    </div>
+  </div>
+);
+
+const AnnouncementFooter = ({ data, onEdit, onDelete }) => {
+  const hasImage = data.image && data.image.length > 0;
+
+  return (
+    <div className="border-t border-gray-100 divide-y divide-gray-100">
+      {/* 1. Image Accordion */}
+      {hasImage && (
+        <AccordionItem title="Event Gallery" icon={ImageIcon} defaultOpen={true}>
+          <div className="rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
+            <img src={data.image[0]} alt="Event" className="w-full max-h-125 object-contain mx-auto" />
+          </div>
+        </AccordionItem>
+      )}
+
+
+
+      {/* 3. Admin Controls Accordion */}
+      <RoleGuard allow={["admin"]}>
+        <AccordionItem title="Admin Controls" icon={AlertCircle}>
+          <div className="bg-red-50/50 rounded-xl p-4 border border-red-100">
+            <p className="text-xs text-red-600 mb-3 font-medium">⚠️ Deletions cannot be undone.</p>
+            <div className="flex gap-3">
+              <Button variant="outline" onClick={onEdit} className="flex-1 flex justify-center gap-2 py-2.5 text-sm bg-white">
+                <Pencil size={16} /> Edit Content
+              </Button>
+              <Button variant="danger" onClick={onDelete} className="flex-1 flex justify-center gap-2 py-2.5 text-sm">
+                <Trash2 size={16} /> Delete Post
+              </Button>
+            </div>
+          </div>
+        </AccordionItem>
+      </RoleGuard>
+    </div>
+  );
+};
+
+
+
 export default AnnouncementDetail;
-
-

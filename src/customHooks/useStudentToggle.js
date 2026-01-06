@@ -13,7 +13,7 @@ const useStudentToggle = () => {
         if (!window.confirm(confirmMsg)) return;
         try {
             const res = await studentService.toogleStudentStatus(id);
-            console.log(res.data)
+            // console.log(res.data)
             dispatch(setStudentStatus(res.data.data))
             toast.success(`student profile successfuly ${action}d`)
         } catch (err) {

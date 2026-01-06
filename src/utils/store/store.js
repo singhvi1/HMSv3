@@ -6,13 +6,14 @@ import leaveReducer from "./leaveSlice"
 import loggedinUserReducer from "./logedinUser"
 import hostelReducer from "./hostelSlice"
 import announcementsSlice from "./announcementsSlice"
-
-const store=configureStore({
-    reducer:{
-        hostel:hostelReducer,
-        loggedinUser:loggedinUserReducer,
-        announcements:announcementsSlice,
-        students:studentReducer,
+import studentProfileReducer from "./studentProfile"
+const store = configureStore({
+    reducer: {
+        studentProfile: studentProfileReducer,
+        loggedinUser: loggedinUserReducer,
+        hostel: hostelReducer,
+        announcements: announcementsSlice,
+        students: studentReducer,
         rooms: roomsReducer,
         issues: issuesReducer,
         leaves: leaveReducer,

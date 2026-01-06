@@ -67,26 +67,7 @@ import {
   CalendarDays,
   GraduationCap
 } from "lucide-react";
-/*const category: {
-  type: String,
-  required: true,
-  lowercase: true,
-  trim: true,
-  enum: [
-    "notice",
-    "sports",
-    "maintenance",
-    "security",
-    "disciplinary",
-    "food",
-    "dinner",
-    "books",
-    "library",
-    "event",
-    "hostel"
-  ]
-}
-*/
+
 export const CATEGORIES = [
   "notice",
   "sports",

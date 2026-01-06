@@ -21,6 +21,8 @@ export const studentService = {
 
   getStudentById: (id) => api.get(`/students/profile/${id}`),
 
+  getStudent: () => api.get(`/students/profile`),
+
   updateStudent: (user_id, data) => api.patch(`/students/edit/${user_id}`, data),
   toogleStudentStatus: (user_id) => api.patch(`/students/status/${user_id}`,),
   deleteStudent: (userId) => api.delete(`/students/${userId}`),
@@ -68,7 +70,7 @@ export const issueCommentService = {
 
 export const leaveService = {
   getAllLeaves: (params) => api.get('/leave-requests', { params }),
-  
+
   getStudentAllLeaves: (params) => api.get(`/leave-requests`,
     { params }),
 

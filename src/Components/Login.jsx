@@ -10,20 +10,13 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const dispactch = useDispatch();
-  // console.log("login called")
 
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
       const res = await authService.loginUser(email, password);
-      // console.log("login successfully")
-      // console.log(res);
-      // const role = res.data.user.role;
-
       if (res.data.success) {
-        // console.log(res?.data.user.role)
         // navigate(`/${res?.data.user.role}`);
-        // console.log("login page loaaded")
         dispactch(setLoggedinUser(res.data.user));
       }
     } catch (err) {

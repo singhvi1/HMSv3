@@ -1,32 +1,34 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { selectLeaveFilters, selectLeavePageData, setLeaveFilters, setLeaveList, setLeavePage, setLeavePageSize } from '../../../../../utils/store/leaveSlice';
+import { selectAllLeaveState, selectLeaveFilters, selectLeavePageData, setLeaveError, setLeaveFilters, setLeaveList, setLeavePage, setLeavePageSize } from '../../../../../utils/store/leaveSlice';
 import { leaveColumns } from '../../../../../../MockData';
 import BackButton from '../../../../common/ui/Backbutton';
 import SearchBar from '../../../../common/table/SearchBar';
 import Table from '../../../../common/table/Table';
 import Pagination from '../../../../common/table/Pagination';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { leaveService } from '../../../../../services/apiService';
 import { useDebounce } from '../../../../../customHooks/useDebounce';
 import { useLeaveStatus } from '../../../../../customHooks/useLeaveStatus';
+import PageLoader from "../../../../common/PageLoader"
 
 const LeavesList = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const filters = useSelector(selectLeaveFilters);
-    const { page, pages, limit, items } = useSelector(selectLeavePageData)
-    const debouncedSid = useDebounce(filters.sid, 900)
+    const { page, pages, limit } = useSelector(selectLeavePageData)
+    const { items, loading, error } = useSelector(selectAllLeaveState);
+
+
+    const debouncedSid = useDebounce(filters.sid, 600)
     const debouncedRoomNumber = useDebounce(filters.room_number, 600)
-    const debouncedFromDate = useDebounce(filters.to_date, 600)
-    const debouncedToDate = useDebounce(filters.from_date, 600)
-    const [loading, setLoading] = useState(false)
+    const debouncedFromDate = useDebounce(filters.from_date, 600)
+    const debouncedToDate = useDebounce(filters.to_date, 600)
     const { updateStatus } = useLeaveStatus()
 
 
     const fetchLeave = useCallback(async () => {
         try {
-            setLoading(true)
             const res = await leaveService.getAllLeaves({
                 page,
                 limit,
@@ -38,19 +40,29 @@ const LeavesList = () => {
                 block: filters.block,
 
             })
-            console.log(res, "Api called")
+            // console.log(res, "Api called")
             dispatch(setLeaveList(res.data))
         } catch (err) {
-            console.log(err, "Not able to fetch leave Request")
-        } finally {
-            setLoading(false)
+            console.log("Not able to fetch issue from api", err?.message || err?.response?.data?.message)
+            dispatch(setLeaveError(err?.response?.data?.message || err?.message || "Error in fetching leave list"
+            ))
         }
     }, [page, limit, debouncedSid, debouncedRoomNumber, debouncedFromDate, debouncedToDate, filters.status, filters.block, dispatch])
 
     useEffect(() => {
-        fetchLeave()
-    }, [fetchLeave])
-
+        if (loading) {
+            fetchLeave()
+        }
+    }, [fetchLeave, loading])
+    if (loading && items.length === 0) {
+        return <PageLoader />
+    }
+    if (error) {
+        return <h1>Error Page : {error}</h1>
+    }
+    if (!loading && items?.length === 0) {
+        return <h2>No items Found</h2>
+    }
 
     return (
         <div className="bg-white rounded-xl shadow p-6">

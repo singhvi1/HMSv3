@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { selectIssuesFilters, selectIssuesItems, selectIssuesPagination, setIssues, setIssuesFilters, setIssuesPage, setIssueslimit } from '../../../../../utils/store/issuesSlice';
+import { forceIssuesRefresh, selectIssuesAllState, selectIssuesFilters, selectIssuesItems, selectIssuesPagination, setIssues, setIssuesError, setIssuesFilters, setIssuesPage, setIssueslimit } from '../../../../../utils/store/issuesSlice';
 import Pagination from '../../../../common/table/Pagination';
 import Table from '../../../../common/table/Table';
 import { issueColumns } from '../../../../../../MockData';
@@ -10,13 +10,20 @@ import { issueService } from '../../../../../services/apiService';
 import { useCallback, useEffect } from 'react';
 import { useDebounce } from '../../../../../customHooks/useDebounce';
 import useIssueDelete from '../../../../../customHooks/useIssueDelete';
+import PageLoader from '../../../../common/PageLoader';
+import { selectLoggedinUserAllState } from '../../../../../utils/store/logedinUser';
+import Button from '../../../../common/ui/Button';
+import { RefreshCcw } from 'lucide-react';
 
 const IssuesList = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { role } = useSelector(selectLoggedinUserAllState)
+
     const filters = useSelector(selectIssuesFilters);
-    const items = useSelector(selectIssuesItems);
     const pagination = useSelector(selectIssuesPagination);
+    const { items, loading, error } = useSelector(selectIssuesAllState);
+
     const debouncedSearchValue = useDebounce(filters.search, 600);
     const debouncedSidValue = useDebounce(filters.sid, 600);
     const debouncedRoomNoValue = useDebounce(filters.room_number, 600);
@@ -36,23 +43,30 @@ const IssuesList = () => {
                 sid: debouncedSidValue,
                 block: filters.block,
                 room_number: debouncedRoomNoValue,
-                limit: pagination.pageSize,
+                limit: pagination.limit,
                 page: pagination.page,
                 student_search: debouncedStudentValue,
             });
-
             dispatch(setIssues(res.data));
         } catch (error) {
-            console.log("Not able to fetch issues list", error);
+            dispatch(setIssuesError(error?.message || "Not able to fetch issue"))
+            console.log("Not able to fetch issues list", error?.message);
         }
-    }, [filters.status, filters.category, debouncedSidValue, filters.block, debouncedRoomNoValue, debouncedStudentValue, debouncedSearchValue, pagination.pageSize, pagination.page, dispatch]);
+    }, [filters.status, filters.category, debouncedSidValue, filters.block, debouncedRoomNoValue, debouncedStudentValue, debouncedSearchValue, pagination.limit, pagination.page, dispatch]);
 
 
     useEffect(() => {
-        fetchData();
-    }, [fetchData]);
+        if (loading) {
+            fetchData()
+        }
+    }, [fetchData, loading])
 
-
+    if (loading && items.length === 0) {
+        return <PageLoader />
+    }
+    else if (error) {
+        return <h1>Error Page : {error}</h1>
+    }
 
     return (
         <div className="bg-white rounded-xl shadow p-6">
@@ -60,17 +74,20 @@ const IssuesList = () => {
             <BackButton />
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-semibold text-gray-800">
-                    Issues List
+                    Issues List <Button variant="text" className="py-3"
+                        onClick={() => dispatch(forceIssuesRefresh())}
+                    >
+                        <RefreshCcw size={20} />
+                    </Button>
                 </h2>
 
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">
 
-                <SearchBar search={filters.student_search} onChange={(v) => dispatch(setIssuesFilters({ student_search: v }))} placeholder={"Search Student Name email "} />
-                <SearchBar search={filters.search} onChange={(v) => dispatch(setIssuesFilters({ search: v }))} placeholder={"Search Discription Title"} />
+                <SearchBar search={filters.student_search} onChange={(v) => dispatch(setIssuesFilters({ student_search: v }))} placeholder={"Name Email "} />
                 <SearchBar search={filters.sid} onChange={(v) => dispatch(setIssuesFilters({ sid: v }))} placeholder={"Search Sid"} />
                 <SearchBar search={filters.room_number} onChange={(v) => dispatch(setIssuesFilters({ room_number: v }))} placeholder={"Search Room"} />
-
+                <SearchBar search={filters.search} onChange={(v) => dispatch(setIssuesFilters({ search: v }))} placeholder={"Search Discription Title"} />
                 <select
                     className="input"
                     value={filters.block}
@@ -112,7 +129,7 @@ const IssuesList = () => {
 
                     <select
                         className="input"
-                        value={pagination.pageSize}
+                        value={pagination.limit}
                         onChange={(e) => dispatch(setIssueslimit(Number(e.target.value)))}
                     >
                         <option value={10}>10</option>
@@ -124,7 +141,7 @@ const IssuesList = () => {
 
 
             <Table
-                columns={issueColumns(navigate, deleteIssueFxn)}
+                columns={issueColumns(role, navigate, deleteIssueFxn)}
                 data={items}
             />
 

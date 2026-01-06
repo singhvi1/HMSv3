@@ -20,9 +20,11 @@ const AdminStudentProfile = () => {
     const [loading, setLoading] = useState(false);
     const userId = id;
     const status = student?.user_id?.status
-    console.log(userId, "userId passing from adminProfile ")
     const { toggleStudentFxn } = useStudentToggle();
     const { deleteStudent } = useStudentDelete();
+
+
+
     const fetchStudent = useCallback(async () => {
         try {
             setLoading(true)
@@ -52,6 +54,8 @@ const AdminStudentProfile = () => {
             <h1>No student found</h1>
         )
     }
+
+    
     return (
         <div>
             <BackButton />

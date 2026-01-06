@@ -1,4 +1,4 @@
-// config.action.js  for Quick Action Grid
+// config.action.js  for Quick Action Grid just below header card of profile
 import {
   AlertCircle,
   Wrench,
@@ -14,31 +14,32 @@ import {
 
 export const studentActions = [
   {
-    title: "Maintenance",
+    title: "Issue Form",
     description: "Raise new issue",
     icon: Wrench,
-    color: "bg-yellow-50",
+    color: "bg-yellow-100",
     to: "/student/issues/new"
   },
   {
-    title: "Leave",
+    title: "Leave Form",
     description: "Apply new leave",
     icon: CalendarDays,
-    color: "bg-purple-50",
+    color: "bg-purple-100",
     to: "/student/leave/new"
   },
+  
   {
     title: "Payments",
     description: "Pay fees and dues",
     icon: CreditCard,
-    color: "bg-green-50",
+    color: "bg-green-100",
     to: "/student/notfound"
   },
   {
     title: "Discipline",
     description: "Provide justification",
     icon: AlertTriangle,
-    color: "bg-red-50",
+    color: "bg-red-100",
     to: "/student/notfound"
   }
 ];

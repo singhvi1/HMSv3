@@ -20,24 +20,14 @@ export const student = {
   }
 };
 export const getFloorLabel = (n) => {
-  // 1. Get the hundreds digit (e.g., 101 -> 1, 205 -> 2)
   const prefix = Math.floor(n / 100);
-
-  // 2. Handle Ground Floor (100 series)
   if (prefix === 1) return "Ground";
-
-  // 3. Calculate actual floor for display (Prefix - 1)
-  // e.g., 200 series -> 2 - 1 = 1st Floor
   const floor = prefix - 1;
-
-  // 4. Handle ordinal suffixes
   const j = floor % 10;
   const k = floor % 100;
-
   if (j === 1 && k !== 11) return `${floor}st Floor`;
   if (j === 2 && k !== 12) return `${floor}nd Floor`;
   if (j === 3 && k !== 13) return `${floor}rd Floor`;
-
   return `${floor}th Floor`;
 };
 
@@ -58,6 +48,15 @@ export const initialForm = {
   yearly_rent: 7500,
 };
 
+export const leaveForm = {
+  leave_type: "",
+  from_date: "",
+  to_date: "",
+  reason: "",
+  half_day: false,
+  only_tomorrow: false
+}
+
 export const mapFormToCreateStudentPayload = (form = {}) => ({
   full_name: (form.full_name ?? "").trim(),
   email: (form.email ?? "").trim().toLowerCase(),
@@ -77,50 +76,6 @@ export const mapFormToCreateStudentPayload = (form = {}) => ({
   yearly_rent: Number(form.yearly_rent ?? 0),
 });
 
-
-export const parseDDMMYYYY = (dateStr) => {
-  if (!dateStr || typeof dateStr !== "string") return NaN;
-
-  const [dd, mm, yyyy] = dateStr.split("-").map(Number);
-
-  // basic validation
-  if (
-    !dd || !mm || !yyyy ||
-    dd < 1 || dd > 31 ||
-    mm < 1 || mm > 12 ||
-    yyyy < 1900
-  ) {
-    return NaN;
-  }
-
-  // Create date in LOCAL timezone (important)
-  const date = new Date(yyyy, mm - 1, dd);
-
-  // Extra guard (handles invalid dates like 31-02-2026)
-  if (
-    date.getFullYear() !== yyyy ||
-    date.getMonth() !== mm - 1 ||
-    date.getDate() !== dd
-  ) {
-    return NaN;
-  }
-
-  return date.getTime();
-};
-
-
-export const studentColumns = [
-  { key: "sid", label: "SID" },
-  { key: "full_name", label: "Name" },
-  { key: "branch", label: "Branch" },
-  { key: "year", label: "Year" },
-  { key: "block", label: "Block" },
-  { key: "room_number", label: "Room" },
-  {
-    key: "status",
-    label: "Status",
-  }
-];
 export const students = Array.from({ length: 47 }, (_, i) => ({
   _id: `st_${i + 1}`,
   sid: `HMS2024${100 + i}`,

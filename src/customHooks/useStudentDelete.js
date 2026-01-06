@@ -17,7 +17,7 @@ const useStudentDelete = () => {
 
         try {
             const res = await studentService.deleteStudent(userId);
-            console.log(res.data);
+            // console.log(res.data);
             dispatch(removeStudent(userId));
             toast.success(`Student successfully Deleted`)
             navigate(`/admin/students`)

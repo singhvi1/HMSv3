@@ -1,8 +1,9 @@
 import { createSelector, createSlice } from "@reduxjs/toolkit";
-// import { rooms as mockRooms } from "../../../data";
 
 const initialState = {
   items: [],
+  loading: true,
+  error: null,
   filters: {
     search: "",
     block: "",
@@ -10,8 +11,8 @@ const initialState = {
   },
   pagination: {
     page: 1,
-    pageSize: 10,
-    totalItems: 0,
+    limit: 10,
+    total: 1,
   }
 };
 
@@ -20,8 +21,18 @@ const roomsSlice = createSlice({
   initialState,
   reducers: {
     setRooms: (state, action) => {
-      state.items = action.payload.items;
-      state.pagination.totalItems = action.payload.count
+      state.items = action.payload.data;
+      state.pagination.total = action.payload.count;
+      state.loading = false;
+      state.error = null;
+    },
+    setRoomError: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+    forceRoomRefresh: (state) => {
+      state.loading = true;
+      state.error = null;
     },
     setRoom: (state, action) => {
       const room = action.payload;
@@ -30,41 +41,61 @@ const roomsSlice = createSlice({
       if (index !== -1) {
         state.items[index] = room;
       } else {
-        state.items.push(room);
-        state.pagination.totalItems += 1;
+        state.items.unshift(room);
+        state.pagination.total += 1;
       }
     },
     setRoomsFilters: (state, action) => {
       state.filters = { ...state.filters, ...action.payload };
       state.pagination.page = 1;
+      state.loading = true;
+      state.error = null;
     },
     setRoomsPage: (state, action) => {
       state.pagination.page = action.payload;
     },
     setRoomsPageSize: (state, action) => {
-      state.pagination.pageSize = action.payload;
+      state.pagination.limit = action.payload;
       state.pagination.page = 1;
     },
     resetRoomsFilters: (state) => {
-      state.filters = initialState.filters;
-      state.pagination = initialState.pagination;
-    }
+      state.filters = { ...initialState.filters };
+      state.pagination = { ...initialState.pagination };
+      state.loading = true;
+      state.error = null;
+    },
+    resetRoomSlice: () => initialState,
   }
 });
 
 export const {
   setRooms,
   setRoom,
+  setRoomError,
+  forceRoomRefresh,
   setRoomsFilters,
   setRoomsPage,
   setRoomsPageSize,
-  resetRoomsFilters
+  resetRoomsFilters,
+  resetRoomSlice,
 } = roomsSlice.actions;
 
 const selectRoomState = (state) => state.rooms;
+export const selectAllRoomState = createSelector(
+  [selectRoomState],
+  (rooms) => ({
+    items: rooms.items,
+    loading: rooms.loading,
+    error: rooms.error,
+  })
+)
+
 export const selectRoomById = (id) => (state) => state.rooms.items.find((r) => r._id === id);
+
 export const selectRoomsItems = (state) => selectRoomState(state).items
+
 export const selectRoomsFilters = (state) => selectRoomState(state).filters
+
 export const selectRoomsPagination = (state) => selectRoomState(state).pagination
 
 export const selectRoomsFiltered = createSelector(
@@ -73,28 +104,34 @@ export const selectRoomsFiltered = createSelector(
     if (!filters) return items;
     const q = (filters?.search || "").trim().toLowerCase()
     return (
-      items.filter((item) => {
+      items?.filter((item) => {
         const roomNumber = String(item.room_number || "").toLowerCase();
         const block = String(item.block || "").toLowerCase();
+
         const matchSearch = !q || roomNumber.includes(q) ||
-          block.includes(q) || `${block}-${roomNumber}`.includes(q);
+          block.includes(q) ||
+          `${block}-${roomNumber}`.includes(q);
+
         const matchBlock = !filters.block || block == filters.block.toLowerCase();
+
         const matchActive = filters.is_active === "" ||
-          item.is_active === (filters.is_active === "true");
+          item.is_active === JSON.parse(filters.is_active);
+
         return matchActive && matchSearch && matchBlock;
       })
     )
   })
 export const selectRoomsPageData = createSelector(
   [selectRoomsFiltered, selectRoomsPagination],
-  (filtered = [], { page, pageSize }) => {
-    const startIndx = (page - 1) * pageSize;
-    const endIndx = (startIndx + pageSize)
+  (filtered = [], { page, limit }) => {
+    const startIndx = (page - 1) * limit;
+    const endIndx = (startIndx + limit)
     return {
       items: filtered?.slice(startIndx, endIndx),
       page,
-      pageSize,
-      totalPages: Math.max(1, Math.ceil(filtered?.length / pageSize))
+      limit,
+      pages: Math.max(1, Math.ceil(filtered.length / limit)),
+      total: filtered.length,
     }
   }
 )
