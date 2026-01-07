@@ -374,3 +374,5 @@ export const leaveColumns = (updateStatus, navigate) => [
 
 ];
 
+
+

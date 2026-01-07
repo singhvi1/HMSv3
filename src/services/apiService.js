@@ -44,13 +44,16 @@ export const roomService = {
 };
 
 export const issueService = {
+  createIssues: (data) => api.post('/issues/create', data),
 
   getAllIssues: (params) => api.get('/issues', { params }),
 
   getIssueById: (id) => api.get(`/issues/${id}`),
 
   getAllIssueOfStudent: (params) => api.get(`/issues`, { params }),
-  updateIssueStatus: (id, status) => api.patch(`/issues/${id}/status`, { status }),
+
+  updateIssueStatus: (id, status) => api.patch(`/issues/${id}/status`,
+    { status }),
   deleteIssue: (id) => api.delete(`/issues/${id}`),
 
 };
@@ -59,6 +62,7 @@ export const issueCommentService = {
   createComment: (data) => api.post(`/issue-comments`, data),
 
   getIssueAllCommetents: (issue_id) => api.get(`/issue-comments/all/${issue_id}`),
+  getIssueCommetents: (issue_id) => api.get(`/issue-comments/${issue_id}`),
 
   getCommetent: (id) => api.get(`/issue-comments/${id}`),
 

@@ -73,7 +73,7 @@ const IssuesList = () => {
 
             <BackButton />
             <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-800">
+                <h2 className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all">
                     Issues List <Button variant="text" className="py-3"
                         onClick={() => dispatch(forceIssuesRefresh())}
                     >

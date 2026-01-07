@@ -19,6 +19,7 @@ const AdminIssueProfile = () => {
     const role = useSelector((store) => store.loggedinUser.role)
 
     const issue = useSelector(selectIssueById(id));
+    console.log(issue)
     const [Loading, setLoading] = useState(false)
     const fetchIssue = useCallback(async () => {
         try {
@@ -72,7 +73,7 @@ const AdminIssueProfile = () => {
 
                 <div className="lg:col-span-2 space-y-6">
                     <IssueDetailsCard issue={issue} />
-                    <CommentsSection issueId={issue?._id} />
+                    {issue.status !== "resolved" && <CommentsSection issueId={issue?._id} />}
                 </div>
 
                 {/* RIGHT COLUMN: Sidebar */}

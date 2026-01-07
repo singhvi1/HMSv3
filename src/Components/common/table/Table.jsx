@@ -1,7 +1,3 @@
-import { useDispatch } from "react-redux"
-import { forceIssuesRefresh } from "../../../utils/store/issuesSlice"
-import Button from "../ui/Button"
-import { RefreshCcw } from "lucide-react"
 
 const Table = ({ columns = [], data = [] }) => {
     // console.log(data[0])

@@ -7,8 +7,13 @@ import loggedinUserReducer from "./logedinUser"
 import hostelReducer from "./hostelSlice"
 import announcementsSlice from "./announcementsSlice"
 import studentProfileReducer from "./studentProfile"
+import commentReducers from "./commentSlice"
+
+
+
 const store = configureStore({
     reducer: {
+        comments: commentReducers,
         studentProfile: studentProfileReducer,
         loggedinUser: loggedinUserReducer,
         hostel: hostelReducer,

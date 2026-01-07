@@ -1,95 +1,132 @@
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { Wrench, PenTool as Tool,} from 'lucide-react';
+import { Wrench, PenTool as Tool, Type } from 'lucide-react'; // Added Type icon for title
 import { student } from '../../../data';
 import BackButton from '../common/ui/Backbutton';
+import { issueService } from '../../services/apiService';
+import Button from '../common/ui/Button';
+import { Imp } from '../common/ui/ProfileComponents';
 
-
-
-// const MaintenanceForm = ({ onClose }) => {
 const MaintenanceForm = () => {
   const [form, setForm] = useState({
+    title: "",
     description: "",
     category: ""
-  })
+  });
+
+  const submitForm = async () => {
+    try {
+      const res = await issueService.createIssues(form);
+      console.log(res.data);
+      toast.success('Maintenance request submitted successfully!');
+      setForm({ description: "", category: "", title: "" });
+    } catch (err) {
+      console.log("Not able to generate issue", err?.message);
+      toast.error("Failed to submit request.");
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    toast.success('Maintenance request submitted successfully!');
-    setForm({ description: "", category: "" });
-    // onClose();
+    submitForm();
+    console.log(form);
   };
 
-
   const handleChange = (e) => {
-    const { name, value } = e.target
-    setForm(prev => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setForm(prev => ({ ...prev, [name]: value }));
+  };
+
+  // Shared input styles for consistency
+  const inputClasses = "w-full rounded-lg border border-gray-300 shadow-sm py-3 px-4 pl-10 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200";
+
   return (
-    <>
-      <div className="bg-white rounded-xl shadow-lg p-8 m-5 border">
+    <div className="max-w-3xl mx-auto"> {/* Added container for centering */}
+      <div className="bg-white rounded-xl shadow-lg p-8 m-5 border border-gray-100">
         <BackButton />
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-3">
-            <div className="p-3 bg-indigo-100 rounded-lg">
-              <Wrench className="md:w-8 md:h-8 text-indigo-600" />
-            </div>
-            <div>
-              <h2 className=" font-semibold  md:text-2xl md:font-bold text-gray-800">Maintenance Request</h2>
-              <p className="text-gray-500">{`Submit a new maintenance request for your room : ${student?.room_number || ""}`}</p>
-            </div>
+
+        {/* Header Section */}
+        <div className="flex items-center space-x-4 mb-8 mt-4">
+          <div className="p-3 bg-indigo-100 rounded-xl shadow-sm">
+            <Wrench className="w-8 h-8 text-indigo-600" />
+          </div>
+          <div>
+            <h2 className="text-2xl font-bold text-gray-800">Maintenance Request</h2>
+            <p className="text-gray-500 text-sm mt-1">
+              Submit a request for room: <span className="font-medium text-gray-700">{student?.room_number || "N/A"}</span>
+            </p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid md:grid-cols-1 gap-6">
 
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Category
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Category <Imp />
             </label>
             <div className="relative">
               <select
+                name='category'
                 value={form.category}
                 onChange={handleChange}
-                // onChange={(e) => setCategory(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 shadow-sm pl-10 py-3 outline-none active:border-blue-500 focus:ring-2 focus:ring-blue-500 "
+                className={`${inputClasses} appearance-none cursor-pointer bg-white`}
               >
+                <option value="">Select Category</option>
                 <option value="plumbing">Plumbing</option>
                 <option value="electrical">Electrical</option>
                 <option value="furniture">Furniture</option>
                 <option value="cleaning">Cleaning</option>
                 <option value="other">Other</option>
               </select>
-              <Tool className="w-5 h-5 text-gray-400 absolute left-3 top-3.5" />
+              <Tool className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Description
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Issue Title <Imp />
+
+            </label>         <div className="relative">
+              <input
+                type="text"
+                value={form.title}
+                name='title'
+                onChange={handleChange}
+                placeholder='Briefly summarize the issue'
+                className={inputClasses}
+              />
+              <Type className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none" />
+            </div>
+          </div>
+
+          {/* Description Textarea */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Description <Imp />
             </label>
             <textarea
+              name='description'
               value={form.description}
-              // onChange={(e) => setDescription(e.target.value)}
               onChange={handleChange}
-              rows={4}
-              className="w-full rounded-lg border-gray-300 shadow-sm outline-none p-2  active:border-blue-500 focus:ring-2 focus:ring-blue-500  "
+              rows={5}
+              className="w-full rounded-lg border border-gray-300 shadow-sm p-4 outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 resize-none"
               placeholder="Please describe the issue in detail..."
               required
             />
           </div>
 
-
-
-          <button
+          {/* Submit Button */}
+          <Button
+            variant='text'
             type="submit"
-            className="w-full bg-linear-to-r from-indigo-600 to-blue-500 text-white py-3 px-6 rounded-lg hover:from-indigo-700 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transform transition-all duration-300 hover:scale-[1.02]"
+            // Fixed gradient syntax: bg-gradient-to-r instead of bg-linear-to-r
+            className="w-full bg-linear-to-r from-indigo-600 to-blue-500 text-white font-semibold py-3.5 px-6 rounded-lg hover:from-indigo-700 hover:to-blue-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transform transition-all duration-300 hover:shadow-lg hover:scale-[1.01]"
           >
             Submit Request
-          </button>
+          </Button>
         </form>
       </div>
-    </>
+    </div>
   );
 };
 

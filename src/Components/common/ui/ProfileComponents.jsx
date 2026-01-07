@@ -51,7 +51,9 @@ export const ProfileHeader = ({ student, InfoItem }) => (
         </div>
     </div>
 );
-
+export const Imp = () => (
+    <span className="text-red-500">*</span>
+)
 export const Filters = ({ status, priority, onChange }) => {
     return (
         <div className="flex gap-3 mb-4">

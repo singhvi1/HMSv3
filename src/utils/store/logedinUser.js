@@ -20,6 +20,7 @@ const selectLoggedinUserState = (state) => state.loggedinUser;
 export const selectLoggedinUserAllState = createSelector(
     [selectLoggedinUserState],
     (loggedinUser) => ({
+        id: loggedinUser._id,
         full_name: loggedinUser.full_name,
         email: loggedinUser.email,
         phone: loggedinUser.phone,
