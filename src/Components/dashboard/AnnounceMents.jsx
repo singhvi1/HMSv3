@@ -51,17 +51,12 @@ const Announcements = () => {
 
     return (
         <div className="max-w-5xl mx-auto px-4"> 
-            {/* --- LAYOUT FIX START --- */}
-            {/* We use a 3-column Grid. The title is placed in the center column explicitly. */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 items-center mb-8 mt-6">
-                
-                {/* Column 1: Back Button (Aligns Left) */}
                 <div className="justify-self-start">
                     <BackButton />
                 </div>
 
-                {/* Column 2: Title (Aligns Center) */}
-                {/* This will always stay centered, even if Col 3 is empty */}
+               
                 <div className="text-center justify-self-center w-full">
                     <h1 className="text-3xl font-black text-slate-900 tracking-tight">
                         Announcements
@@ -71,12 +66,11 @@ const Announcements = () => {
                     </p>
                 </div>
 
-                {/* Column 3: Action Button (Aligns Right) */}
                 <div className="justify-self-end">
                     <RoleGuard allow={["admin"]}>
                         <Button
                             variant="success"
-                            onClick={() => navigate("/admin/anns/create")} // Ensure this route is correct
+                            onClick={() => navigate("/admin/anns/new")} // Ensure this route is correct
                             className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all active:scale-95"
                         >
                             <Megaphone size={18} />

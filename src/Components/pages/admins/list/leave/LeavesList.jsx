@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { selectAllLeaveState, selectLeaveFilters, selectLeavePageData, setLeaveError, setLeaveFilters, setLeaveList, setLeavePage, setLeavePageSize } from '../../../../../utils/store/leaveSlice';
+import { forceLeaveRefresh, selectAllLeaveState, selectLeaveFilters, selectLeavePageData, setLeaveError, setLeaveFilters, setLeaveList, setLeavePage, setLeavePageSize } from '../../../../../utils/store/leaveSlice';
 import { leaveColumns } from '../../../../../../MockData';
 import BackButton from '../../../../common/ui/Backbutton';
 import SearchBar from '../../../../common/table/SearchBar';
@@ -11,6 +11,8 @@ import { leaveService } from '../../../../../services/apiService';
 import { useDebounce } from '../../../../../customHooks/useDebounce';
 import { useLeaveStatus } from '../../../../../customHooks/useLeaveStatus';
 import PageLoader from "../../../../common/PageLoader"
+import Button from '../../../../common/ui/Button';
+import { RefreshCcw } from 'lucide-react';
 
 const LeavesList = () => {
     const dispatch = useDispatch();
@@ -60,18 +62,25 @@ const LeavesList = () => {
     if (error) {
         return <h1>Error Page : {error}</h1>
     }
-    if (!loading && items?.length === 0) {
-        return <h2>No items Found</h2>
-    }
 
     return (
         <div className="bg-white rounded-xl shadow p-6">
 
             <BackButton />
             <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-semibold text-gray-800">
-                    Leaves List
-                </h2>
+                <div className="flex gap-1 items-center-safe">
+                    <h2 className="text-xl font-semibold text-gray-800">
+                        Leaves List
+                    </h2>
+                    <Button
+                        variant="text"
+                        className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all"
+                        onClick={() => dispatch(forceLeaveRefresh())}
+                        title="Refresh List"
+                    >
+                        <RefreshCcw size={20} className={loading ? "animate-spin" : ""} />
+                    </Button>
+                </div>
 
             </div>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-4">

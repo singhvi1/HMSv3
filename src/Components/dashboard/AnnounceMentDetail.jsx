@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import {
-  Pencil, Trash2, Calendar, Clock, ChevronDown, ChevronUp,
-  AlertCircle, Paperclip, Download, Image as ImageIcon
+  Pencil, Trash2, Calendar, Clock,
+  AlertCircle, Image as ImageIcon
 } from "lucide-react";
 import BackButton from "../common/ui/Backbutton";
 import Button from "../common/ui/Button";
@@ -12,10 +12,8 @@ import { announcementService } from "../../services/apiService";
 import { removeAnnouncement, selectAnnounceMentById, updateOneAnnouncement } from "../../utils/store/announcementsSlice";
 import PageLoader from "../common/PageLoader";
 import RoleGuard from "../../services/auth.role";
-import { AccordionItem } from "../common/AccordionItem";
-import CommentsSection from "../common/issue/CommentsSection";
+import AccordionItem from "../common/AccordionItem";
 
-// --- Main Component ---
 const AnnouncementDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -23,10 +21,8 @@ const AnnouncementDetail = () => {
   const [loading, setLoading] = useState(false);
   const deleteRef = useRef(false);
 
-  // Select Data from Redux
   const announcement = useSelector(selectAnnounceMentById(id));
 
-  // Fetch Logic
   useEffect(() => {
     if (deleteRef.current) return;
     if (!announcement) {
@@ -45,7 +41,6 @@ const AnnouncementDetail = () => {
     }
   }, [dispatch, announcement, id]);
 
-  // Delete Logic
   const handleDelete = async () => {
     if (window.confirm("Delete this announcement? This cannot be undone.")) {
       deleteRef.current = true;
@@ -83,7 +78,6 @@ const AnnouncementDetail = () => {
   );
 };
 
-// --- Sub-Components ---
 
 const HeaderNav = () => (
   <div className="flex items-center justify-between">
@@ -146,32 +140,55 @@ const AnnouncementBody = ({ message }) => (
   </div>
 );
 
+
 const AnnouncementFooter = ({ data, onEdit, onDelete }) => {
   const hasImage = data.image && data.image.length > 0;
+  const [galleryOpen, setGalleryOpen] = useState(true);
+  const [adminOpen, setAdminOpen] = useState(false);
 
   return (
     <div className="border-t border-gray-100 divide-y divide-gray-100">
-      {/* 1. Image Accordion */}
       {hasImage && (
-        <AccordionItem title="Event Gallery" icon={ImageIcon} defaultOpen={true}>
+        <AccordionItem
+          title="Event Gallery"
+          icon={ImageIcon}
+          isOpen={galleryOpen}
+          onToggle={() => setGalleryOpen((prev) => !prev)}
+        >
           <div className="rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
-            <img src={data.image[0]} alt="Event" className="w-full max-h-125 object-contain mx-auto" />
+            <img
+              src={data.image[0]}
+              alt="Event"
+              className="w-full max-h-125 object-contain mx-auto"
+            />
           </div>
         </AccordionItem>
       )}
 
-
-
-      {/* 3. Admin Controls Accordion */}
       <RoleGuard allow={["admin"]}>
-        <AccordionItem title="Admin Controls" icon={AlertCircle}>
-          <div className="bg-red-50/50 rounded-xl p-4 border border-red-100">
-            <p className="text-xs text-red-600 mb-3 font-medium">⚠️ Deletions cannot be undone.</p>
+        <AccordionItem
+          title="Admin Controls"
+          icon={AlertCircle}
+          isOpen={adminOpen}
+          onToggle={() => setAdminOpen((prev) => !prev)}
+        >
+          <div className="bg-red-50/50  rounded-xl p-4  border-red-100">
+            <p className="text-xs text-red-600 mb-3 font-medium">
+              ⚠️ Deletions cannot be undone.
+            </p>
             <div className="flex gap-3">
-              <Button variant="outline" onClick={onEdit} className="flex-1 flex justify-center gap-2 py-2.5 text-sm bg-white">
+              <Button
+                variant="outline"
+                onClick={onEdit}
+                className="flex-1 flex justify-center gap-2 py-2.5 text-sm bg-white"
+              >
                 <Pencil size={16} /> Edit Content
               </Button>
-              <Button variant="danger" onClick={onDelete} className="flex-1 flex justify-center gap-2 py-2.5 text-sm">
+              <Button
+                variant="danger"
+                onClick={onDelete}
+                className="flex-1 flex justify-center gap-2 py-2.5 text-sm"
+              >
                 <Trash2 size={16} /> Delete Post
               </Button>
             </div>
@@ -181,6 +198,7 @@ const AnnouncementFooter = ({ data, onEdit, onDelete }) => {
     </div>
   );
 };
+
 
 
 

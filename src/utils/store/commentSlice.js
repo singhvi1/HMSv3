@@ -53,11 +53,12 @@ const commentSlice = createSlice({
         clearComment: (state, action) => {
             const { entityType, entityId } = action.payload;
             delete state.byEntity[getKey(entityType, entityId)]
-        }
+        },
+        clearComments: () => initialState
     }
 })
 
-export const { clearComment, setCommentsError, setCommentsLoading, addComment, setComments } = commentSlice.actions;
+export const { clearComment, setCommentsError, setCommentsLoading, addComment, setComments, clearComments } = commentSlice.actions;
 
 
 const selectCommentEntities = (state) => state?.comments?.byEntity ?? {};

@@ -1,9 +1,10 @@
-const SideBarItem = ({ icon, label, onClick }) => {
+const SideBarItem = ({ icon: Icon, label, onClick }) => {
   return (
     <div
       onClick={onClick}
-      className="flex items-center gap-3 p-2 rounded-lg hover:bg-indigo-50 cursor-pointer">
-      {icon}
+      className="flex items-center gap-3 p-2 rounded-lg hover:bg-indigo-50 cursor-pointer"
+    >
+      <Icon size={18} />
       <span>{label}</span>
     </div>
   );

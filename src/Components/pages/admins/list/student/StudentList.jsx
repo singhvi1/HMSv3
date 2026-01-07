@@ -25,7 +25,7 @@ const StudentList = () => {
     const { deleteStudent } = useStudentDelete()
 
 
-    const debouncedSearch = useDebounce(filters.search, 900);
+    const debouncedSearch = useDebounce(filters.search, 600);
     const fetchData = useCallback(async () => {
         try {
             const res = await studentService.getAllStudents({
@@ -44,29 +44,57 @@ const StudentList = () => {
     }, [page, limit, filters.block, filters.branch, filters.status, debouncedSearch, dispatch]);
 
     useEffect(() => {
-        if (!loading) return;
+        if (!loading || error) return;
         fetchData();
-    }, [fetchData, loading]);
+    }, [error, fetchData, loading]);
 
-    if (loading && items.length === 0) {
-        return <PageLoader />
-    }
-    else if (error) {
-        return <h1>Error Page : {error}</h1>
-    }
 
+    const fetchStudentTable = () => {
+        if (loading && items.length === 0) {
+            return <PageLoader />
+        }
+        if (error) {
+            return <h1>Error Page : {error}</h1>
+        }
+        if (!loading && items?.length === 0) {
+            return (
+                <div className="flex flex-col items-center justify-center py-12 text-gray-500">
+                    <p className="text-lg">No Studnet List found.</p>
+                </div>
+            )
+        }
+        return (
+            <>
+                <Table columns={studentColumns(navigate, deleteStudent)}
+                    data={items} />
+
+                <Pagination
+                    currPage={page}
+                    totalPages={pages}
+                    onPageChange={(p) => dispatch(setStudentsPage(p))}
+                />
+            </>
+        )
+
+    }
     return (
         <>
             <div className="bg-white rounded-xl shadow p-6">
                 <BackButton />
                 <div className="flex items-center justify-between mb-6">
-                    <h2 className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all">
-                        Student List <Button variant="text" className="py-3"
+                    <div className="flex gap-1 items-center-safe">
+                        <h2 className="text-xl font-semibold text-gray-800">
+                            Student List
+                        </h2>
+                        <Button
+                            variant="text"
+                            className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all"
                             onClick={() => dispatch(forceStudentRefresh())}
+                            title="Refresh List"
                         >
-                            <RefreshCcw size={20} />
+                            <RefreshCcw size={20} className={loading ? "animate-spin" : ""} />
                         </Button>
-                    </h2>
+                    </div>
                     <Button
                         variant="success"
                         onClick={() => navigate("/admin/students/new")}
@@ -75,9 +103,9 @@ const StudentList = () => {
                         + Add Student
                     </Button>
                 </div>
-
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
-                    <SearchBar search={filters.search} onChange={(v) => dispatch(setStudentsFilters({ search: v }))} placeholder={"Search name, sid, RoomNo"} />
+                    <SearchBar search={filters.search} onChange={(v) => dispatch(setStudentsFilters({ search: v }))} placeholder={"Name, sid, RoomNo"} />
+
 
                     <select
                         className="input"
@@ -89,7 +117,6 @@ const StudentList = () => {
                         <option value="">All Blocks</option>
                         <option value="a">A</option>
                         <option value="b">B</option>
-                        <option value="c">C</option>
                         <option value="c">C</option>
                     </select>
                     <select
@@ -125,17 +152,10 @@ const StudentList = () => {
                         <option value={10}>10 / page</option>
                         <option value={20}>20 / page</option>
                         <option value={50}>50 / page</option>
-                    </select>
-                </div>
-                <Table columns={studentColumns(navigate, deleteStudent)}
-                    data={items} />
-
-                <Pagination
-                    currPage={page}
-                    totalPages={pages}
-                    onPageChange={(p) => dispatch(setStudentsPage(p))}
-                />
+                    </select></div>
+                {fetchStudentTable()}
             </div>
+
         </>
     )
 }

@@ -16,9 +16,11 @@ const StudentDashboard = () => {
       <Topbar user={student} />
       <div className="flex">
         <SideBar
+          role="student"
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
         />
+
 
         <main className="flex-1 p-6">
           {/* <BackButton /> */}

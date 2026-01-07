@@ -12,6 +12,7 @@ import PageLoader from "../../../common/PageLoader"
 import { selectLoggedinUserAllState } from '../../../../utils/store/logedinUser';
 import { Plus, RefreshCcw } from 'lucide-react';
 import Button from '../../../common/ui/Button';
+import RoleGuard from '../../../../services/auth.role';
 
 const IssuesList = ({ studentId }) => {
     const dispatch = useDispatch();
@@ -82,7 +83,7 @@ const IssuesList = ({ studentId }) => {
                     <h2 className='text-2xl font-bold text-gray-800'>Maintenance Issues</h2>
                     <p className='text-sm text-gray-500'>Track and manage your room maintenance requests</p>
                 </div>
-
+                <RoleGuard allow={["student"]}>
                 <div className="flex items-center gap-3">
                     <Button
                         variant="text"
@@ -101,7 +102,7 @@ const IssuesList = ({ studentId }) => {
                         <Plus size={18} />
                         Raise Request
                     </Button>
-                </div>
+                </div></RoleGuard>
             </div>
 
             {renderContent()}

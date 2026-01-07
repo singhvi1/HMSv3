@@ -1,13 +1,14 @@
-import { User, CreditCard, Wrench, CalendarDays, X, Megaphone, List } from "lucide-react";
-import SideBarItem from "./SidebarItem";
+import { X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import SideBarItem from "./SidebarItem";
+import { sidebarConfig } from "../common/sideBar.config";
 
-const SideBar = ({ isOpen, onClose }) => {
-  const navigate = useNavigate()
+const SideBar = ({ isOpen, onClose, role }) => {
+  const navigate = useNavigate();
+  const items = sidebarConfig[role] || [];
 
   return (
     <>
-      {/* Overlay (mobile only) */}
       {isOpen && (
         <div
           onClick={onClose}
@@ -23,65 +24,23 @@ const SideBar = ({ isOpen, onClose }) => {
           md:translate-x-0
         `}
       >
-        {/* Mobile close button */}
         <div className="flex justify-between items-center mb-8 md:hidden">
           <h1 className="text-xl font-bold text-indigo-600">HMS</h1>
           <X onClick={onClose} className="cursor-pointer" />
         </div>
 
-
-
         <nav className="space-y-4 text-gray-700">
-          <SideBarItem
-            icon={<User size={18} />}
-            label="Profile"
-            onClick={() => {
-              navigate("/student");
-              onClose();
-            }}
-          />
-          <SideBarItem
-            icon={<Megaphone size={18} />}
-            label="Announcements"
-            onClick={() => {
-              navigate("/student/anns");
-              onClose();
-            }}
-          />
-          <SideBarItem
-            icon={<List size={18} />}
-            label="Lists"
-            onClick={() => {
-              navigate("/student/list");
-              onClose();
-            }}
-          />
-          <SideBarItem icon={<Wrench size={18} />}
-            onClick={() => {
-              navigate("/student/issues");
-              onClose();
-            }}
-            label="Issues"
-          />
-          <SideBarItem icon={<CalendarDays size={18} />}
-
-            label="Leave"
-            onClick={() => {
-              navigate("/student/leave");
-              onClose();
-            }}
-          />
-          <SideBarItem icon={<CreditCard size={18} />} label="Payments"
-            onClick={() => {
-              navigate("/student/notfound");
-              onClose();
-            }} />
-          <SideBarItem icon={<CreditCard size={18} />} label="Disciplinary Actions"
-            onClick={() => {
-              navigate("/student/notfound");
-              onClose();
-            }}
-          />
+          {items.map(({ label, icon, path }) => (
+            <SideBarItem
+              key={label}
+              icon={icon}
+              label={label}
+              onClick={() => {
+                if (path) navigate(path);
+                onClose();
+              }}
+            />
+          ))}
         </nav>
       </aside>
     </>

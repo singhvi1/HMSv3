@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Topbar from '../../layout/Topbar'
 import Navbar from '../../layout/NavBar';
-import SideBar from './layout/SideBar';
+import SideBar from '../../layout/SideBar';
 import { Outlet } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
@@ -20,9 +20,11 @@ const AdminDashBoard = () => {
 
       <div className="flex">
         <SideBar
+          role="admin"
           isOpen={isSidebarOpen}
           onClose={() => setIsSidebarOpen(false)}
         />
+
 
         <main className="flex-1 p-6">
           {/* Your dashboard content */}
@@ -33,4 +35,4 @@ const AdminDashBoard = () => {
   )
 }
 
-export default AdminDashBoard
+export default AdminDashBoard;

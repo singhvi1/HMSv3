@@ -1,32 +1,12 @@
 import { Menu, LogOut, Home } from "lucide-react";
-import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { removeLoggedinUser, setLoggedinUser } from "../../utils/store/logedinUser";
-import { authService } from "../../services/apiService";
-import { removeAnnouncement } from "../../utils/store/announcementsSlice";
-import { clearHostel } from "../../utils/store/hostelSlice";
-import { resetStudents, resetStudentsFilters } from "../../utils/store/studentSlice";
-import { resetRoomsFilters, resetRoomSlice } from "../../utils/store/roomsSlice";
-import { resetLeaveSlice } from "../../utils/store/leaveSlice";
-import { resetIssuesFilters, resetIssuesSlice } from "../../utils/store/issuesSlice";
-import { reSetStudent } from "../../utils/store/studentProfile";
+import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { useLogout } from "../../customHooks/useLogout";
 
 const Navbar = ({ onMenuClick }) => {
-  const navigate = useNavigate();
   const user = useSelector((state) => state.loggedinUser);
-  const dispatch = useDispatch();
+  const logout = useLogout();
 
-  const handleLogout = async () => {
-    const res = await authService.logoutUser();
-    dispatch(removeAnnouncement(null));
-    dispatch(clearHostel(null));
-    dispatch(resetIssuesSlice());
-    dispatch(removeLoggedinUser(null));
-    dispatch(resetLeaveSlice());
-    dispatch(resetRoomSlice());
-    dispatch(reSetStudent());
-    dispatch(resetStudents());
-  };
 
   return (
     <nav className="md:hidden bg-linear-to-r from-indigo-600 to-blue-500 text-white shadow-lg">
@@ -48,10 +28,9 @@ const Navbar = ({ onMenuClick }) => {
             </Link>
           </div>
 
-          {/* Right */}
           {user ? (
             <button
-              onClick={handleLogout}
+              onClick={logout}
               className="flex items-center gap-1 px-4 py-2 bg-indigo-700 rounded-md hover:bg-indigo-800"
             >
               <LogOut size={16} />
@@ -71,4 +50,4 @@ const Navbar = ({ onMenuClick }) => {
   );
 };
 
-export default Navbar;
+export default Navbar

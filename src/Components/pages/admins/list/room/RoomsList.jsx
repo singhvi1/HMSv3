@@ -56,13 +56,19 @@ const RoomsList = () => {
         <div className="bg-white rounded-xl shadow p-6">
             <BackButton />
             <div className="flex items-center justify-between mb-6">
-                <h2 className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all">
-                    Room List  <Button variant="text" className="py-3"
+                <div className="flex gap-1 items-center-safe">
+                    <h2 className="text-xl font-semibold text-gray-800">
+                        Room List
+                    </h2>
+                    <Button
+                        variant="text"
+                        className="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all"
                         onClick={() => dispatch(forceRoomRefresh())}
+                        title="Refresh List"
                     >
-                        <RefreshCcw size={20} />
+                        <RefreshCcw size={20} className={loading ? "animate-spin" : ""} />
                     </Button>
-                </h2>
+                </div>
                 <div className="space-x-2">
                     <Button
                         variant="success"

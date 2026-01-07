@@ -31,7 +31,7 @@ const studentsSlice = createSlice({
     },
     setStudent: (state, action) => {
       const student = action.payload;
-      const index = state.items.findIndex(r => r._id == student._id);
+      const index = state.items.findIndex(r => r._id === student._id);
       if (index !== -1) {
         state.items[index] = student;
       } else {
@@ -41,14 +41,14 @@ const studentsSlice = createSlice({
     },
     setStudentStatus: (state, action) => {
       const { user_id, status } = action.payload;
-      const student = state.items.find(s => s.user_id?._id == user_id)
+      const student = state.items.find(s => s.user_id?._id === user_id)
       if (student) {
         student.user_id.status = status
       }
     },
     removeStudent: (state, action) => {
       const user_id = action.payload;
-      state.items = state?.items?.filter(s => s.user_id._id.toString() !== user_id);
+      state.items = state?.items?.filter(s => s.user_id?._id.toString() !== user_id);
       state.pagination.total -= 1;
     },
     setStudentError: (state, action) => {
@@ -96,7 +96,6 @@ export const {
   forceStudentRefresh,
   setStudentsFilters,
   setStudentsPage,
-  setStudentslimit,
   resetStudentsFilters,
   resetStudents,
 } = studentsSlice.actions;

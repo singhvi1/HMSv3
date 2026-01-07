@@ -10,7 +10,7 @@ const AccordionItem = ({
     rightSlot
 }) => {
     return (
-        <div className="bg-white border rounded-xl overflow-hidden transition-all duration-300">
+        <div className="bg-white  rounded-xl overflow-hidden transition-all duration-300">
             <Button
                 variant="text"
                 onClick={onToggle}
