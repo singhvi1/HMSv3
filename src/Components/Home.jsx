@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 
 const Home = () => {
   const loogedinUser = useSelector((state) => state.loggedinUser)
-  // console.log(loogedinUser);
   return (
     <>
       <Topbar user={loogedinUser} />

@@ -42,7 +42,6 @@ const LeavesList = () => {
                 block: filters.block,
 
             })
-            // console.log(res, "Api called")
             dispatch(setLeaveList(res.data))
         } catch (err) {
             console.log("Not able to fetch issue from api", err?.message || err?.response?.data?.message)

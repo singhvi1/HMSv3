@@ -10,14 +10,11 @@ const RoomProfileHeader = ({ room }) => {
     if (!room) return null;
     const capacity = room?.capacity || "1"
 
-    // console.log(students, "this is studens list")
-    // console.log("this is room data given to RoomProfileHeader", room)
     const students = room?.occupants ?? [];
 
     const activeStudents = students.filter((s) => s.user_id.status === "active");
     const isFull = activeStudents >= room.capacity;
     const inactiveStudents = students.filter((s) => s.user_id.status === "inactive");
-    console.log("active", activeStudents)
     return (
         <div className="bg-white rounded-xl shadow p-6 mb-8">
             <BackButton />

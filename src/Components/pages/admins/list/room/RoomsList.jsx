@@ -23,8 +23,6 @@ const RoomsList = () => {
     const { items, pages, limit, page } = useSelector(selectRoomsPageData);
     const { loading, error } = useSelector(selectAllRoomState);
     const { toggleRoomStatus, loadingId } = useRoomStateToggle();
-    console.log(items, "data for table")
-    console.log(pages, limit, page, "data for table")
 
 
 

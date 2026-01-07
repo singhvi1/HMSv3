@@ -38,7 +38,6 @@ const CreateRoom = ({ roomId }) => {
         const fetchStudent = async () => {
             try {
                 const res = await roomService.getRoomById(roomId);
-                // console.log(res, "successfully called insdier")
                 const room = res.data.data;
                 setForm({
                     block: room.block || "",

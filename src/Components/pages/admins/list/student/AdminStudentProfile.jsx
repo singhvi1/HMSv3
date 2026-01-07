@@ -13,7 +13,6 @@ import List from '../../../Student/studentPersonalList/List';
 
 const AdminStudentProfile = () => {
     const { id } = useParams();
-    console.log(id, "from params")
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const student = useSelector(selectStudentByUserId(id));

@@ -10,14 +10,12 @@ const useStudentDelete = () => {
 
     
     const deleteStudent = async ({ userId }) => {
-        console.log(userId, "in deleteHook")
         const confirmMsg = "Are you sure ! "
         if (!window.confirm(confirmMsg)) return;
 
 
         try {
             const res = await studentService.deleteStudent(userId);
-            // console.log(res.data);
             dispatch(removeStudent(userId));
             toast.success(`Student successfully Deleted`)
             navigate(`/admin/students`)

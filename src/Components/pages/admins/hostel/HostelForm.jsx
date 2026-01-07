@@ -33,7 +33,6 @@ const HostelForm = () => {
     const res = await hostelService.create(payload);
     if (res.data.success) {
       dispatch(setHostel(res.data.data))
-      // console.log("save the daata please ", res)
       navigate("/admin/hostel");
     }
   };

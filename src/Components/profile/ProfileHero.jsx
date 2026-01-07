@@ -4,7 +4,6 @@ import ProfileAvatar from "./ProfileAvatar";
 import ProfileInfoGrid from "./ProfileInfoGrid";
 
 const ProfileHero = ({ student }) => {
-  // console.log("profileHero student",student)
   return (
 
     <>

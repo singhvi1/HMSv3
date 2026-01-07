@@ -36,7 +36,6 @@ const CreateStudent = ({ studentId }) => {
     const [form, setForm] = useState(initialForm);
     const [searchParams] = useSearchParams()
     const roomId = searchParams.get("roomId")
-    // console.log(roomId)
     const roomByStore = useSelector(selectRoomById(roomId))
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -49,7 +48,6 @@ const CreateStudent = ({ studentId }) => {
             try {
                 const res = await roomService.getRoomById(id)
                 const room = res.data.room
-                // console.log("room fetching by id create Student ")
                 setForm(prev => ({
                     ...prev, ...mapRoomToForm(room)
                 }));
@@ -106,9 +104,7 @@ const CreateStudent = ({ studentId }) => {
         try {
             if (isEdit) {
                 const { password, ...updatedPayload } = form;
-                // console.log(updatedPayload)
                 const res = await studentService.updateStudent(studentId, updatedPayload);
-                // console.log("updating student")
                 dispatch(setStudent(res.data.student))
                 toast.success("Student Updated Successfully")
                 navigate(`/admin/students/${res.data.student.user_id._id}`);

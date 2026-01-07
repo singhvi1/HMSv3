@@ -7,7 +7,6 @@ import { useSelector } from 'react-redux';
 
 const AdminDashBoard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  // console.log("studentDashBoard rendring")
   const loggedinUser = useSelector((state) => state.loggedinUser)
 
   return (

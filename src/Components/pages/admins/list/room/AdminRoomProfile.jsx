@@ -20,7 +20,6 @@ const AdminRoomProfile = () => {
     const dispatch = useDispatch()
     const { toggleRoomStatus } = useRoomStateToggle()
     const room = useSelector(selectRoomById(id));
-    // console.log(room)
 
     const fetchRoomById = async () => {
         try {

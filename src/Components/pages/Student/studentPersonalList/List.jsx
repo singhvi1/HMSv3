@@ -4,7 +4,6 @@ import LeaveList from './LeaveList';
 import Button from '../../../common/ui/Button';
 
 const List = ({ studentId }) => {
-    // console.log(studentId)
     const [tab, setTab] = useState("issue")
 
     return (

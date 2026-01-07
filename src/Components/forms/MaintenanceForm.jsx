@@ -17,7 +17,6 @@ const MaintenanceForm = () => {
   const submitForm = async () => {
     try {
       const res = await issueService.createIssues(form);
-      console.log(res.data);
       toast.success('Maintenance request submitted successfully!');
       setForm({ description: "", category: "", title: "" });
     } catch (err) {
@@ -29,7 +28,6 @@ const MaintenanceForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     submitForm();
-    console.log(form);
   };
 
   const handleChange = (e) => {

@@ -19,14 +19,12 @@ const AdminIssueProfile = () => {
     const role = useSelector((store) => store.loggedinUser.role)
 
     const issue = useSelector(selectIssueById(id));
-    console.log(issue)
     const [Loading, setLoading] = useState(false)
     const fetchIssue = useCallback(async () => {
         try {
             setLoading(true)
             const res = await issueService.getIssueById(id);
             dispatch(setIssue(res.data.issue))
-            // console.log("issue fetched by api");
         } catch (err) {
             console.error("Not able to fetch Issue", err)
         } finally {
@@ -45,8 +43,6 @@ const AdminIssueProfile = () => {
     const handleStatusChange = async (newStatus) => {
         const res = await issueService.updateIssueStatus(id, newStatus)
         dispatch(updateIssueStatus({ id, status: newStatus }));
-        // console.log(res)
-        // console.log(`Updating status to: ${newStatus}`);
     };
 
     const handleDelete = async () => {

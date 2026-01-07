@@ -6,13 +6,10 @@ import Button from "../../../../common/ui/Button";
 const RoomStudentsList = ({ students = [] }) => {
   const { deleteStudent } = useStudentDelete();
   const navigate = useNavigate();
-  // console.log(students, "this is student list passed here")
   const activeStudents = students.filter(s => s.user_id?.status === "active");
   const inactiveStudents = students.filter(s => s.user_id?.status == "inactive");
-  // console.log(activeStudents, "this is totall inactive student")
   return (
     <div className="bg-white rounded-xl shadow p-5 space-y-6">
-      {/* Active Students */}
 
       <div>
         <h2 className="text-lg font-semibold mb-3">
@@ -30,7 +27,6 @@ const RoomStudentsList = ({ students = [] }) => {
         )}
       </div>
 
-      {/* Inactive Students */}
       <div>
         <h2 className="text-lg font-semibold mb-3">
           Inactive Students ({inactiveStudents.length})
