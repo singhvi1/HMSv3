@@ -10,15 +10,15 @@ const AdminDashBoard = lazy(() =>
 );
 
 const StudentDashboard = lazy(() =>
-  import("./Components/pages/Student/StudentDashBoard")
+  import("./Components/pages/student/StudentDashBoard")
 );
 
 const StudentHome = lazy(() =>
-  import("./Components/pages/Student/StudentHome")
+  import("./Components/pages/student/StudentHome")
 );
 
 const MaintenanceList = lazy(() =>
-  import("./Components/pages/Student/MaintenanceList")
+  import("./Components/pages/student/MaintenanceList")
 );
 
 const MaintenanceForm = lazy(() =>
@@ -70,7 +70,7 @@ const AdminIssueProfile = lazy(() => import("./Components/pages/admins/list/issu
 const PageLoader = lazy(() => import("./Components/common/PageLoader"))
 import { removeLoggedinUser, setLoggedinUser } from './utils/store/logedinUser'
 import { userService } from "./services/apiService";
-const List = lazy(() => import("./Components/pages/Student/studentPersonalList/List"));
+const List = lazy(() => import("./Components/pages/student/studentPersonalList/List"));
 const HostelOverview = lazy(() => import("./Components/pages/admins/hostel/HostelOverview"))
 const EditHostel = lazy(() => import("./Components/pages/admins/hostel/EditHostel"))
 const HostelForm = lazy(() => import("./Components/forms/HostelForm"))

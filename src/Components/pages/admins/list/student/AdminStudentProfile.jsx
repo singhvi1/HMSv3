@@ -9,7 +9,7 @@ import QuickActionsGrid from '../../../../common/QuickActionGrid';
 import { getStudentActions } from '../../../../common/config.AdminAction';
 import useStudentToggle from '../../../../../customHooks/useStudentToggle';
 import useStudentDelete from '../../../../../customHooks/useStudentDelete';
-import List from '../../../Student/studentPersonalList/List';
+import List from '../../../student/studentPersonalList/List';
 
 const AdminStudentProfile = () => {
     const { id } = useParams();

@@ -4,7 +4,6 @@ import SideBar from "../../layout/SideBar";
 import { student } from "../../../../data";
 import Topbar from "../../layout/Topbar";
 import { Outlet } from "react-router-dom";
-import BackButton from "../../common/ui/Backbutton";
 
 const StudentDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
