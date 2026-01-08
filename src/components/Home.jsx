@@ -1,7 +1,7 @@
 import { Bell, Megaphone } from 'lucide-react';
 import Topbar from './layout/Topbar.jsx';
 import NavBar from './layout/NavBar.jsx';
-import Announcements from './dashboard/Announcements.jsx';
+import AnnounceMents from './dashboard/AnnounceMents.jsx';
 import { useSelector } from 'react-redux';
 
 const Home = () => {
@@ -20,14 +20,14 @@ const Home = () => {
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center space-x-2">
                     <Megaphone className="w-4 h-4 md:w-8 md:h-8 text-indigo-600" />
-                    <h2 className="md:text-2xl md:font-bold  font-semibold text-gray-800">Announcements</h2>
+                    <h2 className="md:text-2xl md:font-bold  font-semibold text-gray-800">AnnounceMents</h2>
                   </div>
                 </div>
 
 
                 <div className="grid gap-6">
-                  {/* here we will show Announcements */}
-                  <Announcements />
+                  {/* here we will show AnnounceMents */}
+                  <AnnounceMents />
 
                 </div>
               </div>

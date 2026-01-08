@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { lazy, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { announcementService } from "../../../../services/apiService";
 import { addAnnouncement } from "../../../../utils/store/announcementsSlice";
-import { AnnouncementForm } from "../../../index"
-
+const AnnouncementForm =lazy(()=>import("../../../forms/AnnouncementForm"))
 
 const CreateAnnouncement = () => {
     const dispatch = useDispatch();

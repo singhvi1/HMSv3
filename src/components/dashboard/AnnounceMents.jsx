@@ -10,7 +10,7 @@ import Button from "../common/ui/Button";
 import RoleGuard from "../../services/auth.role";
 import PageLoader from "../common/PageLoader";
 
-const Announcements = () => {
+const AnnounceMents = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const { list, listFetched } = useSelector((state) => state.announcements);
@@ -173,4 +173,4 @@ const AnnouncementCard = ({ data, navigate }) => {
     );
 };
 
-export default Announcements;
+export default AnnounceMents;
