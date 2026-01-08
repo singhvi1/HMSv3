@@ -10,7 +10,7 @@ const AdminDashBoard = lazy(() =>
 )
 
 const StudentDashBoard = lazy(() =>
-  import("./components/pages/student/StudentDashBoard.jsx")
+  import("./components/pages/student/StudentDashboard.jsx")
 );
 
 const StudentHome = lazy(() =>
