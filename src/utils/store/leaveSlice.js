@@ -32,6 +32,9 @@ const leaveSlice = createSlice({
       state.error = null;
 
     },
+    setLeave: (state, action) => {
+      state.items.unshift(action.payload)
+    },
     setLeaveError: (state, action) => {
       state.loading = false;
       state.error = action.payload;
@@ -69,6 +72,7 @@ const leaveSlice = createSlice({
 
 export const {
   setLeaveList,
+  setLeave,
   setLeaveError,
   forceLeaveRefresh,
   setLeaveFilters,

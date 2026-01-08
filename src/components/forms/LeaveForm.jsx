@@ -1,16 +1,40 @@
 import { useState, useEffect } from "react";
 import BackButton from "../common/ui/Backbutton";
 import { useNavigate } from "react-router-dom";
-import { Calendar, FileText, UserCheck, AlertCircle } from "lucide-react";
+// Added MapPin to imports
+import { Calendar, FileText, UserCheck, AlertCircle, MapPin } from "lucide-react";
 import { leaveForm } from "../../../data";
 import Button from "../common/ui/Button";
+import { leaveService } from "../../services/apiService";
+import { useDispatch } from "react-redux";
+import { setLeave } from "../../utils/store/leaveSlice";
 
 const LeaveForm = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [loading, setLoading] = useState(false);
   const [form, setForm] = useState(leaveForm);
 
+  const handleSubmit = async () => {
+    try {
+      if (loading) return;
+      if (!form.title || !form.from_date || !form.to_date || !form.reason || !form.destination) {
+        alert("Please fill all required fields");
+        return;
+      }
+      setLoading(true);
+      const res = await leaveService.createLeave(form);
 
-  
+      console.log(form);
+      dispatch(setLeave(res.data.leaveRequest));
+      navigate('/student/list');
+    } catch (err) {
+      console.error("Not able to create form", err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (form.only_tomorrow) {
       const tomorrow = new Date();
@@ -32,7 +56,6 @@ const LeaveForm = () => {
     });
   };
 
-  // Helper to get today's date for "min" attribute (prevent past dates)
   const today = new Date().toISOString().split("T")[0];
 
   return (
@@ -45,7 +68,7 @@ const LeaveForm = () => {
       </div>
 
       <div className="space-y-8">
-        {/* Section 1: Basic Details */}
+        {/* Section 1: Type & Approver */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-2">
             <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
@@ -54,8 +77,8 @@ const LeaveForm = () => {
             </label>
             <div className="relative">
               <select
-                name="leave_type"
-                value={form.leave_type}
+                name="title"
+                value={form.title}
                 onChange={handleChange}
                 className="w-full pl-4 pr-10 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 outline-none transition-all appearance-none"
               >
@@ -63,8 +86,9 @@ const LeaveForm = () => {
                 <option value="casual">Casual Leave</option>
                 <option value="medical">Medical Leave</option>
                 <option value="emergency">Emergency Leave</option>
+                <option value="vacation">Vacation</option>
+                <option value="other">Other</option>
               </select>
-              {/* Custom Arrow Icon for Select */}
               <div className="absolute inset-y-0 right-0 flex items-center px-3 pointer-events-none text-slate-500">
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
               </div>
@@ -83,18 +107,37 @@ const LeaveForm = () => {
           </div>
         </div>
 
-        {/* Section 2: Timing & Duration */}
+        {/* Section 2: Timing, Destination & Duration */}
         <div className="bg-indigo-50/50 p-6 rounded-xl border border-indigo-100 space-y-6">
 
-          {/* Toggles */}
-          <div className="flex flex-col sm:flex-row gap-6">
-            <ToggleOption
-              label="Only for Tomorrow"
-              name="only_tomorrow"
-              checked={form.only_tomorrow}
-              onChange={handleChange}
-              desc="Auto-fills dates for next day"
-            />
+          {/* Top Row: Toggle and Destination */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+            {/* Destination Input - NOW STYLED */}
+            <div className="space-y-2">
+              <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+                <MapPin size={16} className="text-indigo-600" />
+                Destination
+              </label>
+              <input
+                type="text"
+                placeholder="City, Home, or Address..."
+                value={form.destination || ''}
+                name="destination"
+                onChange={handleChange}
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 outline-none transition-all placeholder:text-slate-400"
+              />
+            </div>
+
+            {/* Toggle */}
+            <div className="h-full flex items-end">
+              <ToggleOption
+                label="Only for Tomorrow"
+                name="only_tomorrow"
+                checked={form.only_tomorrow}
+                onChange={handleChange}
+                desc="Auto-fills dates for next day"
+              />
+            </div>
           </div>
 
           {/* Date Pickers */}
@@ -144,6 +187,7 @@ const LeaveForm = () => {
             value={form.reason}
             onChange={handleChange}
             rows={4}
+            required
             className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-100 focus:border-indigo-500 outline-none transition-all resize-none placeholder:text-slate-400"
             placeholder="Please describe why you need leave (e.g., Going home for sister's wedding)..."
           />
@@ -152,16 +196,18 @@ const LeaveForm = () => {
         <div className="pt-4 flex items-center justify-end gap-4 border-t border-slate-100">
           <Button onClick={() => navigate(-1)} variant="text" className="px-6 py-2.5 rounded-xl text-slate-600 hover:bg-slate-50 font-semibold transition-colors">Cancel</Button>
 
-          <Button type="submit" variant="success" className="md:px-8 md:py-2.5 rounded-2xl transition-all cursor-pointer">
-            Submit Application</Button>
+          <Button disabled={loading} variant="success" className="md:px-8 md:py-2.5 rounded-2xl transition-all cursor-pointer" onClick={handleSubmit}>
+            {loading ? "Submitting " : "Submit Application"}
+          </Button>
         </div>
       </div>
     </div>
   );
 };
 
+// Toggle Option Component remains the same
 const ToggleOption = ({ label, name, checked, onChange, desc }) => (
-  <label className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer transition-all ${checked ? 'bg-white border-indigo-600 ring-1 ring-indigo-600' : 'bg-transparent border-transparent hover:bg-white hover:border-slate-200'}`}>
+  <label className={`w-full flex items-start gap-3 p-3 rounded-xl border cursor-pointer transition-all ${checked ? 'bg-white border-indigo-600 ring-1 ring-indigo-600 shadow-sm' : 'bg-transparent border-transparent hover:bg-white/50 hover:border-indigo-200'}`}>
     <div className="relative flex items-center mt-1">
       <input
         type="checkbox"

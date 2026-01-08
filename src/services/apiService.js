@@ -79,6 +79,8 @@ export const leaveService = {
     { params }),
 
   updateLeaveStatus: (id, status, reason) => api.patch(`/leave-requests/${id}/status`, { status, reason }),
+
+  createLeave :(data)=>api.post('/leave-requests/new' , data)
 };
 
 export const paymentService = {

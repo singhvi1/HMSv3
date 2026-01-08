@@ -22,7 +22,6 @@ const StudentDashBoard = () => {
 
 
         <main className="flex-1 p-6">
-          {/* <BackButton /> */}
           <Outlet />
         </main>
       </div>
