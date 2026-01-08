@@ -1,7 +1,11 @@
 import { ShieldCheck } from "lucide-react";
 import QuickInfo from "./QuickInfo";
+import { useSelector } from "react-redux";
+import { selectLoggedinUserAllState } from "../../../utils/store/logedinUser";
 
 const AdminHero = ({ admin }) => {
+  const { full_name, email, phone, status } = useSelector(selectLoggedinUserAllState)
+  console.log(full_name, email, phone, status)
   return (
     <div className="bg-white rounded-xl shadow p-6 mb-8">
       <div className="text-center mb-6">
@@ -24,20 +28,20 @@ const AdminHero = ({ admin }) => {
 
           <div>
             <h2 className="text-xl font-semibold text-gray-800">
-              Welcome, {admin.full_name}
+              Welcome, {full_name}
             </h2>
             <p className="text-sm text-gray-500">
-              Administrator : {admin.email}
+              Administrator : {email}
             </p>
             <p className="text-sm text-gray-500">
-              MobileNo : +91{admin.phone}
+              MobileNo : +91{phone}
             </p>
           </div>
         </div>
 
         {/* Status Badge */}
         <span className="inline-flex items-center px-3 py-1 text-sm rounded-full bg-green-100 text-green-700 w-fit">
-          Status: {admin.status}
+          Status: {status}
         </span>
       </div>
 

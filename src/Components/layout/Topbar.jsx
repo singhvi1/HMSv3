@@ -38,7 +38,6 @@ const Topbar = ({ user }) => {
       {/* Right */}
       <div className="flex items-center gap-5">
         {/* Avatar */}
-        {user && <Link to={`/${user.role}`}>Profile</Link>}
         <ProfileAvatar
           image_url={user?.image_url}
           name={user?.full_name}

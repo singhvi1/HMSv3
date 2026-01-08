@@ -67,10 +67,13 @@ const EditRoom = lazy(() => import("./Components/pages/admins/list/room/EditRoom
 const CreateRoom = lazy(() => import("./Components/forms/CreateRoom"))
 const EditStudent = lazy(() => import("./Components/pages/admins/list/student/EditStudent"))
 const AdminIssueProfile = lazy(() => import("./Components/pages/admins/list/issues/AdminIssueProfile"));
-import { HostelOverview, HostelForm, EditHostel, PageLoader } from "./Components/index"
+import { PageLoader } from "./Components/index"
 import { removeLoggedinUser, setLoggedinUser } from './utils/store/logedinUser'
 import { userService } from "./services/apiService";
-import List from "./Components/pages/Student/studentPersonalList/List";
+const List = lazy(() => import("./Components/pages/Student/studentPersonalList/List"));
+const HostelOverview = lazy(() => import("./Components/pages/admins/hostel/HostelOverview"))
+const EditHostel = lazy(() => import("./Components/pages/admins/hostel/EditHostel"))
+const HostelForm = lazy(() => import("./Components/forms/HostelForm"))
 
 
 

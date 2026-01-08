@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { hostelService } from "../../../../services/apiService";
+import { hostelService } from "../../services/apiService";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { setHostel } from "../../../../utils/store/hostelSlice";
-import { BackButton } from "../../../index"
+import { setHostel } from "../../utils/store/hostelSlice";
+import { BackButton } from "../index"
 
 const HostelForm = () => {
   const navigate = useNavigate();

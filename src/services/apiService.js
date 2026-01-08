@@ -87,7 +87,7 @@ export const paymentService = {
 };
 
 export const dashboardService = {
-  getDashboardStats: () => api.get('/admin/dashboard'),
+  getDashboardStats: () => api.get('/users'),
 };
 
 export const authService = {
