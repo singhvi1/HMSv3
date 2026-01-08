@@ -67,7 +67,7 @@ const EditRoom = lazy(() => import("./Components/pages/admins/list/room/EditRoom
 const CreateRoom = lazy(() => import("./Components/forms/CreateRoom"))
 const EditStudent = lazy(() => import("./Components/pages/admins/list/student/EditStudent"))
 const AdminIssueProfile = lazy(() => import("./Components/pages/admins/list/issues/AdminIssueProfile"));
-import { PageLoader } from "./Components/index"
+const PageLoader = lazy(() => import("./Components/common/PageLoader"))
 import { removeLoggedinUser, setLoggedinUser } from './utils/store/logedinUser'
 import { userService } from "./services/apiService";
 const List = lazy(() => import("./Components/pages/Student/studentPersonalList/List"));
@@ -83,11 +83,11 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (user) {
+      setLoading(false);
+      return;
+    }
     const fetchMe = async () => {
-      if (user) {
-        setLoading(false);
-        return;
-      }
       try {
         const res = await userService.getMe();
         dispatch(setLoggedinUser(res.data.user));

@@ -3,14 +3,13 @@ import QuickInfo from "./QuickInfo";
 import { useSelector } from "react-redux";
 import { selectLoggedinUserAllState } from "../../../utils/store/logedinUser";
 
-const AdminHero = ({ admin }) => {
+const AdminHero = () => {
   const { full_name, email, phone, status } = useSelector(selectLoggedinUserAllState)
-  console.log(full_name, email, phone, status)
   return (
     <div className="bg-white rounded-xl shadow p-6 mb-8">
       <div className="text-center mb-6">
         <h1 className="text-3xl font-extrabold text-gray-800">
-          {admin.hostel_name}
+          Himalya Hostel
         </h1>
         <p className="text-sm text-gray-500 mt-1">
           Admin Dashboard
@@ -39,17 +38,14 @@ const AdminHero = ({ admin }) => {
           </div>
         </div>
 
-        {/* Status Badge */}
         <span className="inline-flex items-center px-3 py-1 text-sm rounded-full bg-green-100 text-green-700 w-fit">
           Status: {status}
         </span>
       </div>
 
-      {/* Divider */}
       <div className="my-6 border-t" />
 
-      {/* Quick Info */}
-      <QuickInfo admin={admin} />
+      <QuickInfo />
     </div>
   );
 };
